@@ -104,9 +104,13 @@ namespace VisualProcessors.Forms
 
 			//Show toolbox
 			m_Toolbox = new ToolboxForm(this);
-			m_Toolbox.MdiParent = this;
-			m_Toolbox.Show();
+
+			//m_Toolbox.MdiParent = this;
 			m_Toolbox.Dock = DockStyle.Left;
+			m_Toolbox.TopLevel = false;
+			m_Toolbox.TopMost = true;
+			Controls.Add(m_Toolbox);
+			m_Toolbox.Show();
 		}
 
 		#endregion Constructor
@@ -259,20 +263,19 @@ namespace VisualProcessors.Forms
 			pf.Visible = true;
 			pf.Focus();
 			Point centerView = m_MdiClient.DisplayRectangle.GetCenter();
-			Point centerForm = pf.GetCenter();
-			Point offset = new Point(centerView.X - centerForm.X, centerView.Y - centerForm.Y);
 			if (bring)
 			{
-				centerForm.Offset(offset);
-				pf.Location = centerForm;
+				pf.Location = new Point(centerView.X - pf.Width / 2, centerView.Y - pf.Height / 2);
 			}
 			else
 			{
+				Point centerForm = pf.GetCenter();
+				Point offset = new Point(centerView.X - centerForm.X, centerView.Y - centerForm.Y);
 				foreach (ProcessorForm form in m_ProcessorForms)
 				{
 					Point loc = form.Location;
 					loc.Offset(offset);
-					pf.Location = loc;
+					form.Location = loc;
 				}
 			}
 		}

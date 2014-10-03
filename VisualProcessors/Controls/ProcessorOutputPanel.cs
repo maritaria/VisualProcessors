@@ -104,6 +104,15 @@ namespace VisualProcessors.Controls
 				string processorname = (string)cells[TargetColumn.Name].Value;
 				string channelname = (string)cells[InputColumn.Name].Value;
 				Pipeline.ShowInputChannel(processorname, channelname);
+				return;
+			}
+			if (OutputGridView.Columns[e.ColumnIndex] == TargetColumn)
+			{
+				DataGridViewRow row = OutputGridView.Rows[e.RowIndex];
+				DataGridViewCellCollection cells = row.Cells;
+				string processorname = (string)cells[TargetColumn.Name].Value;
+				Pipeline.ShowProcessor(processorname, true);
+				return;
 			}
 		}
 

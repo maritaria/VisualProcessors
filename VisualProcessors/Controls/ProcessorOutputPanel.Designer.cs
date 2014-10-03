@@ -30,12 +30,12 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this.OutputGridView = new System.Windows.Forms.DataGridView();
-			this.LinkOutputButton = new System.Windows.Forms.Button();
-			this.OutputColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.TargetColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.InputColumn = new System.Windows.Forms.DataGridViewLinkColumn();
 			this.OutputContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.UnlinkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.LinkOutputButton = new System.Windows.Forms.Button();
+			this.OutputColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.TargetColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+			this.InputColumn = new System.Windows.Forms.DataGridViewLinkColumn();
 			((System.ComponentModel.ISupportInitialize)(this.OutputGridView)).BeginInit();
 			this.OutputContextMenu.SuspendLayout();
 			this.SuspendLayout();
@@ -54,6 +54,20 @@
 			this.OutputGridView.Size = new System.Drawing.Size(330, 184);
 			this.OutputGridView.TabIndex = 1;
 			this.OutputGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OutputGridView_CellContentClick);
+			// 
+			// OutputContextMenu
+			// 
+			this.OutputContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.UnlinkMenuItem});
+			this.OutputContextMenu.Name = "OutputContextMenu";
+			this.OutputContextMenu.Size = new System.Drawing.Size(109, 26);
+			// 
+			// UnlinkMenuItem
+			// 
+			this.UnlinkMenuItem.Name = "UnlinkMenuItem";
+			this.UnlinkMenuItem.Size = new System.Drawing.Size(108, 22);
+			this.UnlinkMenuItem.Text = "Unlink";
+			this.UnlinkMenuItem.Click += new System.EventHandler(this.UnlinkMenuItem_Click);
 			// 
 			// LinkOutputButton
 			// 
@@ -77,26 +91,13 @@
 			this.TargetColumn.HeaderText = "Target";
 			this.TargetColumn.Name = "TargetColumn";
 			this.TargetColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.TargetColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			// 
 			// InputColumn
 			// 
 			this.InputColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.InputColumn.HeaderText = "InputChannel";
 			this.InputColumn.Name = "InputColumn";
-			// 
-			// OutputContextMenu
-			// 
-			this.OutputContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.UnlinkMenuItem});
-			this.OutputContextMenu.Name = "OutputContextMenu";
-			this.OutputContextMenu.Size = new System.Drawing.Size(153, 48);
-			// 
-			// UnlinkMenuItem
-			// 
-			this.UnlinkMenuItem.Name = "UnlinkMenuItem";
-			this.UnlinkMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.UnlinkMenuItem.Text = "Unlink";
-			this.UnlinkMenuItem.Click += new System.EventHandler(this.UnlinkMenuItem_Click);
 			// 
 			// ProcessorOutputPanel
 			// 
@@ -116,10 +117,10 @@
 
 		private System.Windows.Forms.DataGridView OutputGridView;
 		private System.Windows.Forms.Button LinkOutputButton;
-		private System.Windows.Forms.DataGridViewTextBoxColumn OutputColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn TargetColumn;
-		private System.Windows.Forms.DataGridViewLinkColumn InputColumn;
 		private System.Windows.Forms.ContextMenuStrip OutputContextMenu;
 		private System.Windows.Forms.ToolStripMenuItem UnlinkMenuItem;
+		private System.Windows.Forms.DataGridViewTextBoxColumn OutputColumn;
+		private System.Windows.Forms.DataGridViewLinkColumn TargetColumn;
+		private System.Windows.Forms.DataGridViewLinkColumn InputColumn;
 	}
 }
