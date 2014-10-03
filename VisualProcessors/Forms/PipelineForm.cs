@@ -37,27 +37,8 @@ namespace VisualProcessors.Forms
 	{
 		#region Properties
 
-		private bool m_HideScrollBars = false;
-		private MdiClient m_MdiClient;
-		private MdiClientHelper m_MdiHelper = new MdiClientHelper();
 		private Pipeline m_Pipeline;
 		private bool m_PipelineStatusChanging = false;
-		private ToolboxForm m_Toolbox;
-
-		/// <summary>
-		///  Hides the scrollbars of the MdiClient, there may be a minor flicker when disabled
-		/// </summary>
-		public bool MdiHideScrollBars
-		{
-			get
-			{
-				return m_HideScrollBars;
-			}
-			set
-			{
-				m_HideScrollBars = value;
-			}
-		}
 
 		#endregion Properties
 
@@ -79,22 +60,7 @@ namespace VisualProcessors.Forms
 			{
 				SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
 			}
-
-			//Initialize MdiClient
-			foreach (Control c in Controls)
-			{
-				if (c is MdiClient)
-				{
-					m_MdiClient = (MdiClient)c;
-					break;
-				}
-			}
-			m_MdiClient.Paint += MdiClientPaintLinks;
-			m_MdiClient.MouseDown += MdiClientMouseDown;
-			m_MdiClient.MouseUp += MdiClientMouseUp;
-			m_MdiClient.MouseMove += MdiClientMouseMove;
-			m_MdiHelper.AssignHandle(m_MdiClient.Handle);
-			m_MdiClient.PerformLayout();
+			this.IsMdiContainer = false;
 
 			//Add existing Processors of the Pipeline instance
 			foreach (string name in pipeline.GetListOfNames())
@@ -102,15 +68,8 @@ namespace VisualProcessors.Forms
 				AddProcessor(pipeline.GetByName(name));
 			}
 
-			//Show toolbox
-			m_Toolbox = new ToolboxForm(this);
-
-			//m_Toolbox.MdiParent = this;
-			m_Toolbox.Dock = DockStyle.Left;
-			m_Toolbox.TopLevel = false;
-			m_Toolbox.TopMost = true;
-			Controls.Add(m_Toolbox);
-			m_Toolbox.Show();
+			//Toolbox
+			Toolbox.Pipeline = this;
 		}
 
 		#endregion Constructor
@@ -118,12 +77,12 @@ namespace VisualProcessors.Forms
 		#region Methods
 
 		/// <summary>
-		///  Forces the MDI to redraw itself, usefull for forcing a redraw when a link is added or
-		///  removed
+		///  Forces the FormView to redraw itself, usefull for forcing a redraw when a link is added
+		///  or removed
 		/// </summary>
-		public void InvalidateMdi()
+		public void InvalidateFormView()
 		{
-			m_MdiClient.Invalidate();
+			FormView.Invalidate();
 		}
 
 		private Point CalculateChannelLink(Form a, Point end)
@@ -179,10 +138,9 @@ namespace VisualProcessors.Forms
 			{
 				ProcessorForm f = new ProcessorForm(this, p);
 				m_ProcessorForms.Add(f);
-				AddOwnedForm(f);
-				f.MdiParent = this;
+				f.TopLevel = false;
+				FormView.Controls.Add(f);
 				f.Show();
-				ActivateMdiChild(f);
 			}
 			if (!m_Pipeline.IsProcessorNameTaken(p.Name))
 			{
@@ -257,26 +215,19 @@ namespace VisualProcessors.Forms
 		///  When false, it will move the viewport to center on the form, when true, it will move
 		///  the form to the center of the viewport
 		/// </param>
-		public void ShowProcessor(string name, bool bring)
+		public void ShowProcessor(string name)
 		{
 			ProcessorForm pf = GetProcessorForm(name);
 			pf.Visible = true;
 			pf.Focus();
-			Point centerView = m_MdiClient.DisplayRectangle.GetCenter();
-			if (bring)
+			Point centerView = FormView.DisplayRectangle.GetCenter();
+			Point centerForm = pf.GetCenter();
+			Point offset = new Point(centerView.X - centerForm.X, centerView.Y - centerForm.Y);
+			foreach (ProcessorForm form in m_ProcessorForms)
 			{
-				pf.Location = new Point(centerView.X - pf.Width / 2, centerView.Y - pf.Height / 2);
-			}
-			else
-			{
-				Point centerForm = pf.GetCenter();
-				Point offset = new Point(centerView.X - centerForm.X, centerView.Y - centerForm.Y);
-				foreach (ProcessorForm form in m_ProcessorForms)
-				{
-					Point loc = form.Location;
-					loc.Offset(offset);
-					form.Location = loc;
-				}
+				Point loc = form.Location;
+				loc.Offset(offset);
+				form.Location = loc;
 			}
 		}
 
@@ -326,7 +277,7 @@ namespace VisualProcessors.Forms
 			}
 
 			ResetLinkMode();
-			m_MdiClient.Invalidate();
+			InvalidateFormView();
 		}
 
 		/// <summary>
@@ -364,8 +315,39 @@ namespace VisualProcessors.Forms
 
 		#region EventHandlers
 
+		private Point m_ContextLocation;
 		private bool m_IsDragging = false;
 		private Point m_PreviousDragPosition;
+
+		private void FormView_MouseClick(object sender, MouseEventArgs e)
+		{
+			if (e.Button.HasFlag(MouseButtons.Right))
+			{
+				m_ContextLocation = e.Location;
+				FormViewContextMenu.Show(FormView, e.Location);
+			}
+		}
+
+		private void FormViewContextMenu_Opening(object sender, CancelEventArgs e)
+		{
+			GotoMenu.DropDownItems.Clear();
+			BringMenu.DropDownItems.Clear();
+			foreach (ProcessorForm pf in m_ProcessorForms)
+			{
+				GotoMenu.DropDownItems.Add(pf.Processor.Name, null, delegate(object _sender, EventArgs _e)
+				{
+					ShowProcessor(pf.Processor.Name);
+					InvalidateFormView();
+				});
+				BringMenu.DropDownItems.Add(pf.Processor.Name, null, delegate(object _sender, EventArgs _e)
+				{
+					Point offset = new Point(-pf.Width / 2, -pf.Height / 2);
+					m_ContextLocation.Offset(offset);
+					pf.Location = m_ContextLocation;
+					InvalidateFormView();
+				});
+			}
+		}
 
 		private void m_Pipeline_Started(object sender, EventArgs e)
 		{
@@ -394,7 +376,7 @@ namespace VisualProcessors.Forms
 			{
 				return;
 			}
-			m_MdiClient.SuspendLayout();
+			this.SuspendLayout();
 			Point offset = new Point(e.Location.X - m_PreviousDragPosition.X, e.Location.Y - m_PreviousDragPosition.Y);
 			foreach (ProcessorForm pf in m_ProcessorForms)
 			{
@@ -402,7 +384,7 @@ namespace VisualProcessors.Forms
 				pos.Offset(offset);
 				pf.Location = pos;
 			}
-			m_MdiClient.ResumeLayout(true);
+			this.ResumeLayout(true);
 			m_PreviousDragPosition.Offset(offset);
 		}
 
@@ -418,8 +400,8 @@ namespace VisualProcessors.Forms
 			BufferedGraphicsContext currentContext;
 			BufferedGraphics myBuffer;
 			currentContext = BufferedGraphicsManager.Current;
-			myBuffer = currentContext.Allocate(m_MdiClient.CreateGraphics(), m_MdiClient.DisplayRectangle);
-			myBuffer.Graphics.Clear(m_MdiClient.BackColor);
+			myBuffer = currentContext.Allocate(FormView.CreateGraphics(), FormView.DisplayRectangle);
+			myBuffer.Graphics.Clear(FormView.BackColor);
 			Pen outputhalf = new Pen(Color.Red, 4);
 			Pen inputhalf = new Pen(Color.Green, 4);
 			Pen unused = new Pen(Color.Gray, 4);
@@ -494,35 +476,5 @@ namespace VisualProcessors.Forms
 		#region Interop
 
 		#endregion Interop
-	}
-
-	internal class MdiClientHelper : NativeWindow
-	{
-		private const int SB_BOTH = 3;
-		private const int SB_CTL = 2;
-		private const int SB_HORZ = 0;
-		private const int SB_VERT = 1;
-		private const int WM_NCCALCSIZE = 0x0083;
-
-		public MdiClientHelper()
-		{
-		}
-
-		protected override void WndProc(ref Message m)
-		{
-			switch (m.Msg)
-			{
-				case WM_NCCALCSIZE:
-
-					ShowScrollBar(m.HWnd, SB_BOTH, 0);
-
-					break;
-			}
-			base.WndProc(ref m);
-		}
-
-		// Win32 Functions
-		[DllImport("user32.dll")]
-		private static extern int ShowScrollBar(IntPtr hWnd, int wBar, int bShow);
 	}
 }

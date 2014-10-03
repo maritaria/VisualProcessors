@@ -222,7 +222,7 @@ namespace VisualProcessors.Controls
 
 		private void m_InputChannel_SourceChanged(object sender, EventArgs e)
 		{
-			Pipeline.InvalidateMdi();
+			Pipeline.InvalidateFormView();
 			UpdateChannel();
 		}
 
@@ -249,7 +249,7 @@ namespace VisualProcessors.Controls
 			{
 				m_InputChannel.IsConstant = ConstantRadioButton.Checked;
 			}
-			Pipeline.InvalidateMdi();
+			Pipeline.InvalidateFormView();
 			UpdateChannel();
 		}
 
@@ -259,7 +259,7 @@ namespace VisualProcessors.Controls
 			{
 				m_InputChannel.Unlink();
 			}
-			Pipeline.InvalidateMdi();
+			Pipeline.InvalidateFormView();
 			UpdateChannel();
 		}
 

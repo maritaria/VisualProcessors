@@ -111,7 +111,7 @@ namespace VisualProcessors.Controls
 				DataGridViewRow row = OutputGridView.Rows[e.RowIndex];
 				DataGridViewCellCollection cells = row.Cells;
 				string processorname = (string)cells[TargetColumn.Name].Value;
-				Pipeline.ShowProcessor(processorname, true);
+				Pipeline.ShowProcessor(processorname);
 				return;
 			}
 		}
@@ -137,7 +137,7 @@ namespace VisualProcessors.Controls
 			}
 			if (rows.Count > 0)
 			{
-				Pipeline.InvalidateMdi();
+				Pipeline.InvalidateFormView();
 			}
 		}
 

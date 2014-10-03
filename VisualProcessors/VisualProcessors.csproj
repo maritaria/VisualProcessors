@@ -72,6 +72,12 @@
     <Compile Include="Controls\ProcessorOutputPanel.Designer.cs">
       <DependentUpon>ProcessorOutputPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ToolboxPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ToolboxPanel.Designer.cs">
+      <DependentUpon>ToolboxPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,12 +96,6 @@
     </Compile>
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ToolboxForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ToolboxForm.Designer.cs">
-      <DependentUpon>ToolboxForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Processing\AddProcessor.cs" />
     <Compile Include="Processing\ChannelType.cs" />
@@ -123,6 +123,9 @@
     <EmbeddedResource Include="Controls\ProcessorOutputPanel.resx">
       <DependentUpon>ProcessorOutputPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ToolboxPanel.resx">
+      <DependentUpon>ToolboxPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ChannelSelectionBox.resx">
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -131,9 +134,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProcessorForm.resx">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ToolboxForm.resx">
-      <DependentUpon>ToolboxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
