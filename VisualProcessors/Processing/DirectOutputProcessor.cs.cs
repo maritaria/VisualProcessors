@@ -20,7 +20,7 @@ namespace VisualProcessors.Processing
 		public DirectOutputProcessor(string name)
 			: base(name)
 		{
-			AddInputChannel("Input");
+			AddInputChannel("Input", false);
 		}
 
 		public override Control GetUserInterface()

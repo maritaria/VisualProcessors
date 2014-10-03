@@ -108,7 +108,6 @@
     <Compile Include="Processing\OutputChannel.cs" />
     <Compile Include="Processing\Pipeline.cs" />
     <Compile Include="Processing\Processor.cs" />
-    <Compile Include="Processing\Program.cs" />
     <Compile Include="Processing\XmlAnything.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

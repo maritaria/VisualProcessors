@@ -18,8 +18,8 @@ namespace VisualProcessors.Processing
 		public MultiplyProcessor(string name)
 			: base(name)
 		{
-			AddInputChannel("A");
-			AddInputChannel("B");
+			AddInputChannel("A", false);
+			AddInputChannel("B", false);
 			AddOutputChannel("Output");
 		}
 

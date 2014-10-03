@@ -18,8 +18,8 @@ namespace VisualProcessors.Processing
 		public AddProcessor(string name)
 			: base(name)
 		{
-			AddInputChannel("A");
-			AddInputChannel("B");
+			AddInputChannel("A", false);
+			AddInputChannel("B", false);
 			AddOutputChannel("Output");
 		}
 

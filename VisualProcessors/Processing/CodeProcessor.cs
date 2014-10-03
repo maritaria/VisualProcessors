@@ -19,9 +19,14 @@ namespace VisualProcessors.Processing
 		public CodeProcessor(string name)
 			: base(name)
 		{
-			AddInputChannel("A");
-			AddInputChannel("B");
-			AddOutputChannel("Output");
+			AddInputChannel("A", false);
+			AddInputChannel("B", true);
+			AddInputChannel("C", true);
+			AddInputChannel("D", true);
+			AddInputChannel("E", true);
+			AddOutputChannel("Output1");
+			AddOutputChannel("Output2");
+			AddOutputChannel("Output3");
 			Code = "//Your code here";
 		}
 
@@ -29,7 +34,7 @@ namespace VisualProcessors.Processing
 
 		public override Control GetUserInterface()
 		{
-			CodePanel cpanel = new CodePanel();
+			CodePanel cpanel = new CodePanel(this);
 			return cpanel;
 		}
 

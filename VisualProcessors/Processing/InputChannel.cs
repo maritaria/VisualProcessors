@@ -41,6 +41,12 @@ namespace VisualProcessors.Processing
 		public bool IsConstant { get; set; }
 
 		/// <summary>
+		///  Gets or sets whether the InputChannel is optional, when it is the processor can run
+		///  Process() even if there is no data available in the InputChannel
+		/// </summary>
+		public bool IsOptional { get; set; }
+
+		/// <summary>
 		///  Gets the name of the InputChannel, also represents the name of the argument it stores
 		///  data for.
 		/// </summary>
@@ -82,14 +88,16 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Creates a new instance of the InputChannel class
 		/// </summary>
-		/// <param name="owner">The processor the InputChannel stores values for</param>
-		/// <param name="name"> The name of the InputChannel</param>
-		public InputChannel(Processor owner, string name)
+		/// <param name="owner">   The processor the InputChannel stores values for</param>
+		/// <param name="name">    The name of the InputChannel</param>
+		/// <param name="optional">Sets the IsOptional property</param>
+		public InputChannel(Processor owner, string name, bool optional = false)
 		{
 			Owner = owner;
 			Name = name;
 			IsConstant = false;
 			ConstantValue = 0;
+			IsOptional = optional;
 		}
 
 		/// <summary>
@@ -235,6 +243,7 @@ namespace VisualProcessors.Processing
 				throw new FormatException("Expected a type attribute!");
 			}
 			Name = reader.GetAttribute("Name");
+			IsOptional = bool.Parse(reader.GetAttribute("IsOptional"));
 			IsConstant = bool.Parse(reader.GetAttribute("IsConstant"));
 			ConstantValue = double.Parse(reader.GetAttribute("ConstantValue"));
 			m_OwnerName = reader.GetAttribute("Owner");
@@ -248,6 +257,7 @@ namespace VisualProcessors.Processing
 				throw new InvalidOperationException("Cannot serialize nonbuild InputChannels");
 			}
 			writer.WriteAttributeString("Name", Name);
+			writer.WriteAttributeString("IsOptional", IsOptional.ToString());
 			writer.WriteAttributeString("IsConstant", IsConstant.ToString());
 			writer.WriteAttributeString("ConstantValue", ConstantValue.ToString());
 			writer.WriteAttributeString("Owner", Owner.Name);

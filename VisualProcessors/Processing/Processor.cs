@@ -107,7 +107,10 @@ namespace VisualProcessors.Processing
 				bool ready = true;
 				foreach (InputChannel input in m_InputChannels)
 				{
-					ready &= input.HasData();
+					if (!input.IsOptional)
+					{
+						ready &= input.HasData();
+					}
 				}
 				if (ready)
 				{
@@ -153,11 +156,11 @@ namespace VisualProcessors.Processing
 			return names.ToArray();
 		}
 
-		protected void AddInputChannel(string name)
+		protected void AddInputChannel(string name, bool optional)
 		{
 			if (GetInputChannel(name) == null)
 			{
-				AddInputChannel(new InputChannel(this, name));
+				AddInputChannel(new InputChannel(this, name, optional));
 			}
 		}
 
