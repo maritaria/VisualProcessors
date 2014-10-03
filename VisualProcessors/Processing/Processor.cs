@@ -18,6 +18,14 @@ namespace VisualProcessors.Processing
 		private string m_Name = "Undefined";
 		private Thread m_WorkerThread;
 
+		public virtual bool AllowOptionalChannels
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 		public bool IsRunning
 		{
 			get
@@ -169,6 +177,10 @@ namespace VisualProcessors.Processing
 			if (IsRunning)
 			{
 				throw new InvalidOperationException("Cannot modify input/output channels while running");
+			}
+			if (!AllowOptionalChannels)
+			{
+				optional = false;
 			}
 			if (GetInputChannel(name) == null)
 			{

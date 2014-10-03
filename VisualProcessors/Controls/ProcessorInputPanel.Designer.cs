@@ -37,6 +37,7 @@
 			this.ConfigurationLabel = new System.Windows.Forms.Label();
 			this.UnlinkButton = new System.Windows.Forms.Button();
 			this.LinkButton = new System.Windows.Forms.Button();
+			this.OptionalCheckBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.InputSplitContainer)).BeginInit();
 			this.InputSplitContainer.Panel1.SuspendLayout();
 			this.InputSplitContainer.Panel2.SuspendLayout();
@@ -57,6 +58,7 @@
 			// 
 			// InputSplitContainer.Panel2
 			// 
+			this.InputSplitContainer.Panel2.Controls.Add(this.OptionalCheckBox);
 			this.InputSplitContainer.Panel2.Controls.Add(this.ConstantInput);
 			this.InputSplitContainer.Panel2.Controls.Add(this.ConstantRadioButton);
 			this.InputSplitContainer.Panel2.Controls.Add(this.LinkRadioButton);
@@ -160,6 +162,17 @@
 			this.LinkButton.UseVisualStyleBackColor = true;
 			this.LinkButton.Click += new System.EventHandler(this.LinkButton_Click);
 			// 
+			// OptionalCheckBox
+			// 
+			this.OptionalCheckBox.AutoSize = true;
+			this.OptionalCheckBox.Location = new System.Drawing.Point(3, 97);
+			this.OptionalCheckBox.Name = "OptionalCheckBox";
+			this.OptionalCheckBox.Size = new System.Drawing.Size(65, 17);
+			this.OptionalCheckBox.TabIndex = 18;
+			this.OptionalCheckBox.Text = "Optional";
+			this.OptionalCheckBox.UseVisualStyleBackColor = true;
+			this.OptionalCheckBox.CheckedChanged += new System.EventHandler(this.OptionalCheckBox_CheckedChanged);
+			// 
 			// ProcessorInputPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -189,5 +202,6 @@
 		private System.Windows.Forms.Label ConfigurationLabel;
 		private System.Windows.Forms.Button UnlinkButton;
 		private System.Windows.Forms.Button LinkButton;
+		private System.Windows.Forms.CheckBox OptionalCheckBox;
 	}
 }

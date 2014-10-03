@@ -23,6 +23,14 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output");
 		}
 
+		public override bool AllowOptionalChannels
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		protected override void Process()
 		{
 			double a = GetInputChannel("A").GetValue();

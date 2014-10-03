@@ -76,8 +76,8 @@ namespace VisualProcessors.Forms
 			ProcessorNameChanged(Processor, Processor.Name, Processor.Name);
 
 			//Input
-			ProcessorInputView.Processor = processor;
 			ProcessorInputView.Pipeline = Pipeline;
+			ProcessorInputView.Processor = Processor;
 
 			//Settings
 			Control c = processor.GetUserInterface();
@@ -92,7 +92,8 @@ namespace VisualProcessors.Forms
 			}
 
 			//Output
-			ProcessorOutputView.Processor = processor;
+			ProcessorOutputView.Pipeline = Pipeline;
+			ProcessorOutputView.Processor = Processor;
 		}
 
 		#endregion Constructor
@@ -145,28 +146,6 @@ namespace VisualProcessors.Forms
 		private void ProcessorNameChanged(Processor p, string oldname, string newname)
 		{
 			Text = Processor.GetType().Name + ": " + newname;
-		}
-
-		private void ProcessorOutputView_RequestLink(object sender, EventArgs e)
-		{
-			if (Processor.HasOutputChannels)
-			{
-				ChannelSelectionBox csbox = new ChannelSelectionBox(ChannelType.OutputChannel, Processor);
-				if (csbox.ShowDialog().HasFlag(DialogResult.OK))
-				{
-					Pipeline.StartLinkMode(this, csbox.Choice, LinkMode.OutputFirst);
-				}
-			}
-		}
-
-		private void ProcessorOutputView_RequestShowChannel(string processor, string channelname)
-		{
-			Pipeline.ShowInputChannel(processor, channelname);
-		}
-
-		private void ProcessorOutputView_RequestUnlink(object sender, EventArgs e)
-		{
-			Pipeline.InvalidateMdi();
 		}
 
 		#endregion Event Handlers

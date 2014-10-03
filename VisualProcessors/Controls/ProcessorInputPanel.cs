@@ -134,6 +134,8 @@ namespace VisualProcessors.Controls
 				UnlinkButton.Enabled = false;
 				ConfigurationLabel.Text = "No channel selected";
 				ConstantInput.BackColor = Color.White;
+				OptionalCheckBox.Enabled = false;
+				OptionalCheckBox.Checked = false;
 			}
 			else
 			{
@@ -154,6 +156,8 @@ namespace VisualProcessors.Controls
 				UnlinkButton.Enabled = m_InputChannel.Source != null;
 				ConstantInput.Text = m_InputChannel.ConstantValue.ToString();
 				ConstantInput.BackColor = (m_ConstantInputValid) ? Color.White : Color.Red;
+				OptionalCheckBox.Enabled = m_Processor.AllowOptionalChannels;
+				OptionalCheckBox.Checked = m_InputChannel.IsOptional;
 				if (m_InputChannel.IsConstant)
 				{
 					ConfigurationLabel.Text = "Constant Value: " + m_InputChannel.ConstantValue;
@@ -219,6 +223,19 @@ namespace VisualProcessors.Controls
 		private void m_InputChannel_SourceChanged(object sender, EventArgs e)
 		{
 			Pipeline.InvalidateMdi();
+			UpdateChannel();
+		}
+
+		private void OptionalCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (m_Changing)
+			{
+				return;
+			}
+			if (m_InputChannel != null)
+			{
+				m_InputChannel.IsOptional = OptionalCheckBox.Checked;
+			}
 			UpdateChannel();
 		}
 

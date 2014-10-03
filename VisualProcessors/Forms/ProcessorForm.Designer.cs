@@ -107,9 +107,6 @@
 			this.ProcessorOutputView.Processor = null;
 			this.ProcessorOutputView.Size = new System.Drawing.Size(364, 166);
 			this.ProcessorOutputView.TabIndex = 0;
-			this.ProcessorOutputView.RequestLink += new System.EventHandler(this.ProcessorOutputView_RequestLink);
-			this.ProcessorOutputView.RequestShowChannel += new System.Action<string, string>(this.ProcessorOutputView_RequestShowChannel);
-			this.ProcessorOutputView.RequestUnlink += new System.EventHandler(this.ProcessorOutputView_RequestUnlink);
 			// 
 			// MinimalTab
 			// 

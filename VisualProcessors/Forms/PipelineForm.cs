@@ -246,14 +246,35 @@ namespace VisualProcessors.Forms
 		}
 
 		/// <summary>
-		///  Shows a hidden ProcessorForm, also gives the form focus
+		///  Centers the view on a given processor
 		/// </summary>
-		/// <param name="name"></param>
-		public void ShowProcessor(string name)
+		/// <param name="name"> Name of the processor to focus on</param>
+		/// <param name="bring">
+		///  When false, it will move the viewport to center on the form, when true, it will move
+		///  the form to the center of the viewport
+		/// </param>
+		public void ShowProcessor(string name, bool bring)
 		{
 			ProcessorForm pf = GetProcessorForm(name);
 			pf.Visible = true;
 			pf.Focus();
+			Point centerView = m_MdiClient.DisplayRectangle.GetCenter();
+			Point centerForm = pf.GetCenter();
+			Point offset = new Point(centerView.X - centerForm.X, centerView.Y - centerForm.Y);
+			if (bring)
+			{
+				centerForm.Offset(offset);
+				pf.Location = centerForm;
+			}
+			else
+			{
+				foreach (ProcessorForm form in m_ProcessorForms)
+				{
+					Point loc = form.Location;
+					loc.Offset(offset);
+					pf.Location = loc;
+				}
+			}
 		}
 
 		#endregion ProcessorForm Control

@@ -65,6 +65,12 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
+		///  Gets or sets the default value used when the inputchannel is optional, but no data is
+		///  available
+		/// </summary>
+		public double OptionalDefault { get; set; }
+
+		/// <summary>
 		///  Gets the processor the InputChannel belongs to.
 		/// </summary>
 		public Processor Owner { get; private set; }
@@ -98,6 +104,7 @@ namespace VisualProcessors.Processing
 			IsConstant = false;
 			ConstantValue = 0;
 			IsOptional = optional;
+			OptionalDefault = double.NaN;
 		}
 
 		/// <summary>
@@ -120,6 +127,13 @@ namespace VisualProcessors.Processing
 			if (IsConstant)
 			{
 				return ConstantValue;
+			}
+			if (IsOptional)
+			{
+				if (!HasData())
+				{
+					return OptionalDefault;
+				}
 			}
 			lock (m_Data)
 			{
@@ -246,6 +260,7 @@ namespace VisualProcessors.Processing
 			IsOptional = bool.Parse(reader.GetAttribute("IsOptional"));
 			IsConstant = bool.Parse(reader.GetAttribute("IsConstant"));
 			ConstantValue = double.Parse(reader.GetAttribute("ConstantValue"));
+			OptionalDefault = double.Parse(reader.GetAttribute("OptionalDefault"));
 			m_OwnerName = reader.GetAttribute("Owner");
 			reader.Read();
 		}
@@ -260,6 +275,7 @@ namespace VisualProcessors.Processing
 			writer.WriteAttributeString("IsOptional", IsOptional.ToString());
 			writer.WriteAttributeString("IsConstant", IsConstant.ToString());
 			writer.WriteAttributeString("ConstantValue", ConstantValue.ToString());
+			writer.WriteAttributeString("OptionalDefault", OptionalDefault.ToString());
 			writer.WriteAttributeString("Owner", Owner.Name);
 		}
 
