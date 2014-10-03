@@ -54,6 +54,12 @@
     <Compile Include="Controls\BasicSettingsPanel.Designer.cs">
       <DependentUpon>BasicSettingsPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CodePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CodePanel.Designer.cs">
+      <DependentUpon>CodePanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ProcessorInputPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -91,10 +97,26 @@
     <Compile Include="Forms\ToolboxForm.Designer.cs">
       <DependentUpon>ToolboxForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Processing\AddProcessor.cs" />
+    <Compile Include="Processing\ChannelType.cs" />
+    <Compile Include="Processing\CodeProcessor.cs" />
+    <Compile Include="Processing\DirectInputProcessor.cs" />
+    <Compile Include="Processing\DirectOutputProcessor.cs.cs" />
+    <Compile Include="Processing\InputChannel.cs" />
+    <Compile Include="Processing\MultiplyProcessor.cs" />
+    <Compile Include="Processing\NameChanged.cs" />
+    <Compile Include="Processing\OutputChannel.cs" />
+    <Compile Include="Processing\Pipeline.cs" />
+    <Compile Include="Processing\Processor.cs" />
+    <Compile Include="Processing\Program.cs" />
+    <Compile Include="Processing\XmlAnything.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Controls\BasicSettingsPanel.resx">
       <DependentUpon>BasicSettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CodePanel.resx">
+      <DependentUpon>CodePanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProcessorInputPanel.resx">
       <DependentUpon>ProcessorInputPanel.cs</DependentUpon>
@@ -142,9 +164,7 @@
       <Name>VisualProcessors.Processing</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Processing\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

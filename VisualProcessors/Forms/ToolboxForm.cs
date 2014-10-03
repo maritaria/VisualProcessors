@@ -61,6 +61,7 @@ namespace VisualProcessors.Forms
 					Button b = new Button();
 					b.Dock = DockStyle.Top;
 					b.Text = processorType.Name;
+					b.TextAlign = ContentAlignment.MiddleLeft;
 					b.Click += delegate(object _sender, EventArgs _e)
 					{
 						SpawnProcessor(processorType);

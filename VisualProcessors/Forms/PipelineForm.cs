@@ -41,6 +41,7 @@ namespace VisualProcessors.Forms
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiHelper = new MdiClientHelper();
 		private Pipeline m_Pipeline;
+		private bool m_PipelineStatusChanging = false;
 		private ToolboxForm m_Toolbox;
 
 		/// <summary>
@@ -64,8 +65,20 @@ namespace VisualProcessors.Forms
 
 		public PipelineForm(Pipeline pipeline)
 		{
-			m_Pipeline = pipeline;
 			InitializeComponent();
+
+			//Initialize Pipeline
+			m_Pipeline = pipeline;
+			m_Pipeline.Started += m_Pipeline_Started;
+			m_Pipeline.Stopped += m_Pipeline_Stopped;
+			if (m_Pipeline.IsRunning)
+			{
+				SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Running");
+			}
+			else
+			{
+				SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
+			}
 
 			//Initialize MdiClient
 			foreach (Control c in Controls)
@@ -93,6 +106,7 @@ namespace VisualProcessors.Forms
 			m_Toolbox = new ToolboxForm(this);
 			m_Toolbox.MdiParent = this;
 			m_Toolbox.Show();
+			m_Toolbox.Dock = DockStyle.Left;
 		}
 
 		#endregion Constructor
@@ -214,7 +228,7 @@ namespace VisualProcessors.Forms
 			{
 				return false;
 			}
-
+			m_Pipeline.RemoveProcessor(pf.Processor);
 			pf.Processor.Dispose();
 			bool result = m_ProcessorForms.Remove(pf);
 			pf.Close();
@@ -329,6 +343,20 @@ namespace VisualProcessors.Forms
 		private bool m_IsDragging = false;
 		private Point m_PreviousDragPosition;
 
+		private void m_Pipeline_Started(object sender, EventArgs e)
+		{
+			m_PipelineStatusChanging = true;
+			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Running");
+			m_PipelineStatusChanging = false;
+		}
+
+		private void m_Pipeline_Stopped(object sender, EventArgs e)
+		{
+			m_PipelineStatusChanging = true;
+			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
+			m_PipelineStatusChanging = false;
+		}
+
 		private void MdiClientMouseDown(object sender, MouseEventArgs e)
 		{
 			m_IsDragging = true;
@@ -418,6 +446,22 @@ namespace VisualProcessors.Forms
 
 				//pf.ToggleMinimalView();
 				pf.Location = new Point(10 + (i % row) * 550, 10 + 210 * (i / row));
+			}
+		}
+
+		private void SimulationComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (m_PipelineStatusChanging)
+			{
+				return;
+			}
+			if (SimulationComboBox.Text == "Paused")
+			{
+				m_Pipeline.Stop();
+			}
+			else
+			{
+				m_Pipeline.Start();
 			}
 		}
 
