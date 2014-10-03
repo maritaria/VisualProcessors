@@ -158,12 +158,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Processors\VisualProcessors.Processing.csproj">
-      <Project>{3f738a2f-454a-4d60-85f1-656595f0713e}</Project>
-      <Name>VisualProcessors.Processing</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
