@@ -18,6 +18,14 @@ namespace VisualProcessors.Processing
 		private string m_Name = "Undefined";
 		private Thread m_WorkerThread;
 
+		public bool IsRunning
+		{
+			get
+			{
+				return (m_WorkerThread != null) && m_WorkerThread.IsAlive;
+			}
+		}
+
 		/// <summary>
 		///  Gets or sets the name of the processor, must be unique within the pipeline
 		/// </summary>
@@ -158,18 +166,42 @@ namespace VisualProcessors.Processing
 
 		protected void AddInputChannel(string name, bool optional)
 		{
+			if (IsRunning)
+			{
+				throw new InvalidOperationException("Cannot modify input/output channels while running");
+			}
 			if (GetInputChannel(name) == null)
 			{
 				AddInputChannel(new InputChannel(this, name, optional));
 			}
 		}
 
+		protected void RemoveInputChannel(InputChannel channel)
+		{
+			if (IsRunning)
+			{
+				throw new InvalidOperationException("Cannot modify input/output channels while running");
+			}
+			if (m_InputChannels.Contains(channel))
+			{
+				channel.Unlink();
+				channel.SourceChanged -= channel_SourceChanged;
+				m_InputChannels.Remove(channel);
+				OnInputChannelRemoved();
+			}
+		}
+
 		private void AddInputChannel(InputChannel channel)
 		{
+			if (IsRunning)
+			{
+				throw new InvalidOperationException("Cannot modify input/output channels while running");
+			}
 			if (this == channel.Owner && !m_InputChannels.Contains(channel))
 			{
 				channel.SourceChanged += channel_SourceChanged;
 				m_InputChannels.Add(channel);
+				OnInputChannelAdded();
 			}
 		}
 
@@ -211,14 +243,37 @@ namespace VisualProcessors.Processing
 
 		protected void AddOutputChannel(string name)
 		{
+			if (IsRunning)
+			{
+				throw new InvalidOperationException("Cannot modify input/output channels while running");
+			}
 			if (GetInputChannel(name) == null)
 			{
 				AddOutputChannel(new OutputChannel(this, name));
 			}
 		}
 
+		protected void RemoveOutputChannel(OutputChannel channel)
+		{
+			if (IsRunning)
+			{
+				throw new InvalidOperationException("Cannot modify input/output channels while running");
+			}
+			if (m_OutputChannels.Contains(channel))
+			{
+				channel.Unlink();
+				channel.OutputAdded -= channel_OutputAdded;
+				channel.OutputRemoved -= channel_OutputRemoved;
+				m_OutputChannels.Remove(channel);
+			}
+		}
+
 		private void AddOutputChannel(OutputChannel channel)
 		{
+			if (IsRunning)
+			{
+				throw new InvalidOperationException("Cannot modify input/output channels while running");
+			}
 			if (this == channel.Owner && !m_OutputChannels.Contains(channel))
 			{
 				channel.OutputAdded += channel_OutputAdded;
@@ -265,6 +320,16 @@ namespace VisualProcessors.Processing
 		#region Events
 
 		/// <summary>
+		///  Invoked after an InputChannel has been added
+		/// </summary>
+		public event EventHandler InputChannelAdded;
+
+		/// <summary>
+		///  Invoked after an InputChannel has been safely removed
+		/// </summary>
+		public event EventHandler InputChannelRemoved;
+
+		/// <summary>
 		///  Invoked after an Input or Output has been linked
 		/// </summary>
 		public event EventHandler LinkAdded;
@@ -278,6 +343,32 @@ namespace VisualProcessors.Processing
 		///  Invoked just after the name of the processor has changed
 		/// </summary>
 		public event ProcessorNameChanged NameChanged;
+
+		/// <summary>
+		///  Invoked after an OutputChannel has been added
+		/// </summary>
+		public event EventHandler OutputChannelAdded;
+
+		/// <summary>
+		///  Invoked after an OutputChannel has safely removed
+		/// </summary>
+		public event EventHandler OutputChannelRemoved;
+
+		private void OnInputChannelAdded()
+		{
+			if (InputChannelAdded != null)
+			{
+				InputChannelAdded(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnInputChannelRemoved()
+		{
+			if (InputChannelRemoved != null)
+			{
+				InputChannelRemoved(this, EventArgs.Empty);
+			}
+		}
 
 		private void OnLinkAdded()
 		{
@@ -300,6 +391,22 @@ namespace VisualProcessors.Processing
 			if (NameChanged != null)
 			{
 				NameChanged(this, oldname, newname);
+			}
+		}
+
+		private void OnOutputChannelAdded()
+		{
+			if (OutputChannelAdded != null)
+			{
+				OutputChannelAdded(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnOutputChannelRemoved()
+		{
+			if (OutputChannelRemoved != null)
+			{
+				OutputChannelRemoved(this, EventArgs.Empty);
 			}
 		}
 
