@@ -72,6 +72,7 @@
     <Compile Include="Forms\ChannelSelectionBox.Designer.cs">
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormExtensions.cs" />
     <Compile Include="Forms\PipelineForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,6 +84,12 @@
     </Compile>
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ToolboxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ToolboxForm.Designer.cs">
+      <DependentUpon>ToolboxForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,6 +110,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProcessorForm.resx">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ToolboxForm.resx">
+      <DependentUpon>ToolboxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -131,6 +141,9 @@
       <Project>{3f738a2f-454a-4d60-85f1-656595f0713e}</Project>
       <Name>VisualProcessors.Processing</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Processing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

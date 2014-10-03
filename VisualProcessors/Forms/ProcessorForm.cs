@@ -23,6 +23,7 @@ namespace VisualProcessors.Forms
 	{
 		#region Properties
 
+		private bool m_Closing = false;
 		private PipelineForm m_PipelineForm;
 		private Processor m_Processor;
 		private Type m_ProcessorType;
@@ -121,16 +122,21 @@ namespace VisualProcessors.Forms
 
 		private void ProcessorForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			if (m_Closing)
+			{
+				return;
+			}
+			m_Closing = true;
 			if (e.CloseReason == CloseReason.UserClosing)
 			{
 				var window = MessageBox.Show("Are you sure you want to delete the processor?", "Removing processor", MessageBoxButtons.YesNo);
 				if (window == DialogResult.No)
 				{
 					e.Cancel = true;
+					m_Closing = false;
 				}
 				else
 				{
-					e.Cancel = false;
 					Pipeline.RemoveProcessor(this.Processor.Name);
 				}
 			}

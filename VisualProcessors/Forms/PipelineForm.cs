@@ -33,19 +33,6 @@ namespace VisualProcessors.Forms
 		Disabled,
 	}
 
-	public static class FormExtensions
-	{
-		public static Point GetCenter(this Rectangle a)
-		{
-			return new Point((a.Left + a.Right) / 2, (a.Top + a.Bottom) / 2);
-		}
-
-		public static Point GetCenter(this Form a)
-		{
-			return a.Bounds.GetCenter();
-		}
-	}
-
 	public partial class PipelineForm : Form
 	{
 		#region Properties
@@ -54,6 +41,7 @@ namespace VisualProcessors.Forms
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiHelper = new MdiClientHelper();
 		private Pipeline m_Pipeline;
+		private ToolboxForm m_Toolbox;
 
 		/// <summary>
 		///  Hides the scrollbars of the MdiClient, there may be a minor flicker when disabled
@@ -100,6 +88,11 @@ namespace VisualProcessors.Forms
 			{
 				AddProcessor(pipeline.GetByName(name));
 			}
+
+			//Show toolbox
+			m_Toolbox = new ToolboxForm(this);
+			m_Toolbox.MdiParent = this;
+			m_Toolbox.Show();
 		}
 
 		#endregion Constructor
@@ -221,9 +214,12 @@ namespace VisualProcessors.Forms
 			{
 				return false;
 			}
+
+			pf.Processor.Dispose();
+			bool result = m_ProcessorForms.Remove(pf);
 			pf.Close();
 			pf.Dispose();
-			return m_ProcessorForms.Remove(pf);
+			return result;
 		}
 
 		public void ShowInputChannel(string processorname, string channelname)

@@ -228,6 +228,10 @@ namespace VisualProcessors.Controls
 			{
 				return;
 			}
+			if (m_InputChannel != null)
+			{
+				m_InputChannel.IsConstant = ConstantRadioButton.Checked;
+			}
 			Pipeline.InvalidateMdi();
 			UpdateChannel();
 		}

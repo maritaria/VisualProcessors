@@ -13,8 +13,6 @@ namespace VisualProcessors.Processing
 	{
 		public MultiplyProcessor()
 		{
-			AddInputChannel("A");
-			AddInputChannel("B");
 		}
 
 		public MultiplyProcessor(string name)
@@ -22,6 +20,7 @@ namespace VisualProcessors.Processing
 		{
 			AddInputChannel("A");
 			AddInputChannel("B");
+			AddOutputChannel("Output");
 		}
 
 		protected override void Process()

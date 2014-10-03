@@ -111,12 +111,10 @@ namespace VisualProcessors.Processing
 		{
 			if (IsConstant)
 			{
-				Console.WriteLine(Owner.Name + "_" + Name + ": Reading constant");
 				return ConstantValue;
 			}
 			lock (m_Data)
 			{
-				Console.WriteLine(Owner.Name + "_" + Name + ": Reading value");
 				double result = m_Data[0];
 				m_Data.RemoveAt(0);
 				return result;
@@ -161,7 +159,6 @@ namespace VisualProcessors.Processing
 		{
 			lock (m_Data)
 			{
-				Console.WriteLine(Owner.Name + "_" + Name + ": Received output value of " + value);
 				m_Data.Add(value);
 			}
 		}

@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirectOutputProcessor.cs.cs" />
+    <Compile Include="DirectInputProcessor.cs" />
     <Compile Include="AddProcessor.cs" />
     <Compile Include="ChannelType.cs" />
     <Compile Include="InputChannel.cs" />

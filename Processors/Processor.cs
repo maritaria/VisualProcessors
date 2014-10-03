@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
-	public class Processor : IXmlSerializable
+	public class Processor : IXmlSerializable, IDisposable
 	{
 		#region Properties
 
@@ -113,6 +113,7 @@ namespace VisualProcessors.Processing
 				{
 					Process();
 				}
+				Thread.Sleep(1);
 			}
 		}
 
@@ -361,5 +362,21 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion IXmlSerializable Members
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			foreach (InputChannel input in m_InputChannels)
+			{
+				input.Unlink();
+			}
+			foreach (OutputChannel output in m_OutputChannels)
+			{
+				output.Unlink();
+			}
+		}
+
+		#endregion IDisposable Members
 	}
 }
