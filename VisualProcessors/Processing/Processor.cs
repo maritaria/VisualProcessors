@@ -87,7 +87,7 @@ namespace VisualProcessors.Processing
 			return null;
 		}
 
-		public void Start()
+		public virtual void Start()
 		{
 			if (m_WorkerThread != null)
 			{
@@ -98,7 +98,7 @@ namespace VisualProcessors.Processing
 			m_WorkerThread.Start();
 		}
 
-		public void Stop()
+		public virtual void Stop()
 		{
 			if (m_WorkerThread == null)
 			{
@@ -365,6 +365,7 @@ namespace VisualProcessors.Processing
 		///  Invoked after an OutputChannel has safely removed
 		/// </summary>
 		public event EventHandler OutputChannelRemoved;
+
 		private void OnInputChannelAdded()
 		{
 			if (InputChannelAdded != null)
