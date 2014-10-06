@@ -114,10 +114,12 @@
 			// 
 			// OutputComboBox
 			// 
-			this.OutputComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.OutputComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.OutputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.OutputComboBox.FormattingEnabled = true;
-			this.OutputComboBox.Location = new System.Drawing.Point(0, 0);
+			this.OutputComboBox.Location = new System.Drawing.Point(0, 1);
 			this.OutputComboBox.Name = "OutputComboBox";
 			this.OutputComboBox.Size = new System.Drawing.Size(217, 21);
 			this.OutputComboBox.TabIndex = 3;
