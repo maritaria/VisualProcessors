@@ -22,9 +22,6 @@ namespace VisualProcessors
 		[STAThread]
 		private static void Main()
 		{
-			UserCodeContext ucc = new UserCodeContext();
-			ucc.Compile();
-
 			Pipeline p = new Pipeline();
 
 			DirectInputProcessor in1 = new DirectInputProcessor("DirectInputProcessor1");

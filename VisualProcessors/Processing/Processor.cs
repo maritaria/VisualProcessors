@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -33,6 +34,11 @@ namespace VisualProcessors.Processing
 				return (m_WorkerThread != null) && m_WorkerThread.IsAlive;
 			}
 		}
+
+		/// <summary>
+		///  Gets or sets the location of the processor in the model
+		/// </summary>
+		public Point Location { get; set; }
 
 		/// <summary>
 		///  Gets or sets the name of the processor, must be unique within the pipeline

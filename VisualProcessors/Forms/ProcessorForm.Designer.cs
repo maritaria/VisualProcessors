@@ -31,13 +31,13 @@
 			this.components = new System.ComponentModel.Container();
 			this.Tabs = new System.Windows.Forms.TabControl();
 			this.InputTab = new System.Windows.Forms.TabPage();
+			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
 			this.SettingsTab = new System.Windows.Forms.TabPage();
 			this.OutputTab = new System.Windows.Forms.TabPage();
+			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			this.MinimalTab = new System.Windows.Forms.TabPage();
 			this.LinkEndpointButton = new System.Windows.Forms.Button();
 			this.ErrorIcon = new System.Windows.Forms.ErrorProvider(this.components);
-			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
-			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			this.Tabs.SuspendLayout();
 			this.InputTab.SuspendLayout();
 			this.OutputTab.SuspendLayout();
@@ -69,6 +69,17 @@
 			this.InputTab.Text = "Input";
 			this.InputTab.UseVisualStyleBackColor = true;
 			// 
+			// ProcessorInputView
+			// 
+			this.ProcessorInputView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProcessorInputView.Location = new System.Drawing.Point(3, 3);
+			this.ProcessorInputView.Name = "ProcessorInputView";
+			this.ProcessorInputView.Pipeline = null;
+			this.ProcessorInputView.Processor = null;
+			this.ProcessorInputView.SelectedInputChannel = null;
+			this.ProcessorInputView.Size = new System.Drawing.Size(364, 166);
+			this.ProcessorInputView.TabIndex = 0;
+			// 
 			// SettingsTab
 			// 
 			this.SettingsTab.Location = new System.Drawing.Point(4, 22);
@@ -88,6 +99,16 @@
 			this.OutputTab.TabIndex = 0;
 			this.OutputTab.Text = "Output";
 			this.OutputTab.UseVisualStyleBackColor = true;
+			// 
+			// ProcessorOutputView
+			// 
+			this.ProcessorOutputView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProcessorOutputView.Location = new System.Drawing.Point(3, 3);
+			this.ProcessorOutputView.Name = "ProcessorOutputView";
+			this.ProcessorOutputView.Pipeline = null;
+			this.ProcessorOutputView.Processor = null;
+			this.ProcessorOutputView.Size = new System.Drawing.Size(364, 166);
+			this.ProcessorOutputView.TabIndex = 0;
 			// 
 			// MinimalTab
 			// 
@@ -114,27 +135,6 @@
 			// 
 			this.ErrorIcon.ContainerControl = this;
 			// 
-			// ProcessorInputView
-			// 
-			this.ProcessorInputView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProcessorInputView.Location = new System.Drawing.Point(3, 3);
-			this.ProcessorInputView.Name = "ProcessorInputView";
-			this.ProcessorInputView.Pipeline = null;
-			this.ProcessorInputView.Processor = null;
-			this.ProcessorInputView.SelectedInputChannel = null;
-			this.ProcessorInputView.Size = new System.Drawing.Size(364, 166);
-			this.ProcessorInputView.TabIndex = 0;
-			// 
-			// ProcessorOutputView
-			// 
-			this.ProcessorOutputView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProcessorOutputView.Location = new System.Drawing.Point(3, 3);
-			this.ProcessorOutputView.Name = "ProcessorOutputView";
-			this.ProcessorOutputView.Pipeline = null;
-			this.ProcessorOutputView.Processor = null;
-			this.ProcessorOutputView.Size = new System.Drawing.Size(364, 166);
-			this.ProcessorOutputView.TabIndex = 0;
-			// 
 			// ProcessorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -149,6 +149,7 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "ProcessorForm";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProcessorForm_FormClosing);
+			this.LocationChanged += new System.EventHandler(this.ProcessorForm_LocationChanged);
 			this.Tabs.ResumeLayout(false);
 			this.InputTab.ResumeLayout(false);
 			this.OutputTab.ResumeLayout(false);

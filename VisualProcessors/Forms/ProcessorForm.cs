@@ -218,5 +218,9 @@ namespace VisualProcessors.Forms
 
 		#endregion Minimal View
 
+		private void ProcessorForm_LocationChanged(object sender, EventArgs e)
+		{
+			Processor.Location = this.Location;
+		}
 	}
 }
