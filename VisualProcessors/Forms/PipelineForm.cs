@@ -283,7 +283,6 @@ namespace VisualProcessors.Forms
 				}
 				output.Link(input);
 			}
-
 			ResetLinkMode();
 			InvalidateFormView();
 		}
@@ -334,7 +333,7 @@ namespace VisualProcessors.Forms
 			{
 				AddMenu.DropDownItems.Add(t.Name, null, delegate(object _sender, EventArgs _e)
 				{
-					Toolbox.SpawnProcessor(t,this.m_ContextLocation);
+					Toolbox.SpawnProcessor(t, this.m_ContextLocation);
 				});
 			}
 			GotoMenu.DropDownItems.Clear();

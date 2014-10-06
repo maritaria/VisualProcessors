@@ -27,7 +27,6 @@ namespace VisualProcessors
 
 			Pipeline p = new Pipeline();
 
-			//*
 			DirectInputProcessor in1 = new DirectInputProcessor("DirectInputProcessor1");
 			AddProcessor add1 = new AddProcessor("Add1");
 			add1.GetInputChannel("B").IsConstant = true;
@@ -55,17 +54,9 @@ namespace VisualProcessors
 
 			var dp = Pipeline.LoadFromFile(file);
 
-			//Console.ReadKey(true);
-
-			//*/
-			//*
-
-			//p.Start();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new PipelineForm(p));
-
-			//*/
 		}
 	}
 }

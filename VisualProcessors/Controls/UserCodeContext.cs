@@ -78,7 +78,7 @@ namespace VisualProcessors.Controls
 			Assembly assembly = results.CompiledAssembly;
 			Type program = assembly.GetType(Namespace + "." + Classname);
 			MethodInfo main = program.GetMethod("Process");
-			if (main==null)
+			if (main == null)
 			{
 				CompileErrors.Add(new CompilerError("userinput", 1, 1, "0", "No function 'Process' is defined"));
 				return false;
@@ -92,7 +92,7 @@ namespace VisualProcessors.Controls
 			string result = "";
 			foreach (string use in Usings)
 			{
-				result += "using " + use + ";" + Environment.NewLine;
+				result += "using " + use + ";";
 			}
 			string classcode = "class " + Classname + "{" + usercode + "}";
 			result += "namespace " + Namespace + "{" + classcode + "}";

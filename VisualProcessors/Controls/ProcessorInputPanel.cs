@@ -76,13 +76,13 @@ namespace VisualProcessors.Controls
 			if (m_InputChannel != null)
 			{
 				//Unsubscribe events
-				m_InputChannel.SourceChanged -= m_InputChannel_SourceChanged;
+				m_InputChannel.SourceChanged -= SelectedInputChannelSourceChanged;
 			}
 			m_InputChannel = channel;
 			if (m_InputChannel != null)
 			{
 				//Subscribe events
-				m_InputChannel.SourceChanged += m_InputChannel_SourceChanged;
+				m_InputChannel.SourceChanged += SelectedInputChannelSourceChanged;
 			}
 			UpdateChannel();
 			m_Changing = false;
@@ -94,18 +94,23 @@ namespace VisualProcessors.Controls
 			{
 				m_Processor.LinkAdded -= UpdateLinkData;
 				m_Processor.LinkRemoved -= UpdateLinkData;
+				m_Processor.InputChannelAdded -= ProcessorChannelsChanged;
+				m_Processor.InputChannelRemoved -= ProcessorChannelsChanged;
 			}
 			m_Processor = p;
 			if (m_Processor != null)
 			{
 				m_Processor.LinkAdded += UpdateLinkData;
 				m_Processor.LinkRemoved += UpdateLinkData;
+				m_Processor.InputChannelAdded += ProcessorChannelsChanged;
+				m_Processor.InputChannelRemoved += ProcessorChannelsChanged;
 				InputChannelList.Items.Clear();
 				foreach (string channelname in m_Processor.GetInputChannelNames())
 				{
 					InputChannel channel = m_Processor.GetInputChannel(channelname);
 					InputChannelList.Items.Add(channel.Name);
 				}
+				InputChannelList.SelectedIndex = (InputChannelList.Items.Count > 0) ? 0 : -1;
 			}
 			UpdateLinkData(this, EventArgs.Empty);
 		}
@@ -183,10 +188,6 @@ namespace VisualProcessors.Controls
 
 		#endregion Methods
 
-		#region Events
-
-		#endregion Events
-
 		#region EventHandlers
 
 		private void ConstantInput_TextChanged(object sender, EventArgs e)
@@ -220,12 +221,6 @@ namespace VisualProcessors.Controls
 			UpdateChannel();
 		}
 
-		private void m_InputChannel_SourceChanged(object sender, EventArgs e)
-		{
-			Pipeline.InvalidateFormView();
-			UpdateChannel();
-		}
-
 		private void OptionalCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_Changing)
@@ -239,6 +234,11 @@ namespace VisualProcessors.Controls
 			UpdateChannel();
 		}
 
+		private void ProcessorChannelsChanged(object sender, EventArgs e)
+		{
+			SetProcessor(Processor);
+		}
+
 		private void RadioButtonCheckedChanged(object sender, EventArgs e)
 		{
 			if (m_Changing)
@@ -249,6 +249,12 @@ namespace VisualProcessors.Controls
 			{
 				m_InputChannel.IsConstant = ConstantRadioButton.Checked;
 			}
+			Pipeline.InvalidateFormView();
+			UpdateChannel();
+		}
+
+		private void SelectedInputChannelSourceChanged(object sender, EventArgs e)
+		{
 			Pipeline.InvalidateFormView();
 			UpdateChannel();
 		}

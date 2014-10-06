@@ -1,15 +1,15 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualProcessors.Processing;
-using System.IO;
-using System.CodeDom.Compiler;
 
 namespace VisualProcessors.Controls
 {
@@ -17,10 +17,11 @@ namespace VisualProcessors.Controls
 	{
 		#region Properties
 
+		private bool m_Applied = false;
+		private bool m_CodeChanged = false;
 		private UserCodeContext m_UserCodeContext;
 
 		public CodeProcessor CodeProcessor { get; set; }
-		
 
 		#endregion Properties
 
@@ -29,9 +30,11 @@ namespace VisualProcessors.Controls
 		public CodePanel()
 		{
 			InitializeComponent();
+			SaveCodeDialog.InitialDirectory = Application.StartupPath;
+			LoadCodeDialog.InitialDirectory = Application.StartupPath;
 		}
 
-		public CodePanel(CodeProcessor cp,string usercode="")
+		public CodePanel(CodeProcessor cp, string usercode = "")
 			: this()
 		{
 			CodeProcessor = cp;
@@ -52,6 +55,24 @@ namespace VisualProcessors.Controls
 		}
 
 		#endregion Constructor
+
+		#region Methods
+
+		#endregion Methods
+
+		#region Event Handlers
+
+		private void ApplyButton_Click(object sender, EventArgs e)
+		{
+			if (!m_Applied)
+			{
+				CodeProcessor.ProcessFunction = m_UserCodeContext.CompiledFunction;
+				CodeProcessor.Code = CodeBox.Text;
+				ErrorList.Items.Add("[Processor Updated]");
+				ApplyButton.Enabled = false;
+				m_Applied = true;
+			}
+		}
 
 		private void CodeBox_DragDrop(object sender, DragEventArgs e)
 		{
@@ -82,33 +103,78 @@ namespace VisualProcessors.Controls
 		private void CompileButton_Click(object sender, EventArgs e)
 		{
 			m_UserCodeContext.UserCode = CodeBox.Text;
-			ErrorList.Items.Clear();
 			bool success = m_UserCodeContext.Compile();
+			ErrorList.Items.Clear();
+			CompileButton.Enabled = false;
 			ApplyButton.Enabled = success;
+			m_CodeChanged = false;
+			m_Applied = false;
 			if (success)
 			{
-				ErrorList.Items.Add("No errors");
+				ErrorList.Items.Add("[Compiled Succesfully]");
+				CompileButton.Enabled = false;
 			}
 			foreach (CompilerError error in m_UserCodeContext.CompileErrors)
 			{
-				string msg = "[Error:" + error.Line + "] " + error.ErrorText;
+				string msg = "Error:" + error.Line + " " + error.ErrorText;
 				ErrorList.Items.Add(msg);
 			}
 			foreach (CompilerError warning in m_UserCodeContext.CompileWarnings)
 			{
-				string msg = "[Warning:" + warning.Line + "] " + warning.ErrorText;
+				string msg = "Warning:" + warning.Line + " " + warning.ErrorText;
 				ErrorList.Items.Add(msg);
 			}
 		}
 
-		private void ApplyButton_Click(object sender, EventArgs e)
+		private void LoadButton_Click(object sender, EventArgs e)
 		{
-			CodeProcessor.ProcessFunction = m_UserCodeContext.CompiledFunction;
-			CodeProcessor.Code = CodeBox.Text;
+			LoadCodeDialog.ShowDialog();
 		}
 
-		#region Methods
+		private void LoadCodeDialog_FileOk(object sender, CancelEventArgs e)
+		{
+			if (!e.Cancel)
+			{
+				Stream s = LoadCodeDialog.OpenFile();
+				StreamReader reader = new StreamReader(s);
+				CodeBox.Text = reader.ReadToEnd();
+				reader.Close();
+				reader.Dispose();
+			}
+		}
 
-		#endregion Methods
+		private void SaveButton_Click(object sender, EventArgs e)
+		{
+			if (CodeBox.Text != "")
+			{
+				SaveCodeDialog.ShowDialog();
+			}
+		}
+
+		private void SaveCodeDialog_FileOk(object sender, CancelEventArgs e)
+		{
+			if (!e.Cancel)
+			{
+				Stream s = SaveCodeDialog.OpenFile();
+				StreamWriter writer = new StreamWriter(s);
+				writer.Write(CodeBox.Text);
+				writer.Close();
+				writer.Dispose();
+			}
+		}
+
+		#endregion Event Handlers
+
+		private void CodeBox_TextChanged(object sender, EventArgs e)
+		{
+			if (!m_CodeChanged)
+			{
+				CompileButton.Enabled = true;
+				ApplyButton.Enabled = false;
+				m_CodeChanged = true;
+				m_Applied = false;
+				ErrorList.Items.Add("[Code modified]");
+			}
+		}
 	}
 }
