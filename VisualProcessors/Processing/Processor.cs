@@ -17,16 +17,9 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
+		protected int m_ThreadSleep = 1;
 		private string m_Name = "Undefined";
 		private Thread m_WorkerThread;
-
-		public virtual bool AllowOptionalChannels
-		{
-			get
-			{
-				return false;
-			}
-		}
 
 		public bool IsRunning
 		{
@@ -143,7 +136,7 @@ namespace VisualProcessors.Processing
 				{
 					Process();
 				}
-				Thread.Sleep(1);
+				Thread.Sleep(m_ThreadSleep);
 			}
 		}
 
@@ -158,7 +151,7 @@ namespace VisualProcessors.Processing
 
 		private List<InputChannel> m_InputChannels = new List<InputChannel>();
 
-		public bool HasInputChannels
+		public virtual bool HasInputChannels
 		{
 			get
 			{
@@ -193,10 +186,6 @@ namespace VisualProcessors.Processing
 			if (IsRunning)
 			{
 				throw new InvalidOperationException("Cannot modify input/output channels while running");
-			}
-			if (!AllowOptionalChannels)
-			{
-				optional = false;
 			}
 			if (GetInputChannel(name) == null)
 			{
@@ -239,7 +228,7 @@ namespace VisualProcessors.Processing
 
 		private List<OutputChannel> m_OutputChannels = new List<OutputChannel>();
 
-		public bool HasOutputChannels
+		public virtual bool HasOutputChannels
 		{
 			get
 			{

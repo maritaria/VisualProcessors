@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
+	[ProcessorMeta(Author = "Bram Kamies", Description = "Adds two values together")]
 	public class AddProcessor : Processor
 	{
 		public AddProcessor()

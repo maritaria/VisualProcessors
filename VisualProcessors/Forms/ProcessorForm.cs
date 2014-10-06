@@ -78,6 +78,10 @@ namespace VisualProcessors.Forms
 			//Input
 			ProcessorInputView.Pipeline = Pipeline;
 			ProcessorInputView.Processor = Processor;
+			if (!Processor.HasInputChannels)
+			{
+				Tabs.TabPages.Remove(InputTab);
+			}
 
 			//Settings
 			processor.GetUserInterface(SettingsPanel);
@@ -85,6 +89,10 @@ namespace VisualProcessors.Forms
 			//Output
 			ProcessorOutputView.Pipeline = Pipeline;
 			ProcessorOutputView.Processor = Processor;
+			if (!Processor.HasOutputChannels)
+			{
+				Tabs.TabPages.Remove(OutputTab);
+			}
 		}
 
 		#endregion Constructor
@@ -132,6 +140,11 @@ namespace VisualProcessors.Forms
 					Pipeline.RemoveProcessor(this.Processor.Name);
 				}
 			}
+		}
+
+		private void ProcessorForm_LocationChanged(object sender, EventArgs e)
+		{
+			Processor.Location = this.Location;
 		}
 
 		private void ProcessorNameChanged(Processor p, string oldname, string newname)
@@ -208,10 +221,5 @@ namespace VisualProcessors.Forms
 		}
 
 		#endregion Minimal View
-
-		private void ProcessorForm_LocationChanged(object sender, EventArgs e)
-		{
-			Processor.Location = this.Location;
-		}
 	}
 }

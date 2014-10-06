@@ -26,15 +26,12 @@ namespace VisualProcessors
 
 			DirectInputProcessor in1 = new DirectInputProcessor("DirectInputProcessor1");
 			CodeProcessor code1 = new CodeProcessor("CodeProcessor1");
-			AverageProcessor avg1 = new AverageProcessor("AverageProcessor1");
-			DirectOutputProcessor dop1 = new DirectOutputProcessor("DirectOutputProcessor1");
+			GraphPlotter gplot = new GraphPlotter("GraphPlotter1");
 			in1.GetOutputChannel("Output").Link(code1.GetInputChannel("A"));
-			code1.GetOutputChannel("Output1").Link(avg1.GetInputChannel("Input"));
-			avg1.GetOutputChannel("Output").Link(dop1.GetInputChannel("Input"));
+			code1.GetOutputChannel("Output1").Link(gplot.GetInputChannel("Red"));
 			p.AddProcessor(in1);
 			p.AddProcessor(code1);
-			p.AddProcessor(avg1);
-			p.AddProcessor(dop1);
+			p.AddProcessor(gplot);
 
 			string path = Application.StartupPath + "/output.xml";
 			FileStream file = new FileStream(path, FileMode.Create);

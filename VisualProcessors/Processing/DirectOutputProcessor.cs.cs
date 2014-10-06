@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
+	[ProcessorMeta(Author = "Bram Kamies", Description = "Displays a single number on a label", HideOutputTab = true, DefaultInput = "Input")]
 	public class DirectOutputProcessor : Processor
 	{
 		private List<Label> guis = new List<Label>();

@@ -10,6 +10,9 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
+	[ProcessorMeta(Author = "Bram Kamies",
+		Description = "Allows user C# code to be executed during simulations",
+		AllowOptionalInputs = true)]
 	public class CodeProcessor : Processor
 	{
 		public CodeProcessor()
@@ -29,14 +32,6 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output3");
 
 			Code = "//Your code here";
-		}
-
-		public override bool AllowOptionalChannels
-		{
-			get
-			{
-				return true;
-			}
 		}
 
 		public string Code { get; set; }

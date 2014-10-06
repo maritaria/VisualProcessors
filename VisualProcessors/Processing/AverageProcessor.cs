@@ -10,6 +10,7 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
+	[ProcessorMeta(Author = "Bram Kamies", Description = "Calculates the average of a signal over time")]
 	public class AverageProcessor : Processor
 	{
 		private List<double> m_History = new List<double>();
@@ -34,7 +35,7 @@ namespace VisualProcessors.Processing
 			double input = GetInputChannel("Input").GetValue();
 			int historySize = (int)GetInputChannel("HistorySize").GetValue();
 			m_History.Add(input);
-			if (m_History.Count > historySize)
+			while (m_History.Count > historySize)
 			{
 				m_History.RemoveAt(0);
 			}

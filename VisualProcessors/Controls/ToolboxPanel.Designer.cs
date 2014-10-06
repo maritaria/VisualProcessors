@@ -28,8 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.ButtonPanel = new System.Windows.Forms.Panel();
 			this.ButtonGroupBox = new System.Windows.Forms.GroupBox();
+			this.DescriptionTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.ButtonGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -54,6 +56,10 @@
 			this.ButtonGroupBox.TabStop = false;
 			this.ButtonGroupBox.Text = "New Processor";
 			// 
+			// DescriptionTooltip
+			// 
+			this.DescriptionTooltip.ToolTipTitle = "Description";
+			// 
 			// ToolboxPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -71,6 +77,7 @@
 
 		private System.Windows.Forms.Panel ButtonPanel;
 		private System.Windows.Forms.GroupBox ButtonGroupBox;
+		private System.Windows.Forms.ToolTip DescriptionTooltip;
 
 
 	}

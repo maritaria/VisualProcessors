@@ -111,6 +111,16 @@ namespace VisualProcessors.Controls
 					InputChannelList.Items.Add(channel.Name);
 				}
 				InputChannelList.SelectedIndex = (InputChannelList.Items.Count > 0) ? 0 : -1;
+				OptionalCheckBox.Enabled = false;
+				foreach (Attribute attr in Attribute.GetCustomAttributes(m_Processor.GetType()))
+				{
+					if (attr is ProcessorMeta)
+					{
+						ProcessorMeta pm = attr as ProcessorMeta;
+						OptionalCheckBox.Enabled = pm.AllowOptionalInputs;
+						break;
+					}
+				}
 			}
 			UpdateLinkData(this, EventArgs.Empty);
 		}
@@ -161,8 +171,7 @@ namespace VisualProcessors.Controls
 				UnlinkButton.Enabled = m_InputChannel.Source != null;
 				ConstantInput.Text = m_InputChannel.ConstantValue.ToString();
 				ConstantInput.BackColor = (m_ConstantInputValid) ? Color.White : Color.Red;
-				OptionalCheckBox.Enabled = m_Processor.AllowOptionalChannels;
-				OptionalCheckBox.Checked = m_InputChannel.IsOptional;
+				OptionalCheckBox.Checked = OptionalCheckBox.Enabled && m_InputChannel.IsOptional;
 				if (m_InputChannel.IsConstant)
 				{
 					ConfigurationLabel.Text = "Constant Value: " + m_InputChannel.ConstantValue;

@@ -19,6 +19,8 @@ namespace VisualProcessors.Controls
 
 		private PipelineForm m_Pipeline;
 
+		private List<Type> m_Types = new List<Type>();
+
 		public PipelineForm Pipeline
 		{
 			get
@@ -30,7 +32,6 @@ namespace VisualProcessors.Controls
 				m_Pipeline = value;
 			}
 		}
-		private List<Type> m_Types = new List<Type>();
 
 		public Type[] Types
 		{
@@ -67,6 +68,15 @@ namespace VisualProcessors.Controls
 					b.Dock = DockStyle.Top;
 					b.Text = processorType.Name;
 					b.TextAlign = ContentAlignment.MiddleLeft;
+					foreach (Attribute attr in Attribute.GetCustomAttributes(processorType))
+					{
+						if (attr is ProcessorMeta)
+						{
+							ProcessorMeta pm = attr as ProcessorMeta;
+							DescriptionTooltip.SetToolTip(b, pm.Description);
+							break;
+						}
+					}
 					b.Click += delegate(object _sender, EventArgs _e)
 					{
 						SpawnProcessor(processorType);
@@ -78,16 +88,17 @@ namespace VisualProcessors.Controls
 
 		public void SpawnProcessor(Type t)
 		{
-			if (Pipeline==null)
+			if (Pipeline == null)
 			{
 				return;
 			}
 			Point center = Pipeline.MdiClient.Bounds.GetCenter();
 			SpawnProcessor(t, center);
 		}
+
 		public void SpawnProcessor(Type t, Point pos)
 		{
-			if (Pipeline==null)
+			if (Pipeline == null)
 			{
 				return;
 			}
@@ -106,7 +117,6 @@ namespace VisualProcessors.Controls
 			Point offset = new Point(pfcenter.X - pf.Location.X, pfcenter.Y - pf.Location.Y);
 			pf.Location = new Point(pos.X - offset.X, pos.Y - offset.Y);
 		}
-
 
 		#endregion Methods
 	}
