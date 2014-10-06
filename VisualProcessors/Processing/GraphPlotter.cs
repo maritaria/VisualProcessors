@@ -48,6 +48,14 @@ namespace VisualProcessors.Processing
 
 		#region Methods
 
+		public override void GetUserInterface(Panel panel)
+		{
+			ZedGraphControl graph = new ZedGraphControl();
+			graph.Dock = DockStyle.Fill;
+			panel.Controls.Add(graph);
+			base.GetUserInterface(panel);
+		}
+
 		public override void Start()
 		{
 			m_StartTimestamp = DateTime.Now;
