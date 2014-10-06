@@ -53,27 +53,45 @@ namespace VisualProcessors.Controls
 			{
 				Processor.LinkAdded -= UpdateLinkData;
 				Processor.LinkRemoved -= UpdateLinkData;
+				Processor.OutputChannelAdded -= UpdateLinkData;
+				Processor.OutputChannelRemoved -= UpdateLinkData;
 			}
 			m_Processor = p;
 			if (Processor != null)
 			{
 				Processor.LinkAdded += UpdateLinkData;
 				Processor.LinkRemoved += UpdateLinkData;
+				Processor.OutputChannelAdded += UpdateLinkData;
+				Processor.OutputChannelRemoved += UpdateLinkData;
 			}
 			UpdateLinkData(this, EventArgs.Empty);
 		}
 
 		private void UpdateLinkData(object sender, EventArgs e)
 		{
+			string selected = (string)OutputComboBox.SelectedItem;
+			OutputComboBox.Items.Clear();
 			OutputGridView.Rows.Clear();
 			if (Processor != null)
 			{
 				foreach (string name in Processor.GetOutputChannelNames())
 				{
+					OutputComboBox.Items.Add(name);
 					OutputChannel channel = Processor.GetOutputChannel(name);
 					foreach (InputChannel target in channel.Targets)
 					{
 						OutputGridView.Rows.Add(channel.Name, target.Owner.Name, target.Name);
+					}
+				}
+				if (OutputComboBox.Items.Count != 0)
+				{
+					if (selected == null)
+					{
+						OutputComboBox.SelectedIndex = 0;
+					}
+					else
+					{
+						OutputComboBox.SelectedItem = selected;
 					}
 				}
 			}
@@ -87,11 +105,7 @@ namespace VisualProcessors.Controls
 		{
 			if (Processor.HasOutputChannels)
 			{
-				ChannelSelectionBox csbox = new ChannelSelectionBox(ChannelType.OutputChannel, Processor);
-				if (csbox.ShowDialog().HasFlag(DialogResult.OK))
-				{
-					Pipeline.StartLinkMode(Pipeline.GetProcessorForm(Processor.Name), csbox.Choice, LinkMode.OutputFirst);
-				}
+				Pipeline.StartLinkMode(Pipeline.GetProcessorForm(Processor.Name), (string)OutputComboBox.SelectedItem, LinkMode.OutputFirst);
 			}
 		}
 

@@ -28,7 +28,15 @@ namespace VisualProcessors.Controls
 			set
 			{
 				m_Pipeline = value;
-				UpdateTypeList();
+			}
+		}
+		private List<Type> m_Types = new List<Type>();
+
+		public Type[] Types
+		{
+			get
+			{
+				return m_Types.ToArray();
 			}
 		}
 
@@ -39,6 +47,8 @@ namespace VisualProcessors.Controls
 		public ToolboxPanel()
 		{
 			InitializeComponent();
+			ButtonPanel.Controls.Clear();
+			AddAssembly(Assembly.GetAssembly(typeof(Processor)));
 		}
 
 		#endregion Constructor
@@ -52,6 +62,7 @@ namespace VisualProcessors.Controls
 			{
 				if (processorType.IsSubclassOf(typeof(Processor)))
 				{
+					m_Types.Add(processorType);
 					Button b = new Button();
 					b.Dock = DockStyle.Top;
 					b.Text = processorType.Name;
@@ -65,8 +76,21 @@ namespace VisualProcessors.Controls
 			}
 		}
 
-		private void SpawnProcessor(Type t)
+		public void SpawnProcessor(Type t)
 		{
+			if (Pipeline==null)
+			{
+				return;
+			}
+			Point center = Pipeline.MdiClient.Bounds.GetCenter();
+			SpawnProcessor(t, center);
+		}
+		public void SpawnProcessor(Type t, Point pos)
+		{
+			if (Pipeline==null)
+			{
+				return;
+			}
 			int counter = 1;
 			string basename = t.Name;
 			while (true)
@@ -76,19 +100,13 @@ namespace VisualProcessors.Controls
 				counter++;
 			}
 			Processor p = (Processor)Activator.CreateInstance(t, t.Name + counter);
-			Pipeline.AddProcessor(p);
+
+			ProcessorForm pf = Pipeline.AddProcessor(p);
+			Point pfcenter = pf.GetCenter();
+			Point offset = new Point(pfcenter.X - pf.Location.X, pfcenter.Y - pf.Location.Y);
+			pf.Location = new Point(pos.X - offset.X, pos.Y - offset.Y);
 		}
 
-		private void UpdateTypeList()
-		{
-			ButtonPanel.Controls.Clear();
-			if (m_Pipeline == null)
-			{
-				return;
-			}
-			Assembly processorAssembly = Assembly.GetAssembly(typeof(Processor));
-			AddAssembly(processorAssembly);
-		}
 
 		#endregion Methods
 	}

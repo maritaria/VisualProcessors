@@ -15,6 +15,13 @@ namespace VisualProcessors.Processing
 		public CodeProcessor()
 		{
 		}
+		public override bool AllowOptionalChannels
+		{
+			get
+			{
+				return true;
+			}
+		}
 
 		public CodeProcessor(string name)
 			: base(name)
@@ -27,22 +34,27 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output1");
 			AddOutputChannel("Output2");
 			AddOutputChannel("Output3");
+			
 			Code = "//Your code here";
 		}
 
 		public string Code { get; set; }
 
+		public Action<CodeProcessor> ProcessFunction { get; set; }
+
 		public override Control GetUserInterface()
 		{
 			CodePanel cpanel = new CodePanel(this);
+			
 			return cpanel;
 		}
 
 		protected override void Process()
 		{
-			double a = GetInputChannel("A").GetValue();
-			double b = GetInputChannel("B").GetValue();
-			GetOutputChannel("Output").WriteValue(a + b);
+			if (ProcessFunction!=null)
+			{
+				ProcessFunction(this);
+			}
 		}
 	}
 }

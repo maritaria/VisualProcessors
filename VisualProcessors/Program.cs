@@ -22,6 +22,9 @@ namespace VisualProcessors
 		[STAThread]
 		private static void Main()
 		{
+			UserCodeContext ucc = new UserCodeContext();
+			ucc.Compile();
+
 			Pipeline p = new Pipeline();
 
 			//*
@@ -38,6 +41,7 @@ namespace VisualProcessors
 			add1.GetOutputChannel("Output").Link(add2.GetInputChannel("A"));
 			add2.GetOutputChannel("Output").Link(out1.GetInputChannel("Input"));
 
+			p.AddProcessor(new CodeProcessor("Test"));
 			p.AddProcessor(in1);
 			p.AddProcessor(add1);
 			p.AddProcessor(add2);

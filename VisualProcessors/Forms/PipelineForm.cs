@@ -15,30 +15,22 @@ using VisualProcessors.Processing;
 
 namespace VisualProcessors.Forms
 {
-	public enum LinkMode
-	{
-		/// <summary>
-		///  User selects the output first, and then the input target
-		/// </summary>
-		OutputFirst,
-
-		/// <summary>
-		///  User selected the input target first, then the source
-		/// </summary>
-		InputFirst,
-
-		/// <summary>
-		///  Disable linkmode
-		/// </summary>
-		Disabled,
-	}
-
 	public partial class PipelineForm : Form
 	{
 		#region Properties
 
+		private MdiClient m_MdiClient;
+		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
 		private bool m_PipelineStatusChanging = false;
+
+		public MdiClient MdiClient
+		{
+			get
+			{
+				return m_MdiClient;
+			}
+		}
 
 		#endregion Properties
 
@@ -50,8 +42,8 @@ namespace VisualProcessors.Forms
 
 			//Initialize Pipeline
 			m_Pipeline = pipeline;
-			m_Pipeline.Started += m_Pipeline_Started;
-			m_Pipeline.Stopped += m_Pipeline_Stopped;
+			m_Pipeline.Started += PipelineStarted;
+			m_Pipeline.Stopped += PipelineStopped;
 			if (m_Pipeline.IsRunning)
 			{
 				SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Running");
@@ -60,7 +52,21 @@ namespace VisualProcessors.Forms
 			{
 				SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
 			}
-			this.IsMdiContainer = false;
+			foreach (Control c in Controls)
+			{
+				if (c is MdiClient)
+				{
+					m_MdiClient = c as MdiClient;
+					break;
+				}
+			}
+			m_MdiClient.Paint += MdiClientPaintLinks;
+			m_MdiClient.MouseDown += MdiClientMouseDown;
+			m_MdiClient.MouseMove += MdiclientMouseMove;
+			m_MdiClient.MouseUp += MdiClientMouseUp;
+			m_MdiClient.MouseClick += MdiClientMouseClick;
+			m_MdiClient.BackColor = SystemColors.ActiveCaption;
+			m_MdiClientHelper = new MdiClientHelper(m_MdiClient);
 
 			//Add existing Processors of the Pipeline instance
 			foreach (string name in pipeline.GetListOfNames())
@@ -82,7 +88,7 @@ namespace VisualProcessors.Forms
 		/// </summary>
 		public void InvalidateFormView()
 		{
-			FormView.Invalidate();
+			m_MdiClient.Invalidate();
 		}
 
 		private Point CalculateChannelLink(Form a, Point end)
@@ -132,20 +138,22 @@ namespace VisualProcessors.Forms
 		///  form on the MDIClient
 		/// </summary>
 		/// <param name="p">The processor to add to the underlaying pipeline</param>
-		public void AddProcessor(Processor p)
+		/// <returns>The (new) ProcessorForm that owns the processor</returns>
+		public ProcessorForm AddProcessor(Processor p)
 		{
 			if (GetProcessorForm(p.Name) == null)
 			{
 				ProcessorForm f = new ProcessorForm(this, p);
 				m_ProcessorForms.Add(f);
 				f.TopLevel = false;
-				FormView.Controls.Add(f);
+				f.MdiParent = this;
 				f.Show();
 			}
 			if (!m_Pipeline.IsProcessorNameTaken(p.Name))
 			{
 				m_Pipeline.AddProcessor(p);
 			}
+			return GetProcessorForm(p.Name);
 		}
 
 		/// <summary>
@@ -220,7 +228,7 @@ namespace VisualProcessors.Forms
 			ProcessorForm pf = GetProcessorForm(name);
 			pf.Visible = true;
 			pf.Focus();
-			Point centerView = FormView.DisplayRectangle.GetCenter();
+			Point centerView = m_MdiClient.DisplayRectangle.GetCenter();
 			Point centerForm = pf.GetCenter();
 			Point offset = new Point(centerView.X - centerForm.X, centerView.Y - centerForm.Y);
 			foreach (ProcessorForm form in m_ProcessorForms)
@@ -319,17 +327,16 @@ namespace VisualProcessors.Forms
 		private bool m_IsDragging = false;
 		private Point m_PreviousDragPosition;
 
-		private void FormView_MouseClick(object sender, MouseEventArgs e)
+		private void MdiClientContextMenuOpening(object sender, CancelEventArgs e)
 		{
-			if (e.Button.HasFlag(MouseButtons.Right))
+			AddMenu.DropDownItems.Clear();
+			foreach (Type t in Toolbox.Types.Reverse())
 			{
-				m_ContextLocation = e.Location;
-				FormViewContextMenu.Show(FormView, e.Location);
+				AddMenu.DropDownItems.Add(t.Name, null, delegate(object _sender, EventArgs _e)
+				{
+					Toolbox.SpawnProcessor(t,this.m_ContextLocation);
+				});
 			}
-		}
-
-		private void FormViewContextMenu_Opening(object sender, CancelEventArgs e)
-		{
 			GotoMenu.DropDownItems.Clear();
 			BringMenu.DropDownItems.Clear();
 			foreach (ProcessorForm pf in m_ProcessorForms)
@@ -349,18 +356,13 @@ namespace VisualProcessors.Forms
 			}
 		}
 
-		private void m_Pipeline_Started(object sender, EventArgs e)
+		private void MdiClientMouseClick(object sender, MouseEventArgs e)
 		{
-			m_PipelineStatusChanging = true;
-			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Running");
-			m_PipelineStatusChanging = false;
-		}
-
-		private void m_Pipeline_Stopped(object sender, EventArgs e)
-		{
-			m_PipelineStatusChanging = true;
-			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
-			m_PipelineStatusChanging = false;
+			if (e.Button.HasFlag(MouseButtons.Right))
+			{
+				m_ContextLocation = e.Location;
+				MdiClientContextMenu.Show(m_MdiClient, e.Location);
+			}
 		}
 
 		private void MdiClientMouseDown(object sender, MouseEventArgs e)
@@ -370,7 +372,7 @@ namespace VisualProcessors.Forms
 			Cursor = Cursors.Hand;
 		}
 
-		private void MdiClientMouseMove(object sender, MouseEventArgs e)
+		private void MdiclientMouseMove(object sender, MouseEventArgs e)
 		{
 			if (!m_IsDragging)
 			{
@@ -396,12 +398,11 @@ namespace VisualProcessors.Forms
 
 		private void MdiClientPaintLinks(object sender, PaintEventArgs e)
 		{
-			//Create buffer
 			BufferedGraphicsContext currentContext;
 			BufferedGraphics myBuffer;
 			currentContext = BufferedGraphicsManager.Current;
-			myBuffer = currentContext.Allocate(FormView.CreateGraphics(), FormView.DisplayRectangle);
-			myBuffer.Graphics.Clear(FormView.BackColor);
+			myBuffer = currentContext.Allocate(m_MdiClient.CreateGraphics(), m_MdiClient.DisplayRectangle);
+			myBuffer.Graphics.Clear(m_MdiClient.BackColor);
 			Pen outputhalf = new Pen(Color.Red, 4);
 			Pen inputhalf = new Pen(Color.Green, 4);
 			Pen unused = new Pen(Color.Gray, 4);
@@ -436,8 +437,6 @@ namespace VisualProcessors.Forms
 					}
 				}
 			}
-
-			//Render
 			myBuffer.Render();
 			myBuffer.Dispose();
 		}
@@ -445,14 +444,28 @@ namespace VisualProcessors.Forms
 		private void PipelineFormShown(object sender, EventArgs e)
 		{
 			System.Threading.Thread.Sleep(100);
-			int row = 5;
+			int row = 2;
 			for (int i = 0; i < m_ProcessorForms.Count; i++)
 			{
 				var pf = m_ProcessorForms[i];
 
 				//pf.ToggleMinimalView();
-				pf.Location = new Point(10 + (i % row) * 550, 10 + 210 * (i / row));
+				pf.Location = new Point(10 + (i % row) * 550, 10 + 270 * (i / row));
 			}
+		}
+
+		private void PipelineStarted(object sender, EventArgs e)
+		{
+			m_PipelineStatusChanging = true;
+			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Running");
+			m_PipelineStatusChanging = false;
+		}
+
+		private void PipelineStopped(object sender, EventArgs e)
+		{
+			m_PipelineStatusChanging = true;
+			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
+			m_PipelineStatusChanging = false;
 		}
 
 		private void SimulationComboBox_SelectedIndexChanged(object sender, EventArgs e)

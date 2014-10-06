@@ -217,5 +217,6 @@ namespace VisualProcessors.Forms
 		}
 
 		#endregion Minimal View
+
 	}
 }

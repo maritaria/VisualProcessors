@@ -78,6 +78,7 @@
     <Compile Include="Controls\ToolboxPanel.Designer.cs">
       <DependentUpon>ToolboxPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UserCodeContext.cs" />
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -85,6 +86,7 @@
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormExtensions.cs" />
+    <Compile Include="Forms\LinkMode.cs" />
     <Compile Include="Forms\PipelineForm.cs">
       <SubType>Form</SubType>
     </Compile>

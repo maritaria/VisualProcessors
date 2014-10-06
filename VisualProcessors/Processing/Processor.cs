@@ -365,7 +365,6 @@ namespace VisualProcessors.Processing
 		///  Invoked after an OutputChannel has safely removed
 		/// </summary>
 		public event EventHandler OutputChannelRemoved;
-
 		private void OnInputChannelAdded()
 		{
 			if (InputChannelAdded != null)

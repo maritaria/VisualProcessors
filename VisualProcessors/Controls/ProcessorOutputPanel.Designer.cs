@@ -30,14 +30,17 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this.OutputGridView = new System.Windows.Forms.DataGridView();
-			this.OutputContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.UnlinkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.LinkOutputButton = new System.Windows.Forms.Button();
 			this.OutputColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.TargetColumn = new System.Windows.Forms.DataGridViewLinkColumn();
 			this.InputColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+			this.OutputContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.UnlinkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.LinkOutputButton = new System.Windows.Forms.Button();
+			this.LinkPanel = new System.Windows.Forms.Panel();
+			this.OutputComboBox = new System.Windows.Forms.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.OutputGridView)).BeginInit();
 			this.OutputContextMenu.SuspendLayout();
+			this.LinkPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// OutputGridView
@@ -54,31 +57,6 @@
 			this.OutputGridView.Size = new System.Drawing.Size(330, 184);
 			this.OutputGridView.TabIndex = 1;
 			this.OutputGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OutputGridView_CellContentClick);
-			// 
-			// OutputContextMenu
-			// 
-			this.OutputContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.UnlinkMenuItem});
-			this.OutputContextMenu.Name = "OutputContextMenu";
-			this.OutputContextMenu.Size = new System.Drawing.Size(109, 26);
-			// 
-			// UnlinkMenuItem
-			// 
-			this.UnlinkMenuItem.Name = "UnlinkMenuItem";
-			this.UnlinkMenuItem.Size = new System.Drawing.Size(108, 22);
-			this.UnlinkMenuItem.Text = "Unlink";
-			this.UnlinkMenuItem.Click += new System.EventHandler(this.UnlinkMenuItem_Click);
-			// 
-			// LinkOutputButton
-			// 
-			this.LinkOutputButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.LinkOutputButton.Location = new System.Drawing.Point(0, 184);
-			this.LinkOutputButton.Name = "LinkOutputButton";
-			this.LinkOutputButton.Size = new System.Drawing.Size(330, 23);
-			this.LinkOutputButton.TabIndex = 2;
-			this.LinkOutputButton.Text = "Link Output";
-			this.LinkOutputButton.UseVisualStyleBackColor = true;
-			this.LinkOutputButton.Click += new System.EventHandler(this.LinkOutputButton_Click);
 			// 
 			// OutputColumn
 			// 
@@ -99,16 +77,62 @@
 			this.InputColumn.HeaderText = "InputChannel";
 			this.InputColumn.Name = "InputColumn";
 			// 
+			// OutputContextMenu
+			// 
+			this.OutputContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.UnlinkMenuItem});
+			this.OutputContextMenu.Name = "OutputContextMenu";
+			this.OutputContextMenu.Size = new System.Drawing.Size(109, 26);
+			// 
+			// UnlinkMenuItem
+			// 
+			this.UnlinkMenuItem.Name = "UnlinkMenuItem";
+			this.UnlinkMenuItem.Size = new System.Drawing.Size(108, 22);
+			this.UnlinkMenuItem.Text = "Unlink";
+			this.UnlinkMenuItem.Click += new System.EventHandler(this.UnlinkMenuItem_Click);
+			// 
+			// LinkOutputButton
+			// 
+			this.LinkOutputButton.Dock = System.Windows.Forms.DockStyle.Right;
+			this.LinkOutputButton.Location = new System.Drawing.Point(217, 0);
+			this.LinkOutputButton.Name = "LinkOutputButton";
+			this.LinkOutputButton.Size = new System.Drawing.Size(113, 23);
+			this.LinkOutputButton.TabIndex = 2;
+			this.LinkOutputButton.Text = "Link Output";
+			this.LinkOutputButton.UseVisualStyleBackColor = true;
+			this.LinkOutputButton.Click += new System.EventHandler(this.LinkOutputButton_Click);
+			// 
+			// LinkPanel
+			// 
+			this.LinkPanel.Controls.Add(this.OutputComboBox);
+			this.LinkPanel.Controls.Add(this.LinkOutputButton);
+			this.LinkPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.LinkPanel.Location = new System.Drawing.Point(0, 184);
+			this.LinkPanel.Name = "LinkPanel";
+			this.LinkPanel.Size = new System.Drawing.Size(330, 23);
+			this.LinkPanel.TabIndex = 3;
+			// 
+			// OutputComboBox
+			// 
+			this.OutputComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.OutputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.OutputComboBox.FormattingEnabled = true;
+			this.OutputComboBox.Location = new System.Drawing.Point(0, 0);
+			this.OutputComboBox.Name = "OutputComboBox";
+			this.OutputComboBox.Size = new System.Drawing.Size(217, 21);
+			this.OutputComboBox.TabIndex = 3;
+			// 
 			// ProcessorOutputPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.OutputGridView);
-			this.Controls.Add(this.LinkOutputButton);
+			this.Controls.Add(this.LinkPanel);
 			this.Name = "ProcessorOutputPanel";
 			this.Size = new System.Drawing.Size(330, 207);
 			((System.ComponentModel.ISupportInitialize)(this.OutputGridView)).EndInit();
 			this.OutputContextMenu.ResumeLayout(false);
+			this.LinkPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -122,5 +146,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn OutputColumn;
 		private System.Windows.Forms.DataGridViewLinkColumn TargetColumn;
 		private System.Windows.Forms.DataGridViewLinkColumn InputColumn;
+		private System.Windows.Forms.Panel LinkPanel;
+		private System.Windows.Forms.ComboBox OutputComboBox;
 	}
 }

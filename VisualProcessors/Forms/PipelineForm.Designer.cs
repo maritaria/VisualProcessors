@@ -31,13 +31,13 @@
 			this.components = new System.ComponentModel.Container();
 			this.MainToolStrip = new System.Windows.Forms.ToolStrip();
 			this.SimulationComboBox = new System.Windows.Forms.ToolStripComboBox();
-			this.FormView = new System.Windows.Forms.Panel();
-			this.FormViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.MdiClientContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.GotoMenu = new System.Windows.Forms.ToolStripMenuItem();
-			this.Toolbox = new VisualProcessors.Controls.ToolboxPanel();
 			this.BringMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.AddMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this.Toolbox = new VisualProcessors.Controls.ToolboxPanel();
 			this.MainToolStrip.SuspendLayout();
-			this.FormViewContextMenu.SuspendLayout();
+			this.MdiClientContextMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainToolStrip
@@ -61,34 +61,33 @@
 			this.SimulationComboBox.Size = new System.Drawing.Size(121, 25);
 			this.SimulationComboBox.SelectedIndexChanged += new System.EventHandler(this.SimulationComboBox_SelectedIndexChanged);
 			// 
-			// FormView
+			// MdiClientContextMenu
 			// 
-			this.FormView.BackColor = System.Drawing.SystemColors.ActiveCaption;
-			this.FormView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.FormView.Location = new System.Drawing.Point(175, 25);
-			this.FormView.Name = "FormView";
-			this.FormView.Size = new System.Drawing.Size(518, 409);
-			this.FormView.TabIndex = 2;
-			this.FormView.Paint += new System.Windows.Forms.PaintEventHandler(this.MdiClientPaintLinks);
-			this.FormView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormView_MouseClick);
-			this.FormView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MdiClientMouseDown);
-			this.FormView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MdiClientMouseMove);
-			this.FormView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MdiClientMouseUp);
-			// 
-			// FormViewContextMenu
-			// 
-			this.FormViewContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.MdiClientContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AddMenu,
             this.GotoMenu,
             this.BringMenu});
-			this.FormViewContextMenu.Name = "FormViewContextMenu";
-			this.FormViewContextMenu.Size = new System.Drawing.Size(164, 48);
-			this.FormViewContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.FormViewContextMenu_Opening);
+			this.MdiClientContextMenu.Name = "FormViewContextMenu";
+			this.MdiClientContextMenu.Size = new System.Drawing.Size(157, 92);
+			this.MdiClientContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.MdiClientContextMenuOpening);
 			// 
 			// GotoMenu
 			// 
 			this.GotoMenu.Name = "GotoMenu";
-			this.GotoMenu.Size = new System.Drawing.Size(163, 22);
-			this.GotoMenu.Text = "Goto Processor...";
+			this.GotoMenu.Size = new System.Drawing.Size(156, 22);
+			this.GotoMenu.Text = "Goto Processor";
+			// 
+			// BringMenu
+			// 
+			this.BringMenu.Name = "BringMenu";
+			this.BringMenu.Size = new System.Drawing.Size(156, 22);
+			this.BringMenu.Text = "Bring Processor";
+			// 
+			// AddMenu
+			// 
+			this.AddMenu.Name = "AddMenu";
+			this.AddMenu.Size = new System.Drawing.Size(156, 22);
+			this.AddMenu.Text = "Add Processor";
 			// 
 			// Toolbox
 			// 
@@ -101,27 +100,21 @@
 			this.Toolbox.Size = new System.Drawing.Size(175, 409);
 			this.Toolbox.TabIndex = 0;
 			// 
-			// BringMenu
-			// 
-			this.BringMenu.Name = "BringMenu";
-			this.BringMenu.Size = new System.Drawing.Size(163, 22);
-			this.BringMenu.Text = "Bring Processor";
-			// 
 			// PipelineForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(693, 434);
-			this.Controls.Add(this.FormView);
 			this.Controls.Add(this.Toolbox);
 			this.Controls.Add(this.MainToolStrip);
+			this.IsMdiContainer = true;
 			this.Name = "PipelineForm";
 			this.Text = "Form1";
 			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			this.Shown += new System.EventHandler(this.PipelineFormShown);
 			this.MainToolStrip.ResumeLayout(false);
 			this.MainToolStrip.PerformLayout();
-			this.FormViewContextMenu.ResumeLayout(false);
+			this.MdiClientContextMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -131,11 +124,11 @@
 
 		private System.Windows.Forms.ToolStrip MainToolStrip;
 		private System.Windows.Forms.ToolStripComboBox SimulationComboBox;
-		private System.Windows.Forms.Panel FormView;
 		private Controls.ToolboxPanel Toolbox;
-		private System.Windows.Forms.ContextMenuStrip FormViewContextMenu;
+		private System.Windows.Forms.ContextMenuStrip MdiClientContextMenu;
 		private System.Windows.Forms.ToolStripMenuItem GotoMenu;
 		private System.Windows.Forms.ToolStripMenuItem BringMenu;
+		private System.Windows.Forms.ToolStripMenuItem AddMenu;
 		
 
 	}
