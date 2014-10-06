@@ -19,6 +19,7 @@ namespace VisualProcessors.Forms
 	{
 		#region Properties
 
+		private GraphForm m_GraphForm;
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
@@ -76,6 +77,12 @@ namespace VisualProcessors.Forms
 
 			//Toolbox
 			Toolbox.Pipeline = this;
+
+			//Test graph
+			m_GraphForm = new GraphForm();
+			m_GraphForm.MdiParent = this;
+			m_GraphForm.TopLevel = false;
+			m_GraphForm.Show();
 		}
 
 		#endregion Constructor

@@ -86,6 +86,12 @@
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormExtensions.cs" />
+    <Compile Include="Forms\GraphForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GraphForm.Designer.cs">
+      <DependentUpon>GraphForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\LinkMode.cs" />
     <Compile Include="Forms\PipelineForm.cs">
       <SubType>Form</SubType>
@@ -99,12 +105,7 @@
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GraphForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GraphForm.Designer.cs">
-      <DependentUpon>GraphForm.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Processing\GraphPlotter.cs" />
     <Compile Include="Processing\AverageProcessor.cs" />
     <Compile Include="Processing\AddProcessor.cs" />
     <Compile Include="Processing\ChannelType.cs" />
@@ -137,6 +138,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ChannelSelectionBox.resx">
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GraphForm.resx">
+      <DependentUpon>GraphForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PipelineForm.resx">
       <DependentUpon>PipelineForm.cs</DependentUpon>
