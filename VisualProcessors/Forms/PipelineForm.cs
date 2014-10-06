@@ -19,7 +19,6 @@ namespace VisualProcessors.Forms
 	{
 		#region Properties
 
-		private GraphForm m_GraphForm;
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
