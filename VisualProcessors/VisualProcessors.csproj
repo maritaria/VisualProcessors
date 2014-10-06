@@ -99,6 +99,12 @@
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GraphForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GraphForm.Designer.cs">
+      <DependentUpon>GraphForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Processing\AverageProcessor.cs" />
     <Compile Include="Processing\AddProcessor.cs" />
     <Compile Include="Processing\ChannelType.cs" />
