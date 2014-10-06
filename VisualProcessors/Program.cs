@@ -25,23 +25,16 @@ namespace VisualProcessors
 			Pipeline p = new Pipeline();
 
 			DirectInputProcessor in1 = new DirectInputProcessor("DirectInputProcessor1");
-			AddProcessor add1 = new AddProcessor("Add1");
-			add1.GetInputChannel("B").IsConstant = true;
-			add1.GetInputChannel("B").ConstantValue = 20;
-			AddProcessor add2 = new AddProcessor("Add2");
-			add2.GetInputChannel("B").IsConstant = true;
-			add2.GetInputChannel("B").ConstantValue = 40;
-			DirectOutputProcessor out1 = new DirectOutputProcessor("DirectOutputProcessor1");
-
-			in1.GetOutputChannel("Output").Link(add1.GetInputChannel("A"));
-			add1.GetOutputChannel("Output").Link(add2.GetInputChannel("A"));
-			add2.GetOutputChannel("Output").Link(out1.GetInputChannel("Input"));
-
-			p.AddProcessor(new CodeProcessor("Test"));
+			CodeProcessor code1 = new CodeProcessor("CodeProcessor1");
+			AverageProcessor avg1 = new AverageProcessor("AverageProcessor1");
+			DirectOutputProcessor dop1 = new DirectOutputProcessor("DirectOutputProcessor1");
+			in1.GetOutputChannel("Output").Link(code1.GetInputChannel("A"));
+			code1.GetOutputChannel("Output1").Link(avg1.GetInputChannel("Input"));
+			avg1.GetOutputChannel("Output").Link(dop1.GetInputChannel("Input"));
 			p.AddProcessor(in1);
-			p.AddProcessor(add1);
-			p.AddProcessor(add2);
-			p.AddProcessor(out1);
+			p.AddProcessor(code1);
+			p.AddProcessor(avg1);
+			p.AddProcessor(dop1);
 
 			string path = Application.StartupPath + "/output.xml";
 			FileStream file = new FileStream(path, FileMode.Create);

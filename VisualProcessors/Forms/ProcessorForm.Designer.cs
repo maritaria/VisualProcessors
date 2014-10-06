@@ -38,8 +38,10 @@
 			this.MinimalTab = new System.Windows.Forms.TabPage();
 			this.LinkEndpointButton = new System.Windows.Forms.Button();
 			this.ErrorIcon = new System.Windows.Forms.ErrorProvider(this.components);
+			this.SettingsPanel = new System.Windows.Forms.Panel();
 			this.Tabs.SuspendLayout();
 			this.InputTab.SuspendLayout();
+			this.SettingsTab.SuspendLayout();
 			this.OutputTab.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ErrorIcon)).BeginInit();
 			this.SuspendLayout();
@@ -82,6 +84,7 @@
 			// 
 			// SettingsTab
 			// 
+			this.SettingsTab.Controls.Add(this.SettingsPanel);
 			this.SettingsTab.Location = new System.Drawing.Point(4, 22);
 			this.SettingsTab.Name = "SettingsTab";
 			this.SettingsTab.Size = new System.Drawing.Size(370, 172);
@@ -135,6 +138,14 @@
 			// 
 			this.ErrorIcon.ContainerControl = this;
 			// 
+			// SettingsPanel
+			// 
+			this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsPanel.Location = new System.Drawing.Point(0, 0);
+			this.SettingsPanel.Name = "SettingsPanel";
+			this.SettingsPanel.Size = new System.Drawing.Size(370, 172);
+			this.SettingsPanel.TabIndex = 0;
+			// 
 			// ProcessorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -152,6 +163,7 @@
 			this.LocationChanged += new System.EventHandler(this.ProcessorForm_LocationChanged);
 			this.Tabs.ResumeLayout(false);
 			this.InputTab.ResumeLayout(false);
+			this.SettingsTab.ResumeLayout(false);
 			this.OutputTab.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.ErrorIcon)).EndInit();
 			this.ResumeLayout(false);
@@ -169,6 +181,7 @@
 		private System.Windows.Forms.TabPage SettingsTab;
 		private System.Windows.Forms.TabPage MinimalTab;
 		private Controls.ProcessorInputPanel ProcessorInputView;
+		private System.Windows.Forms.Panel SettingsPanel;
 
 	}
 }

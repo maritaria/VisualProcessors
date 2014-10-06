@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
@@ -88,9 +89,13 @@ namespace VisualProcessors.Processing
 
 		#region Methods
 
-		public virtual Control GetUserInterface()
+		public virtual void GetUserInterface(Panel panel)
 		{
-			return null;
+			StringInputPanel input = new StringInputPanel();
+			input.InputCompleted += input_InputCompleted;
+			input.InputTitle = "Name:";
+			input.Dock = DockStyle.Top;
+			panel.Controls.Add(input);
 		}
 
 		public virtual void Start()
@@ -140,6 +145,11 @@ namespace VisualProcessors.Processing
 				}
 				Thread.Sleep(1);
 			}
+		}
+
+		private void input_InputCompleted(object sender, EventArgs e)
+		{
+			this.Name = (sender as StringInputPanel).InputText;
 		}
 
 		#endregion Methods

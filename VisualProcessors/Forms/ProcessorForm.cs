@@ -80,16 +80,7 @@ namespace VisualProcessors.Forms
 			ProcessorInputView.Processor = Processor;
 
 			//Settings
-			Control c = processor.GetUserInterface();
-			if (c != null)
-			{
-				SettingsTab.Controls.Add(c);
-				c.Size = c.PreferredSize;
-				c.Location = new Point((SettingsTab.Size.Width - c.Size.Width) / 2, (SettingsTab.Size.Height - c.Size.Height) / 2);
-
-				//c.Anchor = AnchorStyles.None;
-				c.Dock = DockStyle.Fill;
-			}
+			processor.GetUserInterface(SettingsPanel);
 
 			//Output
 			ProcessorOutputView.Pipeline = Pipeline;

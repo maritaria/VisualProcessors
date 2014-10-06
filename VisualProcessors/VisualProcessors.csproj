@@ -48,11 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\BasicSettingsPanel.cs">
+    <Compile Include="Controls\StringInputPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\BasicSettingsPanel.Designer.cs">
-      <DependentUpon>BasicSettingsPanel.cs</DependentUpon>
+    <Compile Include="Controls\StringInputPanel.Designer.cs">
+      <DependentUpon>StringInputPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\CodePanel.cs">
       <SubType>UserControl</SubType>
@@ -114,8 +114,8 @@
     <Compile Include="Processing\XmlAnything.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Controls\BasicSettingsPanel.resx">
-      <DependentUpon>BasicSettingsPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\StringInputPanel.resx">
+      <DependentUpon>StringInputPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CodePanel.resx">
       <DependentUpon>CodePanel.cs</DependentUpon>

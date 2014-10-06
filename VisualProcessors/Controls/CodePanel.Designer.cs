@@ -83,7 +83,7 @@
 			// MainSplitContainer.Panel1
 			// 
 			this.MainSplitContainer.Panel1.Controls.Add(this.CodeBox);
-			this.MainSplitContainer.Panel1MinSize = 65;
+			this.MainSplitContainer.Panel1MinSize = 0;
 			// 
 			// MainSplitContainer.Panel2
 			// 

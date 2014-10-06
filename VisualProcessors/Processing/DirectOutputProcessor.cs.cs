@@ -23,12 +23,14 @@ namespace VisualProcessors.Processing
 			AddInputChannel("Input", false);
 		}
 
-		public override Control GetUserInterface()
+		public override void GetUserInterface(Panel panel)
 		{
 			Label l = new Label();
 			guis.Add(l);
 			l.Text = "No input available yet";
-			return l;
+			l.Dock = DockStyle.Top;
+			panel.Controls.Add(l);
+			base.GetUserInterface(panel);
 		}
 
 		protected override void Process()
@@ -39,7 +41,6 @@ namespace VisualProcessors.Processing
 				MethodInvoker action = delegate { l.Text = value.ToString(); };
 				l.BeginInvoke(action);
 			}
-			Console.WriteLine(Name + " Received: " + value);
 		}
 	}
 }
