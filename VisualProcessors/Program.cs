@@ -43,7 +43,7 @@ namespace VisualProcessors
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new PipelineForm(p));
+			Application.Run(new PipelineForm(dp));
 		}
 	}
 }

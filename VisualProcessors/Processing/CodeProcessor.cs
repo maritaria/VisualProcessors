@@ -31,7 +31,10 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output2");
 			AddOutputChannel("Output3");
 
-			Code = "//Your code here";
+			Code = "public static void Process(CodeProcessor processor)" + Environment.NewLine +
+				"{" + Environment.NewLine +
+				"\tthrow new Exception();" + Environment.NewLine +
+				"}";
 		}
 
 		public string Code { get; set; }
@@ -40,7 +43,7 @@ namespace VisualProcessors.Processing
 
 		public override void GetUserInterface(Panel panel)
 		{
-			CodePanel cpanel = new CodePanel(this);
+			CodePanel cpanel = new CodePanel(this, this.Code);
 			cpanel.Dock = DockStyle.Fill;
 			panel.Controls.Add(cpanel);
 			base.GetUserInterface(panel);
@@ -50,8 +53,32 @@ namespace VisualProcessors.Processing
 		{
 			if (ProcessFunction != null)
 			{
-				ProcessFunction(this);
+				try
+				{
+					ProcessFunction(this);
+				}
+				catch (Exception e)
+				{
+					MessageBox.Show(e.ToString());
+					OnRequestExecutionHalt();
+				}
 			}
 		}
+
+		#region IXmlSerializable Members
+
+		public override void ReadXml(XmlReader reader)
+		{
+			Code = reader.GetAttribute("Code");
+			base.ReadXml(reader);
+		}
+
+		public override void WriteXml(XmlWriter writer)
+		{
+			writer.WriteAttributeString("Code", Code);
+			base.WriteXml(writer);
+		}
+
+		#endregion IXmlSerializable Members
 	}
 }

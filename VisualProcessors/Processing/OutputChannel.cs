@@ -255,7 +255,7 @@ namespace VisualProcessors.Processing
 			public void ReadXml(XmlReader reader)
 			{
 				Owner = reader.GetAttribute("Owner");
-				Owner = reader.GetAttribute("Name");
+				Name = reader.GetAttribute("Name");
 				reader.Read();
 			}
 

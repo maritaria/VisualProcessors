@@ -34,6 +34,7 @@ namespace VisualProcessors.Processing
 
 		public GraphPlotter()
 		{
+			SetupLists();
 		}
 
 		public GraphPlotter(string name)
@@ -42,6 +43,10 @@ namespace VisualProcessors.Processing
 			AddInputChannel("Red", true);
 			AddInputChannel("Blue", true);
 			AddInputChannel("Green", true);
+			SetupLists();
+		}
+		private void SetupLists()
+		{
 			m_PointListRed = new RollingPointPairList(2000);
 			m_PointListBlue = new RollingPointPairList(20);
 			m_PointListGreen = new RollingPointPairList(20);

@@ -312,14 +312,14 @@ namespace VisualProcessors.Processing
 			m_OutputChannels.Clear();
 			foreach (InputChannel input in m_RawInput)
 			{
-				AddInputChannel(input);
 				input.Build(pipeline);
+				AddInputChannel(input);
 			}
 			m_RawInput.Clear();
 			foreach (OutputChannel output in m_RawOutput)
 			{
-				m_OutputChannels.Add(output);
 				output.Build(pipeline);
+				AddOutputChannel(output);
 			}
 			m_RawOutput.Clear();
 		}
@@ -371,7 +371,9 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public event EventHandler OutputChannelRemoved;
 
-		private void OnInputChannelAdded()
+		public event EventHandler RequestExecutionHalt;
+
+		protected void OnInputChannelAdded()
 		{
 			if (InputChannelAdded != null)
 			{
@@ -379,7 +381,7 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		private void OnInputChannelRemoved()
+		protected void OnInputChannelRemoved()
 		{
 			if (InputChannelRemoved != null)
 			{
@@ -387,7 +389,7 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		private void OnLinkAdded()
+		protected void OnLinkAdded()
 		{
 			if (LinkAdded != null)
 			{
@@ -395,11 +397,35 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		private void OnLinkRemoved()
+		protected void OnLinkRemoved()
 		{
 			if (LinkRemoved != null)
 			{
 				LinkRemoved(this, EventArgs.Empty);
+			}
+		}
+
+		protected void OnOutputChannelAdded()
+		{
+			if (OutputChannelAdded != null)
+			{
+				OutputChannelAdded(this, EventArgs.Empty);
+			}
+		}
+
+		protected void OnOutputChannelRemoved()
+		{
+			if (OutputChannelRemoved != null)
+			{
+				OutputChannelRemoved(this, EventArgs.Empty);
+			}
+		}
+
+		protected void OnRequestExecutionHalt()
+		{
+			if (RequestExecutionHalt != null)
+			{
+				RequestExecutionHalt(this, EventArgs.Empty);
 			}
 		}
 
@@ -408,22 +434,6 @@ namespace VisualProcessors.Processing
 			if (NameChanged != null)
 			{
 				NameChanged(this, oldname, newname);
-			}
-		}
-
-		private void OnOutputChannelAdded()
-		{
-			if (OutputChannelAdded != null)
-			{
-				OutputChannelAdded(this, EventArgs.Empty);
-			}
-		}
-
-		private void OnOutputChannelRemoved()
-		{
-			if (OutputChannelRemoved != null)
-			{
-				OutputChannelRemoved(this, EventArgs.Empty);
 			}
 		}
 
