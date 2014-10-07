@@ -42,6 +42,26 @@ namespace ZedGraph
 		private int	maxPts;
 
 		/// <summary>
+		/// Read only property that determines if all items in the <see cref="CurveList"/> are
+		/// Pies.
+		/// </summary>
+		public bool IsPieOnly
+		{
+			get
+			{
+				bool hasPie = false;
+				foreach (CurveItem curve in this)
+				{
+					if (!curve.IsPie)
+						return false;
+					else
+						hasPie = true;
+				}
+				return hasPie;
+			}
+		}
+
+		/// <summary>
 		/// Read only value for the maximum number of points in any of the curves
 		/// in the list.
 		/// </summary>
@@ -113,27 +133,6 @@ namespace ZedGraph
 				return count;
 			}
 		}
-
-		/// <summary>
-		/// Read only property that determines if all items in the <see cref="CurveList"/> are
-		/// Pies.
-		/// </summary>
-		public bool IsPieOnly
-		{
- 			get
- 			{
-				bool hasPie = false;
- 				foreach ( CurveItem curve in this )
- 				{
- 					if ( !curve.IsPie )
- 						return false;
-					else
-						hasPie = true;
- 				}
-				return hasPie;
- 			}
-		}
-
 		/// <summary>
 		/// Determine if there is any data in any of the <see cref="CurveItem"/>
 		/// objects for this graph.  This method does not verify valid data, it
@@ -176,6 +175,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public CurveList Clone()
+		{
+			return new CurveList(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -184,17 +192,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public CurveList Clone()
-		{
-			return new CurveList( this );
-		}
-
-		
 	#endregion
 
 	#region IEnumerable Methods
@@ -346,15 +343,6 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Sorts the list according to the point values at the specified index and
-		/// for the specified axis.
-		/// </summary>
-		public void Sort( SortType type, int index )
-		{
-			this.Sort( new CurveItem.Comparer( type, index ) );
-		}
-
-		/// <summary>
 		/// Move the position of the object at the specified index
 		/// to the new relative position in the list.</summary>
 		/// <remarks>For Graphic type objects, this method controls the
@@ -371,29 +359,136 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The new position for the object, or -1 if the object
 		/// was not found.</returns>
-		public int Move( int index, int relativePos )
+		public int Move(int index, int relativePos)
 		{
-			if ( index < 0 || index >= Count )
+			if (index < 0 || index >= Count)
 				return -1;
 
 			CurveItem curve = this[index];
-			this.RemoveAt( index );
+			this.RemoveAt(index);
 
 			index += relativePos;
-			if ( index < 0 )
+			if (index < 0)
 				index = 0;
-			if ( index > Count )
+			if (index > Count)
 				index = Count;
 
-			Insert( index, curve );
+			Insert(index, curve);
 			return index;
 		}
 
-
-
+		/// <summary>
+		/// Sorts the list according to the point values at the specified index and
+		/// for the specified axis.
+		/// </summary>
+		public void Sort( SortType type, int index )
+		{
+			this.Sort( new CurveItem.Comparer( type, index ) );
+		}
 	#endregion
 
 	#region Rendering Methods
+
+		/// <summary>
+		/// Render all the <see cref="CurveItem"/> objects in the list to the
+		/// specified <see cref="Graphics"/>
+		/// device by calling the <see cref="CurveItem.Draw"/> member function of
+		/// each <see cref="CurveItem"/> object.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		public void Draw(Graphics g, GraphPane pane, float scaleFactor)
+		{
+			// Configure the accumulator for stacked bars
+			//Bar.ResetBarStack();
+
+			// Count the number of BarItems in the curvelist
+			int pos = this.NumBars;
+
+			// sorted overlay bars are a special case, since they are sorted independently at each
+			// ordinal position.
+			if (pane._barSettings.Type == BarType.SortedOverlay)
+			{
+				// First, create a new curveList with references (not clones) of the curves
+				CurveList tempList = new CurveList();
+				foreach (CurveItem curve in this)
+					if (curve.IsBar)
+						tempList.Add((CurveItem)curve);
+
+				// Loop through the bars, graphing each ordinal position separately
+				for (int i = 0; i < this.maxPts; i++)
+				{
+					// At each ordinal position, sort the curves according to the value axis value
+					tempList.Sort(pane._barSettings.Base == BarBase.X ? SortType.YValues : SortType.XValues, i);
+					// plot the bars for the current ordinal position, in sorted order
+					foreach (BarItem barItem in tempList)
+						barItem.Bar.DrawSingleBar(g, pane, barItem,
+							((BarItem)barItem).BaseAxis(pane),
+							((BarItem)barItem).ValueAxis(pane),
+							0, i, ((BarItem)barItem).GetBarWidth(pane), scaleFactor);
+				}
+			}
+
+			// Loop for each curve in reverse order to pick up the remaining curves
+			// The reverse order is done so that curves that are later in the list are plotted behind
+			// curves that are earlier in the list
+
+			for (int i = this.Count - 1; i >= 0; i--)
+			{
+				CurveItem curve = this[i];
+
+				if (curve.IsBar)
+					pos--;
+
+				// Render the curve
+
+				//	if it's a sorted overlay bar type, it's already been done above
+				if (!(curve.IsBar && pane._barSettings.Type == BarType.SortedOverlay))
+				{
+					curve.Draw(g, pane, pos, scaleFactor);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Find the ordinal position of the specified <see cref="BarItem" /> within
+		/// the <see cref="CurveList" />.  This position only counts <see cef="BarItem" />
+		/// types, ignoring all other types.
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> of interest</param>
+		/// <param name="barItem">The <see cref="BarItem" /> for which to search.</param>
+		/// <returns>The ordinal position of the specified bar, or -1 if the bar
+		/// was not found.</returns>
+		public int GetBarItemPos(GraphPane pane, BarItem barItem)
+		{
+			if (pane._barSettings.Type == BarType.Overlay ||
+					pane._barSettings.Type == BarType.Stack ||
+					pane._barSettings.Type == BarType.PercentStack)
+				return 0;
+
+			int i = 0;
+			foreach (CurveItem curve in this)
+			{
+				if (curve == barItem)
+					return i;
+				else if (curve is BarItem)
+					i++;
+			}
+
+			return -1;
+		}
 
 		/// <summary>
 		/// Go through each <see cref="CurveItem"/> object in the collection,
@@ -559,16 +654,6 @@ namespace ZedGraph
 				axis.Scale.SetRange( pane, axis );
 		}
 
-		private void InitScale( Scale scale, bool isBoundedRanges )
-		{
-			scale._rangeMin = double.MaxValue;
-			scale._rangeMax = double.MinValue;
-			scale._lBound = ( isBoundedRanges && !scale._minAuto ) ?
-				scale._min : double.MinValue;
-			scale._uBound = ( isBoundedRanges && !scale._maxAuto ) ?
-				scale._max : double.MaxValue;
-		}
-
 		/// <summary>
 		/// Calculate the range for stacked bars and lines.
 		/// </summary>
@@ -587,156 +672,63 @@ namespace ZedGraph
 		/// <param name="tXMaxVal">The maximum X value so far</param>
 		/// <param name="tYMaxVal">The maximum Y value so far</param>
 		/// <seealso cref="GraphPane.IsBoundedRanges"/>
-		private void GetStackRange( GraphPane pane, CurveItem curve, out double tXMinVal,
-									out double tYMinVal, out double tXMaxVal, out double tYMaxVal )
+		private void GetStackRange(GraphPane pane, CurveItem curve, out double tXMinVal,
+									out double tYMinVal, out double tXMaxVal, out double tYMaxVal)
 		{
 			// initialize the values to outrageous ones to start
 			tXMinVal = tYMinVal = Double.MaxValue;
 			tXMaxVal = tYMaxVal = Double.MinValue;
 
-			ValueHandler valueHandler = new ValueHandler( pane, false );
-			Axis baseAxis = curve.BaseAxis( pane );
+			ValueHandler valueHandler = new ValueHandler(pane, false);
+			Axis baseAxis = curve.BaseAxis(pane);
 			bool isXBase = baseAxis is XAxis || baseAxis is X2Axis;
 
 			double lowVal, baseVal, hiVal;
 
-			for ( int i=0; i<curve.Points.Count; i++ )
+			for (int i = 0; i < curve.Points.Count; i++)
 			{
-				valueHandler.GetValues( curve, i, out baseVal, out lowVal, out hiVal );
+				valueHandler.GetValues(curve, i, out baseVal, out lowVal, out hiVal);
 				double x = isXBase ? baseVal : hiVal;
 				double y = isXBase ? hiVal : baseVal;
 
-				if ( x != PointPair.Missing && y != PointPair.Missing && lowVal != PointPair.Missing )
+				if (x != PointPair.Missing && y != PointPair.Missing && lowVal != PointPair.Missing)
 				{
-					if ( x < tXMinVal )
+					if (x < tXMinVal)
 						tXMinVal = x;
-					if ( x > tXMaxVal )
+					if (x > tXMaxVal)
 						tXMaxVal = x;
-					if ( y < tYMinVal )
+					if (y < tYMinVal)
 						tYMinVal = y;
-					if ( y > tYMaxVal )
+					if (y > tYMaxVal)
 						tYMaxVal = y;
 
-					if ( !isXBase )
+					if (!isXBase)
 					{
-						if ( lowVal < tXMinVal )
+						if (lowVal < tXMinVal)
 							tXMinVal = lowVal;
-						if ( lowVal > tXMaxVal )
+						if (lowVal > tXMaxVal)
 							tXMaxVal = lowVal;
 					}
 					else
 					{
-						if ( lowVal < tYMinVal )
+						if (lowVal < tYMinVal)
 							tYMinVal = lowVal;
-						if ( lowVal > tYMaxVal )
+						if (lowVal > tYMaxVal)
 							tYMaxVal = lowVal;
 					}
 				}
 			}
 		}
 
-		/// <summary>
-		/// Render all the <see cref="CurveItem"/> objects in the list to the
-		/// specified <see cref="Graphics"/>
-		/// device by calling the <see cref="CurveItem.Draw"/> member function of
-		/// each <see cref="CurveItem"/> object.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void Draw( Graphics g, GraphPane pane, float scaleFactor )
+		private void InitScale(Scale scale, bool isBoundedRanges)
 		{
-			// Configure the accumulator for stacked bars
-			//Bar.ResetBarStack();
-
-			// Count the number of BarItems in the curvelist
-			int pos = this.NumBars;
-			
-			// sorted overlay bars are a special case, since they are sorted independently at each
-			// ordinal position.
-			if ( pane._barSettings.Type == BarType.SortedOverlay )
-			{
-				// First, create a new curveList with references (not clones) of the curves
-				CurveList tempList = new CurveList();
-				foreach ( CurveItem curve in this )
-					if ( curve.IsBar )
-						tempList.Add( (CurveItem) curve );
-				
-				// Loop through the bars, graphing each ordinal position separately
-				for ( int i=0; i<this.maxPts; i++ )
-				{
-					// At each ordinal position, sort the curves according to the value axis value
-					tempList.Sort( pane._barSettings.Base == BarBase.X ? SortType.YValues : SortType.XValues, i );
-					// plot the bars for the current ordinal position, in sorted order
-					foreach ( BarItem barItem in tempList )
-						barItem.Bar.DrawSingleBar( g, pane, barItem,
-							((BarItem)barItem).BaseAxis( pane ),
-							((BarItem)barItem).ValueAxis( pane ),
-							0, i, ( (BarItem)barItem ).GetBarWidth( pane ), scaleFactor );
-				}
-			}
-
-			// Loop for each curve in reverse order to pick up the remaining curves
-			// The reverse order is done so that curves that are later in the list are plotted behind
-			// curves that are earlier in the list
-
-			for ( int i = this.Count - 1; i >= 0; i-- )
-			{
-				CurveItem curve = this[i];
-				
-				if ( curve.IsBar)
-					pos--;
-					
-				// Render the curve
-
-				//	if it's a sorted overlay bar type, it's already been done above
-				if ( !( curve.IsBar && pane._barSettings.Type == BarType.SortedOverlay ) )
-				{
-					curve.Draw( g, pane, pos, scaleFactor );
-				}
-			}
+			scale._rangeMin = double.MaxValue;
+			scale._rangeMax = double.MinValue;
+			scale._lBound = ( isBoundedRanges && !scale._minAuto ) ?
+				scale._min : double.MinValue;
+			scale._uBound = ( isBoundedRanges && !scale._maxAuto ) ?
+				scale._max : double.MaxValue;
 		}
-
-
-		/// <summary>
-		/// Find the ordinal position of the specified <see cref="BarItem" /> within
-		/// the <see cref="CurveList" />.  This position only counts <see cef="BarItem" />
-		/// types, ignoring all other types.
-		/// </summary>
-		/// <param name="pane">The <see cref="GraphPane" /> of interest</param>
-		/// <param name="barItem">The <see cref="BarItem" /> for which to search.</param>
-		/// <returns>The ordinal position of the specified bar, or -1 if the bar
-		/// was not found.</returns>
-		public int GetBarItemPos( GraphPane pane, BarItem barItem )
-		{
-			if (	pane._barSettings.Type == BarType.Overlay ||
-					pane._barSettings.Type == BarType.Stack ||
-					pane._barSettings.Type == BarType.PercentStack)
-				return 0;
-
-			int i = 0;
-			foreach ( CurveItem curve in this )
-			{
-				if ( curve == barItem )
-					return i;
-				else if ( curve is BarItem )
-					i++;
-			}
-
-			return -1;
-		}
-
 	#endregion
 
 	}

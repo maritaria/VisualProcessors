@@ -12,6 +12,7 @@ using VisualProcessors;
 using VisualProcessors.Controls;
 using VisualProcessors.Forms;
 using VisualProcessors.Processing;
+using System.IO;
 
 namespace VisualProcessors.Forms
 {
@@ -24,6 +25,17 @@ namespace VisualProcessors.Forms
 		private Pipeline m_Pipeline;
 		private bool m_PipelineStatusChanging = false;
 
+		public Pipeline CurrentPipeline
+		{
+			get
+			{
+				return m_Pipeline;
+			}
+			set
+			{
+				SetPipeline(value);
+			}
+		}
 		public MdiClient MdiClient
 		{
 			get
@@ -36,22 +48,10 @@ namespace VisualProcessors.Forms
 
 		#region Constructor
 
-		public PipelineForm(Pipeline pipeline)
+		public PipelineForm()
 		{
 			InitializeComponent();
 
-			//Initialize Pipeline
-			m_Pipeline = pipeline;
-			m_Pipeline.Started += PipelineStarted;
-			m_Pipeline.Stopped += PipelineStopped;
-			if (m_Pipeline.IsRunning)
-			{
-				//Update GUI to set running state
-			}
-			else
-			{
-				//Update GUI to set paused state
-			}
 			foreach (Control c in Controls)
 			{
 				if (c is MdiClient)
@@ -67,15 +67,8 @@ namespace VisualProcessors.Forms
 			m_MdiClient.MouseClick += MdiClientMouseClick;
 			m_MdiClient.BackColor = SystemColors.ActiveCaption;
 			m_MdiClientHelper = new MdiClientHelper(m_MdiClient);
-
-			//Add existing Processors of the Pipeline instance
-			foreach (string name in pipeline.GetListOfNames())
-			{
-				AddProcessor(pipeline.GetByName(name));
-			}
-
 			//Toolbox
-			Toolbox.Pipeline = this;
+			Toolbox.PipelineForm = this;
 		}
 
 		#endregion Constructor
@@ -89,6 +82,34 @@ namespace VisualProcessors.Forms
 		public void InvalidateFormView()
 		{
 			m_MdiClient.Invalidate();
+		}
+
+		public void SetPipeline(Pipeline pipeline)
+		{
+			Pipeline old = CurrentPipeline;
+			if (CurrentPipeline != null)
+			{
+				CurrentPipeline.Started -= PipelineStarted;
+				CurrentPipeline.Stopped -= PipelineStopped;
+				CurrentPipeline.Stop();
+			}
+			foreach(ProcessorForm pf in m_ProcessorForms)
+			{
+				pf.Close();
+			}
+			m_ProcessorForms.Clear();
+			m_Pipeline = pipeline;
+			if (CurrentPipeline != null)
+			{
+				CurrentPipeline.Started += PipelineStarted;
+				CurrentPipeline.Stopped += PipelineStopped;
+				CurrentPipeline.Stop();
+				foreach (string name in pipeline.GetListOfNames())
+				{
+					AddProcessor(pipeline.GetByName(name));
+				}
+			}
+			OnPipelineChanged(old,CurrentPipeline);
 		}
 
 		private Point CalculateChannelLink(Form a, Point end)
@@ -149,9 +170,9 @@ namespace VisualProcessors.Forms
 				f.MdiParent = this;
 				f.Show();
 			}
-			if (!m_Pipeline.IsProcessorNameTaken(p.Name))
+			if (!CurrentPipeline.IsProcessorNameTaken(p.Name))
 			{
-				m_Pipeline.AddProcessor(p);
+				CurrentPipeline.AddProcessor(p);
 			}
 			return GetProcessorForm(p.Name);
 		}
@@ -198,7 +219,7 @@ namespace VisualProcessors.Forms
 			{
 				return false;
 			}
-			m_Pipeline.RemoveProcessor(pf.Processor);
+			CurrentPipeline.RemoveProcessor(pf.Processor);
 			pf.Processor.Dispose();
 			bool result = m_ProcessorForms.Remove(pf);
 			pf.Close();
@@ -320,6 +341,20 @@ namespace VisualProcessors.Forms
 
 		#endregion Processor Linking
 
+		#region Events
+
+		public event Action<Pipeline,Pipeline> PipelineChanged;
+
+		private void OnPipelineChanged(Pipeline oldPipeline, Pipeline newPipeline)
+		{
+			if (PipelineChanged!=null)
+			{
+				PipelineChanged(oldPipeline,newPipeline);
+			}
+		}
+
+		#endregion
+
 		#region EventHandlers
 
 		private Point m_ContextLocation;
@@ -440,10 +475,10 @@ namespace VisualProcessors.Forms
 			myBuffer.Dispose();
 		}
 
-
 		private void PipelineStarted(object sender, EventArgs e)
 		{
 			m_PipelineStatusChanging = true;
+
 			//Update GUI to set running state
 			m_PipelineStatusChanging = false;
 		}
@@ -451,12 +486,119 @@ namespace VisualProcessors.Forms
 		private void PipelineStopped(object sender, EventArgs e)
 		{
 			m_PipelineStatusChanging = true;
+
 			//Update GUI to set paused state
 			m_PipelineStatusChanging = false;
 		}
-		
-		#endregion EventHandlers
 
+		#endregion EventHandlers
+		
+		#region MenuStrip Implementation
+
+		#region Menu: File
+
+		private bool m_IsSaved = false;
+		private string m_CurrentFilepath = "";
+
+		private void newToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!m_IsSaved)
+			{
+				if (ConfirmNoSave())
+				{
+					m_CurrentFilepath = "";
+					CreateNew();
+				}
+			}
+		}
+		private void openToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!m_IsSaved)
+			{
+				if (ConfirmNoSave())
+				{
+				}
+			}
+		}
+		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SaveFile();
+		}
+
+		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			m_CurrentFilepath = SaveFileAs();
+		}
+
+		private bool ConfirmNoSave()
+		{
+			DialogResult result = MessageBox.Show("Do you want to save?", "Unsaved edits", MessageBoxButtons.YesNoCancel);
+			switch(result)
+			{
+				case System.Windows.Forms.DialogResult.Cancel:
+					return false;
+				case System.Windows.Forms.DialogResult.No:
+					return true;
+				case System.Windows.Forms.DialogResult.Yes:
+					SaveFile();
+					return true;
+			}
+			return true;
+		}
+
+
+		public void SaveFile()
+		{
+			if (m_CurrentFilepath != "")
+			{
+				FileStream file = new FileStream(m_CurrentFilepath, FileMode.Create);
+				CurrentPipeline.SaveToFile(file);
+				file.Close();
+			}
+			else
+			{
+				m_CurrentFilepath = SaveFileAs();
+			}
+		}
+		public string SaveFileAs()
+		{
+			return "";
+		}
+
+		public void LoadFile()
+		{
+			MainMenuOpenFileDialog.InitialDirectory = m_CurrentFilepath;
+			DialogResult result = MainMenuOpenFileDialog.ShowDialog();
+			if (result == DialogResult.Cancel)
+			{
+				return;
+			}
+			m_CurrentFilepath = MainMenuOpenFileDialog.FileName;
+			FileStream file = new FileStream(m_CurrentFilepath, FileMode.Open);
+			CurrentPipeline = Pipeline.LoadFromFile(file);
+			CurrentPipeline.Started += PipelineStarted;
+			CurrentPipeline.Stopped += PipelineStopped;
+			if (CurrentPipeline.IsRunning)
+			{
+				//Update GUI to set running state
+			}
+			else
+			{
+				//Update GUI to set paused state
+			}
+			file.Close();
+		}
+
+		public void CreateNew()
+		{
+			CurrentPipeline = new Pipeline();
+		}
+
+		#endregion
+
+
+
+		#endregion
 
 		#region Interop
 

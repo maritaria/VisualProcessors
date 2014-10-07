@@ -39,25 +39,25 @@ namespace ZedGraph
 	#region Fields
 
 		/// <summary>
-		/// private field that saves the paneLayout format specified when
-		/// <see cref="SetLayout(PaneLayout)"/> was called. This value will
-		/// default to <see cref="MasterPane.Default.PaneLayout"/> if
-		/// <see cref="SetLayout(PaneLayout)"/> (or an overload) was never called.
-		/// </summary>
-		internal PaneLayout _paneLayout;
-
-		/// <summary>
-		/// Private field that stores the boolean value that determines whether
-		/// <see cref="_countList"/> is specifying rows or columns.
-		/// </summary>
-		internal bool _isColumnSpecified;
-		/// <summary>
 		/// private field that stores the row/column item count that was specified to the
 		/// <see cref="SetLayout(bool,int[],float[])"/> method.  This values will be
 		/// null if <see cref="SetLayout(bool,int[],float[])"/> was never called.
 		/// </summary>
 		internal int[] _countList;
 
+		/// <summary>
+		/// Private field that stores the boolean value that determines whether
+		/// <see cref="_countList"/> is specifying rows or columns.
+		/// </summary>
+		internal bool _isColumnSpecified;
+
+		/// <summary>
+		/// private field that saves the paneLayout format specified when
+		/// <see cref="SetLayout(PaneLayout)"/> was called. This value will
+		/// default to <see cref="MasterPane.Default.PaneLayout"/> if
+		/// <see cref="SetLayout(PaneLayout)"/> (or an overload) was never called.
+		/// </summary>
+		internal PaneLayout _paneLayout;
 		/// <summary>
 		/// private field that stores the row/column size proportional values as specified
 		/// to the <see cref="SetLayout(bool,int[],float[])"/> method.  This
@@ -70,25 +70,26 @@ namespace ZedGraph
 
 	#region Constructors
 
-		internal void Init()
-		{
-			_paneLayout = MasterPane.Default.PaneLayout;
-			_countList = null;
-			_isColumnSpecified = false;
-			_prop = null;
-		}
-
 		internal PaneLayoutMgr()
 		{
 			Init();
 		}
 
-		internal PaneLayoutMgr( PaneLayoutMgr rhs )
+		internal PaneLayoutMgr(PaneLayoutMgr rhs)
 		{
 			_paneLayout = rhs._paneLayout;
 			_countList = rhs._countList;
 			_isColumnSpecified = rhs._isColumnSpecified;
 			_prop = rhs._prop;
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public PaneLayoutMgr Clone()
+		{
+			return new PaneLayoutMgr(this);
 		}
 
 		/// <summary>
@@ -101,15 +102,13 @@ namespace ZedGraph
 			return this.Clone();
 		}
 
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public PaneLayoutMgr Clone()
+		internal void Init()
 		{
-			return new PaneLayoutMgr( this );
+			_paneLayout = MasterPane.Default.PaneLayout;
+			_countList = null;
+			_isColumnSpecified = false;
+			_prop = null;
 		}
-
 	#endregion
 
 	#region Serialization
@@ -157,6 +156,97 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
+
+		/// <summary>
+		/// Modify the <see cref="GraphPane" /> <see cref="PaneBase.Rect" /> sizes of each
+		/// <see cref="GraphPane" /> such that they fit within the <see cref="MasterPane" />
+		/// in a pre-configured layout.
+		/// </summary>
+		/// <remarks>The <see cref="SetLayout(PaneLayout)" /> method (and overloads) is
+		/// used for setting the layout configuration.</remarks>
+		/// <param name="g">A <see cref="Graphics" /> instance to be used for font sizing,
+		/// etc. in determining the layout configuration.</param>
+		/// <param name="master">The <see cref="MasterPane" /> instance which is to
+		/// be resized.</param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
+		public void DoLayout(Graphics g, MasterPane master)
+		{
+			if (this._countList != null)
+				DoLayout(g, master, this._isColumnSpecified, this._countList, this._prop);
+			else
+			{
+				int count = master.PaneList.Count;
+				if (count == 0)
+					return;
+
+				int rows,
+						cols,
+						root = (int)(Math.Sqrt((double)count) + 0.9999999);
+
+				//float[] widthList = new float[5];
+
+				switch (_paneLayout)
+				{
+					case PaneLayout.ForceSquare:
+						rows = root;
+						cols = root;
+						DoLayout(g, master, rows, cols);
+						break;
+					case PaneLayout.SingleColumn:
+						rows = count;
+						cols = 1;
+						DoLayout(g, master, rows, cols);
+						break;
+					case PaneLayout.SingleRow:
+						rows = 1;
+						cols = count;
+						DoLayout(g, master, rows, cols);
+						break;
+					default:
+					case PaneLayout.SquareColPreferred:
+						rows = root;
+						cols = root;
+						if (count <= root * (root - 1))
+							rows--;
+						DoLayout(g, master, rows, cols);
+						break;
+					case PaneLayout.SquareRowPreferred:
+						rows = root;
+						cols = root;
+						if (count <= root * (root - 1))
+							cols--;
+						DoLayout(g, master, rows, cols);
+						break;
+					case PaneLayout.ExplicitCol12:
+						DoLayout(g, master, true, new int[2] { 1, 2 }, null);
+						break;
+					case PaneLayout.ExplicitCol21:
+						DoLayout(g, master, true, new int[2] { 2, 1 }, null);
+						break;
+					case PaneLayout.ExplicitCol23:
+						DoLayout(g, master, true, new int[2] { 2, 3 }, null);
+						break;
+					case PaneLayout.ExplicitCol32:
+						DoLayout(g, master, true, new int[2] { 3, 2 }, null);
+						break;
+					case PaneLayout.ExplicitRow12:
+						DoLayout(g, master, false, new int[2] { 1, 2 }, null);
+						break;
+					case PaneLayout.ExplicitRow21:
+						DoLayout(g, master, false, new int[2] { 2, 1 }, null);
+						break;
+					case PaneLayout.ExplicitRow23:
+						DoLayout(g, master, false, new int[2] { 2, 3 }, null);
+						break;
+					case PaneLayout.ExplicitRow32:
+						DoLayout(g, master, false, new int[2] { 3, 2 }, null);
+						break;
+				}
+			}
+		}
 
 		/// <overloads>The SetLayout() methods setup the desired layout of the
 		/// <see cref="GraphPane" /> objects within a <see cref="MasterPane" />.  These functions
@@ -300,98 +390,6 @@ namespace ZedGraph
 				_countList = countList;
 			}
 		}
-
-		/// <summary>
-		/// Modify the <see cref="GraphPane" /> <see cref="PaneBase.Rect" /> sizes of each
-		/// <see cref="GraphPane" /> such that they fit within the <see cref="MasterPane" />
-		/// in a pre-configured layout.
-		/// </summary>
-		/// <remarks>The <see cref="SetLayout(PaneLayout)" /> method (and overloads) is
-		/// used for setting the layout configuration.</remarks>
-		/// <param name="g">A <see cref="Graphics" /> instance to be used for font sizing,
-		/// etc. in determining the layout configuration.</param>
-		/// <param name="master">The <see cref="MasterPane" /> instance which is to
-		/// be resized.</param>
-		/// <seealso cref="SetLayout(PaneLayout)" />
-		/// <seealso cref="SetLayout(int,int)" />
-		/// <seealso cref="SetLayout(bool,int[])" />
-		/// <seealso cref="SetLayout(bool,int[],float[])" />
-		public void DoLayout( Graphics g, MasterPane master )
-		{
-			if ( this._countList != null )
-				DoLayout( g, master, this._isColumnSpecified, this._countList, this._prop );
-			else
-			{
-				int count = master.PaneList.Count;
-				if ( count == 0 )
-					return;
-
-				int rows,
-						cols,
-						root = (int)( Math.Sqrt( (double)count ) + 0.9999999 );
-
-				//float[] widthList = new float[5];
-
-				switch ( _paneLayout )
-				{
-					case PaneLayout.ForceSquare:
-						rows = root;
-						cols = root;
-						DoLayout( g, master, rows, cols );
-						break;
-					case PaneLayout.SingleColumn:
-						rows = count;
-						cols = 1;
-						DoLayout( g, master, rows, cols );
-						break;
-					case PaneLayout.SingleRow:
-						rows = 1;
-						cols = count;
-						DoLayout( g, master, rows, cols );
-						break;
-					default:
-					case PaneLayout.SquareColPreferred:
-						rows = root;
-						cols = root;
-						if ( count <= root * ( root - 1 ) )
-							rows--;
-						DoLayout( g, master, rows, cols );
-						break;
-					case PaneLayout.SquareRowPreferred:
-						rows = root;
-						cols = root;
-						if ( count <= root * ( root - 1 ) )
-							cols--;
-						DoLayout( g, master, rows, cols );
-						break;
-					case PaneLayout.ExplicitCol12:
-						DoLayout( g, master, true, new int[2] { 1, 2 }, null );
-						break;
-					case PaneLayout.ExplicitCol21:
-						DoLayout( g, master, true, new int[2] { 2, 1 }, null );
-						break;
-					case PaneLayout.ExplicitCol23:
-						DoLayout( g, master, true, new int[2] { 2, 3 }, null );
-						break;
-					case PaneLayout.ExplicitCol32:
-						DoLayout( g, master, true, new int[2] { 3, 2 }, null );
-						break;
-					case PaneLayout.ExplicitRow12:
-						DoLayout( g, master, false, new int[2] { 1, 2 }, null );
-						break;
-					case PaneLayout.ExplicitRow21:
-						DoLayout( g, master, false, new int[2] { 2, 1 }, null );
-						break;
-					case PaneLayout.ExplicitRow23:
-						DoLayout( g, master, false, new int[2] { 2, 3 }, null );
-						break;
-					case PaneLayout.ExplicitRow32:
-						DoLayout( g, master, false, new int[2] { 3, 2 }, null );
-						break;
-				}
-			}
-		}
-
 		/// <summary>
 		/// Internal method that applies a previously set layout with a specific
 		/// row and column count.  This method is only called by

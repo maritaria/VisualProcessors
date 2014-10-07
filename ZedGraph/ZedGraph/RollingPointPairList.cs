@@ -49,15 +49,14 @@ namespace ZedGraph
 	#region Fields
 
 		/// <summary>
-		/// An array of PointPair objects that acts as the underlying buffer.
-		/// </summary>
-		protected PointPair[] _mBuffer;
-
-		/// <summary>
 		/// The index of the previously enqueued item. -1 if buffer is empty.
 		/// </summary>
 		protected int _headIdx;
 
+		/// <summary>
+		/// An array of PointPair objects that acts as the underlying buffer.
+		/// </summary>
+		protected PointPair[] _mBuffer;
 		/// <summary>
 		/// The index of the next item to be dequeued. -1 if buffer is empty.
 		/// </summary>
@@ -201,22 +200,25 @@ namespace ZedGraph
 	#region Public Methods
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// Add a <see cref="PointPair"/> onto the head of the queue,
+		/// overwriting old values if the buffer is full.
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
+		/// <param name="item">The <see cref="PointPair" /> to be added.</param>
+		public void Add(PointPair item)
 		{
-			return this.Clone();
+			_mBuffer[GetNextIndex()] = item;
 		}
 
 		/// <summary>
-		/// Typesafe, deep-copy clone method.
+		/// Add an <see cref="IPointList"/> object to the head of the queue.
 		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public RollingPointPairList Clone()
-		{
-			return new RollingPointPairList( this );
+		/// <param name="pointList">A reference to the <see cref="IPointList"/> object to
+		/// be added</param>
+		public void Add(IPointList pointList)
+		{   // A slightly more efficient approach would be to determine where the new points should placed within
+			// the buffer and to then copy them in directly - updating the head and tail indexes appropriately.
+			for (int i = 0; i < pointList.Count; i++)
+				Add(pointList[i]);
 		}
 
 		/// <summary>
@@ -226,6 +228,153 @@ namespace ZedGraph
 		public void Clear()
 		{
 			_headIdx = _tailIdx = -1;
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public RollingPointPairList Clone()
+		{
+			return new RollingPointPairList(this);
+		}
+
+		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+		/// <summary>
+		/// Peek at the <see cref="PointPair" /> item at the head of the queue.
+		/// </summary>
+		/// <returns>The <see cref="PointPair" /> item at the head of the queue.
+		/// Throws an <see cref="InvalidOperationException" /> if the buffer was empty.
+		/// </returns>
+		public PointPair Peek()
+		{
+			if (_headIdx == -1)
+			{	// buffer is currently empty.
+				throw new InvalidOperationException("buffer is empty.");
+			}
+
+			return _mBuffer[_headIdx];
+		}
+
+		/// <summary>
+		/// Pop an item off the head of the queue.
+		/// </summary>
+		/// <returns>The popped item. Throws an exception if the buffer was empty.</returns>
+		public PointPair Pop()
+		{
+			if (_tailIdx == -1)
+			{	// buffer is currently empty.
+				throw new InvalidOperationException("buffer is empty.");
+			}
+
+			PointPair o = _mBuffer[_headIdx];
+
+			if (_tailIdx == _headIdx)
+			{	// The buffer is now empty.
+				_headIdx = _tailIdx = -1;
+				return o;
+			}
+
+			if (--_headIdx == -1)
+			{	// Wrap around.
+				_headIdx = _mBuffer.Length - 1;
+			}
+
+			return o;
+		}
+
+		/// <summary>
+		/// Remove an old item from the tail of the queue.
+		/// </summary>
+		/// <returns>The removed item. Throws an <see cref="InvalidOperationException" />
+		/// if the buffer was empty. 
+		/// Check the buffer's length (<see cref="Count" />) or the <see cref="IsEmpty" />
+		/// property to avoid exceptions.</returns>
+		public PointPair Remove()
+		{
+			if (_tailIdx == -1)
+			{	// buffer is currently empty.
+				throw new InvalidOperationException("buffer is empty.");
+			}
+
+			PointPair o = _mBuffer[_tailIdx];
+
+			if (_tailIdx == _headIdx)
+			{	// The buffer is now empty.
+				_headIdx = _tailIdx = -1;
+				return o;
+			}
+
+			if (++_tailIdx == _mBuffer.Length)
+			{	// Wrap around.
+				_tailIdx = 0;
+			}
+
+			return o;
+		}
+
+		/// <summary>
+		/// Remove the <see cref="PointPair" /> at the specified index
+		/// </summary>
+		/// <remarks>
+		/// All items in the queue that lie after <paramref name="index"/> will
+		/// be shifted back by one, and the queue will be one item shorter.
+		/// </remarks>
+		/// <param name="index">The ordinal position of the item to be removed.
+		/// Throws an <see cref="ArgumentOutOfRangeException" /> if index is less than
+		/// zero or greater than or equal to <see cref="Count" />
+		/// </param>
+		public void RemoveAt(int index)
+		{
+			int count = this.Count;
+
+			if (index >= count || index < 0)
+				throw new ArgumentOutOfRangeException();
+
+			// shift all the items that lie after index back by 1
+			for (int i = index + _tailIdx; i < _tailIdx + count - 1; i++)
+			{
+				i = (i >= _mBuffer.Length) ? 0 : i;
+				int j = i + 1;
+				j = (j >= _mBuffer.Length) ? 0 : j;
+				_mBuffer[i] = _mBuffer[j];
+			}
+
+			// Remove the item from the head (it's been duplicated already)
+			Pop();
+		}
+
+		/// <summary>
+		/// Remove a range of <see cref="PointPair" /> objects starting at the specified index
+		/// </summary>
+		/// <remarks>
+		/// All items in the queue that lie after <paramref name="index"/> will
+		/// be shifted back, and the queue will be <paramref name="count" /> items shorter.
+		/// </remarks>
+		/// <param name="index">The ordinal position of the item to be removed.
+		/// Throws an <see cref="ArgumentOutOfRangeException" /> if index is less than
+		/// zero or greater than or equal to <see cref="Count" />
+		/// </param>
+		/// <param name="count">The number of items to be removed.  Throws an
+		/// <see cref="ArgumentOutOfRangeException" /> if <paramref name="count" /> is less than zero
+		/// or greater than the total available items in the queue</param>
+		public void RemoveRange(int index, int count)
+		{
+			int totalCount = this.Count;
+
+			if (index >= totalCount || index < 0 || count < 0 || count > totalCount)
+				throw new ArgumentOutOfRangeException();
+
+			for (int i = 0; i < count; i++)
+				this.RemoveAt(index);
 		}
 
 		/// <summary>
@@ -259,158 +408,6 @@ namespace ZedGraph
 
 			return _headIdx;
 		}
-
-		/// <summary>
-		/// Add a <see cref="PointPair"/> onto the head of the queue,
-		/// overwriting old values if the buffer is full.
-		/// </summary>
-		/// <param name="item">The <see cref="PointPair" /> to be added.</param>
-		public void Add( PointPair item )
-		{
-			_mBuffer[ GetNextIndex() ] = item;
-		}
-
-		/// <summary>
-		/// Add an <see cref="IPointList"/> object to the head of the queue.
-		/// </summary>
-		/// <param name="pointList">A reference to the <see cref="IPointList"/> object to
-		/// be added</param>
-		public void Add( IPointList pointList )
-		{   // A slightly more efficient approach would be to determine where the new points should placed within
-			// the buffer and to then copy them in directly - updating the head and tail indexes appropriately.
-			for ( int i = 0; i < pointList.Count; i++ )
-				Add( pointList[i] );
-		}
-
-		/// <summary>
-		/// Remove an old item from the tail of the queue.
-		/// </summary>
-		/// <returns>The removed item. Throws an <see cref="InvalidOperationException" />
-		/// if the buffer was empty. 
-		/// Check the buffer's length (<see cref="Count" />) or the <see cref="IsEmpty" />
-		/// property to avoid exceptions.</returns>
-		public PointPair Remove()
-		{
-			if ( _tailIdx == -1 )
-			{	// buffer is currently empty.
-				throw new InvalidOperationException( "buffer is empty." );
-			}
-
-			PointPair o = _mBuffer[_tailIdx];
-
-			if ( _tailIdx == _headIdx )
-			{	// The buffer is now empty.
-				_headIdx = _tailIdx = -1;
-				return o;
-			}
-
-			if ( ++_tailIdx == _mBuffer.Length )
-			{	// Wrap around.
-				_tailIdx = 0;
-			}
-
-			return o;
-		}
-
-		/// <summary>
-		/// Remove the <see cref="PointPair" /> at the specified index
-		/// </summary>
-		/// <remarks>
-		/// All items in the queue that lie after <paramref name="index"/> will
-		/// be shifted back by one, and the queue will be one item shorter.
-		/// </remarks>
-		/// <param name="index">The ordinal position of the item to be removed.
-		/// Throws an <see cref="ArgumentOutOfRangeException" /> if index is less than
-		/// zero or greater than or equal to <see cref="Count" />
-		/// </param>
-		public void RemoveAt( int index )
-		{
-			int count = this.Count;
-
-			if ( index >= count || index < 0 )
-				throw new ArgumentOutOfRangeException();
-
-			// shift all the items that lie after index back by 1
-			for ( int i = index + _tailIdx; i < _tailIdx + count - 1; i++ )
-			{
-				i = ( i >= _mBuffer.Length ) ? 0 : i;
-				int j = i + 1;
-				j = ( j >= _mBuffer.Length ) ? 0 : j;
-				_mBuffer[i] = _mBuffer[j];
-			}
-
-			// Remove the item from the head (it's been duplicated already)
-			Pop();
-		}
-
-		/// <summary>
-		/// Remove a range of <see cref="PointPair" /> objects starting at the specified index
-		/// </summary>
-		/// <remarks>
-		/// All items in the queue that lie after <paramref name="index"/> will
-		/// be shifted back, and the queue will be <paramref name="count" /> items shorter.
-		/// </remarks>
-		/// <param name="index">The ordinal position of the item to be removed.
-		/// Throws an <see cref="ArgumentOutOfRangeException" /> if index is less than
-		/// zero or greater than or equal to <see cref="Count" />
-		/// </param>
-		/// <param name="count">The number of items to be removed.  Throws an
-		/// <see cref="ArgumentOutOfRangeException" /> if <paramref name="count" /> is less than zero
-		/// or greater than the total available items in the queue</param>
-		public void RemoveRange( int index, int count )
-		{
-			int totalCount = this.Count;
-
-			if ( index >= totalCount || index < 0 || count < 0 || count > totalCount )
-				throw new ArgumentOutOfRangeException();
-
-			for ( int i = 0; i < count; i++ )
-				this.RemoveAt( index );
-		}
-
-		/// <summary>
-		/// Pop an item off the head of the queue.
-		/// </summary>
-		/// <returns>The popped item. Throws an exception if the buffer was empty.</returns>
-		public PointPair Pop()
-		{
-			if ( _tailIdx == -1 )
-			{	// buffer is currently empty.
-				throw new InvalidOperationException( "buffer is empty." );
-			}
-
-			PointPair o = _mBuffer[_headIdx];
-
-			if ( _tailIdx == _headIdx )
-			{	// The buffer is now empty.
-				_headIdx = _tailIdx = -1;
-				return o;
-			}
-
-			if ( --_headIdx == -1 )
-			{	// Wrap around.
-				_headIdx = _mBuffer.Length - 1;
-			}
-
-			return o;
-		}
-
-		/// <summary>
-		/// Peek at the <see cref="PointPair" /> item at the head of the queue.
-		/// </summary>
-		/// <returns>The <see cref="PointPair" /> item at the head of the queue.
-		/// Throws an <see cref="InvalidOperationException" /> if the buffer was empty.
-		/// </returns>
-		public PointPair Peek()
-		{
-			if ( _headIdx == -1 )
-			{	// buffer is currently empty.
-				throw new InvalidOperationException( "buffer is empty." );
-			}
-
-			return _mBuffer[_headIdx];
-		}
-
 	#endregion
 
 	#region Auxilliary Methods

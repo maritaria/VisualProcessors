@@ -61,6 +61,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public YAxisList Clone()
+		{
+			return new YAxisList(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -69,16 +78,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public YAxisList Clone()
-		{
-			return new YAxisList( this );
-		}
-
 		#endregion
 
 		#region List Methods
@@ -112,6 +111,22 @@ namespace ZedGraph
 				else
 					return null;
 			}
+		}
+
+		/// <summary>
+		/// Create a new <see cref="YAxis" /> and add it to this list.
+		/// </summary>
+		/// <param name="title">The title string for the new axis</param>
+		/// <returns>An integer representing the ordinal position of the new <see cref="YAxis" /> in
+		/// this <see cref="YAxisList" />.  This is the value that you would set the
+		/// <see cref="CurveItem.YAxisIndex" /> property of a given <see cref="CurveItem" /> to 
+		/// assign it to this new <see cref="YAxis" />.</returns>
+		public int Add(string title)
+		{
+			YAxis axis = new YAxis(title);
+			Add(axis);
+
+			return Count - 1;
 		}
 
 		/// <summary>
@@ -164,23 +179,6 @@ namespace ZedGraph
 
 			return -1;
 		}
-
-		/// <summary>
-		/// Create a new <see cref="YAxis" /> and add it to this list.
-		/// </summary>
-		/// <param name="title">The title string for the new axis</param>
-		/// <returns>An integer representing the ordinal position of the new <see cref="YAxis" /> in
-		/// this <see cref="YAxisList" />.  This is the value that you would set the
-		/// <see cref="CurveItem.YAxisIndex" /> property of a given <see cref="CurveItem" /> to 
-		/// assign it to this new <see cref="YAxis" />.</returns>
-		public int Add( string title )
-		{
-			YAxis axis = new YAxis( title );
-			Add( axis );
-
-			return Count - 1;
-		}
-
 		#endregion
 
 	}

@@ -81,12 +81,17 @@ namespace ZedGraph
 	#region properties
 
 		/// <summary>
-		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
-		/// <see cref="AxisType.Log" />.
+		/// Gets or sets the maximum value for this scale.
 		/// </summary>
-		public override AxisType Type
+		/// <remarks>
+		/// The set property is specifically adapted for <see cref="AxisType.Log" /> scales,
+		/// in that it automatically limits the setting to values greater than zero.
+		/// <see cref="XDate" /> struct.
+		/// </remarks>
+		public override double Max
 		{
-			get { return AxisType.Log; }
+			get { return _max; }
+			set { if (value > 0) _max = value; }
 		}
 
 		/// <summary>
@@ -99,64 +104,25 @@ namespace ZedGraph
 		public override double Min
 		{
 			get { return _min; }
-			set { if ( value > 0 ) _min = value; }
+			set { if (value > 0) _min = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the maximum value for this scale.
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.Log" />.
 		/// </summary>
-		/// <remarks>
-		/// The set property is specifically adapted for <see cref="AxisType.Log" /> scales,
-		/// in that it automatically limits the setting to values greater than zero.
-		/// <see cref="XDate" /> struct.
-		/// </remarks>
-		public override double Max
+		public override AxisType Type
 		{
-			get { return _max; }
-			set { if ( value > 0 ) _max = value; }
+			get { return AxisType.Log; }
 		}
-
 	#endregion
 
 	#region methods
 
-		/// <summary>
-		/// Setup some temporary transform values in preparation for rendering the <see cref="Axis"/>.
-		/// </summary>
-		/// <remarks>
-		/// This method is typically called by the parent <see cref="GraphPane"/>
-		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
-		/// called by <see cref="GraphPane.GeneralTransform(double,double,CoordType)"/> and
-		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double )"/>
-		/// methods to setup for coordinate transformations.
-		/// </remarks>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="axis">
-		/// The parent <see cref="Axis" /> for this <see cref="Scale" />
-		/// </param>
-		override public void SetupScaleData( GraphPane pane, Axis axis )
+		private double CyclesPerStep
 		{
-			base.SetupScaleData( pane, axis );
-
-			_minLinTemp = Linearize( _min );
-			_maxLinTemp = Linearize( _max );
-		}
-
-		/// <summary>
-		/// Convert a value to its linear equivalent for this type of scale.
-		/// </summary>
-		/// <remarks>
-		/// The default behavior is to just return the value unchanged.  However,
-		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
-		/// it returns the log or power equivalent.
-		/// </remarks>
-		/// <param name="val">The value to be converted</param>
-		override public double Linearize( double val )
-		{
-			return SafeLog( val );
+			//get { return (int)Math.Max( Math.Floor( Scale.SafeLog( _majorStep ) ), 1 ); }
+			get { return _majorStep; }
 		}
 
 		/// <summary>
@@ -169,130 +135,23 @@ namespace ZedGraph
 		/// it returns the anti-log or inverse-power equivalent.
 		/// </remarks>
 		/// <param name="val">The value to be converted</param>
-		override public double DeLinearize( double val )
+		override public double DeLinearize(double val)
 		{
-			return Math.Pow( 10.0, val );
+			return Math.Pow(10.0, val);
 		}
 
 		/// <summary>
-		/// Determine the value for any major tic.
+		/// Convert a value to its linear equivalent for this type of scale.
 		/// </summary>
 		/// <remarks>
-		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
-		/// and other axis format settings.
+		/// The default behavior is to just return the value unchanged.  However,
+		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
+		/// it returns the log or power equivalent.
 		/// </remarks>
-		/// <param name="baseVal">
-		/// The value of the first major tic (floating point double)
-		/// </param>
-		/// <param name="tic">
-		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
-		/// </param>
-		/// <returns>
-		/// The specified major tic value (floating point double).
-		/// </returns>
-		override internal double CalcMajorTicValue( double baseVal, double tic )
+		/// <param name="val">The value to be converted</param>
+		override public double Linearize(double val)
 		{
-			return baseVal + (double)tic * CyclesPerStep;
-
-		//	double val = baseVal + (double)tic * CyclesPerStep;
-		//	double frac = val - Math.Floor( val );
-		}
-
-		/// <summary>
-		/// Determine the value for any minor tic.
-		/// </summary>
-		/// <remarks>
-		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <param name="baseVal">
-		/// The value of the first major tic (floating point double).  This tic value is the base
-		/// reference for all tics (including minor ones).
-		/// </param>
-		/// <param name="iTic">
-		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
-		/// </param>
-		/// <returns>
-		/// The specified minor tic value (floating point double).
-		/// </returns>
-		override internal double CalcMinorTicValue( double baseVal, int iTic )
-		{
-			double[] dLogVal = { 0, 0.301029995663981, 0.477121254719662, 0.602059991327962,
-									0.698970004336019, 0.778151250383644, 0.845098040014257,
-									0.903089986991944, 0.954242509439325, 1 };
-
-			return baseVal + Math.Floor( (double) iTic / 9.0 ) + dLogVal[( iTic + 9 ) % 9];
-		}
-
-		/// <summary>
-		/// Internal routine to determine the ordinals of the first minor tic mark
-		/// </summary>
-		/// <param name="baseVal">
-		/// The value of the first major tic for the axis.
-		/// </param>
-		/// <returns>
-		/// The ordinal position of the first minor tic, relative to the first major tic.
-		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
-		/// increments before the first major tic.
-		/// </returns>
-		override internal int CalcMinorStart( double baseVal )
-		{
-			return -9;
-		}
-
-		/// <summary>
-		/// Determine the value for the first major tic.
-		/// </summary>
-		/// <remarks>
-		/// This is done by finding the first possible value that is an integral multiple of
-		/// the step size, taking into account the date/time units if appropriate.
-		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <returns>
-		/// First major tic value (floating point double).
-		/// </returns>
-		override internal double CalcBaseTic()
-		{
-			if ( _baseTic != PointPair.Missing )
-				return _baseTic;
-			else
-			{
-				// go to the nearest even multiple of the step size
-				return Math.Ceiling( Scale.SafeLog( _min ) - 0.00000001 );
-			}
-
-		}
-		
-		/// <summary>
-		/// Internal routine to determine the ordinals of the first and last major axis label.
-		/// </summary>
-		/// <returns>
-		/// This is the total number of major tics for this axis.
-		/// </returns>
-		override internal int CalcNumTics()
-		{
-			int nTics = 1;
-
-			//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
-			//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
-
-			//nTics = (int)( ( Math.Floor( Scale.SafeLog( _max ) + 1.0e-12 ) ) -
-			//		( Math.Ceiling( Scale.SafeLog( _min ) - 1.0e-12 ) ) + 1 ) / CyclesPerStep;
-			nTics = (int)( ( Scale.SafeLog( _max ) - Scale.SafeLog( _min ) ) / CyclesPerStep ) + 1;
-
-			if ( nTics < 1 )
-				nTics = 1;
-			else if ( nTics > 1000 )
-				nTics = 1000;
-
-			return nTics;
-		}
-
-		private double CyclesPerStep
-		{
-			//get { return (int)Math.Max( Math.Floor( Scale.SafeLog( _majorStep ) ), 1 ); }
-			get { return _majorStep; }
+			return SafeLog(val);
 		}
 
 		/// <summary>
@@ -331,52 +190,189 @@ namespace ZedGraph
 		/// </param>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Log"/>
-		override public void PickScale( GraphPane pane, Graphics g, float scaleFactor )
+		override public void PickScale(GraphPane pane, Graphics g, float scaleFactor)
 		{
 			// call the base class first
-			base.PickScale( pane, g, scaleFactor );
+			base.PickScale(pane, g, scaleFactor);
 
 			// Majorstep is always 1 for log scales
-			if ( _majorStepAuto )
+			if (_majorStepAuto)
 				_majorStep = 1.0;
 
 			_mag = 0;		// Never use a magnitude shift for log scales
 			//this.numDec = 0;		// The number of decimal places to display is not used
 
 			// Check for bad data range
-			if ( _min <= 0.0 && _max <= 0.0 )
+			if (_min <= 0.0 && _max <= 0.0)
 			{
 				_min = 1.0;
 				_max = 10.0;
 			}
-			else if ( _min <= 0.0 )
+			else if (_min <= 0.0)
 			{
 				_min = _max / 10.0;
 			}
-			else if ( _max <= 0.0 )
+			else if (_max <= 0.0)
 			{
 				_max = _min * 10.0;
 			}
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( _max - _min < 1.0e-20 )
+			if (_max - _min < 1.0e-20)
 			{
-				if ( _maxAuto )
+				if (_maxAuto)
 					_max = _max * 2.0;
-				if ( _minAuto )
+				if (_minAuto)
 					_min = _min / 2.0;
 			}
 
 			// Get the nearest power of 10 (no partial log cycles allowed)
-			if ( _minAuto )
-				_min = Math.Pow( (double) 10.0,
-					Math.Floor( Math.Log10( _min ) ) );
-			if ( _maxAuto )
-				_max = Math.Pow( (double) 10.0,
-					Math.Ceiling( Math.Log10( _max ) ) );
+			if (_minAuto)
+				_min = Math.Pow((double)10.0,
+					Math.Floor(Math.Log10(_min)));
+			if (_maxAuto)
+				_max = Math.Pow((double)10.0,
+					Math.Ceiling(Math.Log10(_max)));
 
 		}
 
+		/// <summary>
+		/// Setup some temporary transform values in preparation for rendering the <see cref="Axis"/>.
+		/// </summary>
+		/// <remarks>
+		/// This method is typically called by the parent <see cref="GraphPane"/>
+		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
+		/// called by <see cref="GraphPane.GeneralTransform(double,double,CoordType)"/> and
+		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double )"/>
+		/// methods to setup for coordinate transformations.
+		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="axis">
+		/// The parent <see cref="Axis" /> for this <see cref="Scale" />
+		/// </param>
+		override public void SetupScaleData( GraphPane pane, Axis axis )
+		{
+			base.SetupScaleData( pane, axis );
+
+			_minLinTemp = Linearize( _min );
+			_maxLinTemp = Linearize( _max );
+		}
+		/// <summary>
+		/// Determine the value for the first major tic.
+		/// </summary>
+		/// <remarks>
+		/// This is done by finding the first possible value that is an integral multiple of
+		/// the step size, taking into account the date/time units if appropriate.
+		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
+		/// <returns>
+		/// First major tic value (floating point double).
+		/// </returns>
+		override internal double CalcBaseTic()
+		{
+			if (_baseTic != PointPair.Missing)
+				return _baseTic;
+			else
+			{
+				// go to the nearest even multiple of the step size
+				return Math.Ceiling(Scale.SafeLog(_min) - 0.00000001);
+			}
+
+		}
+
+		/// <summary>
+		/// Determine the value for any major tic.
+		/// </summary>
+		/// <remarks>
+		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
+		/// <param name="baseVal">
+		/// The value of the first major tic (floating point double)
+		/// </param>
+		/// <param name="tic">
+		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
+		/// </param>
+		/// <returns>
+		/// The specified major tic value (floating point double).
+		/// </returns>
+		override internal double CalcMajorTicValue( double baseVal, double tic )
+		{
+			return baseVal + (double)tic * CyclesPerStep;
+
+		//	double val = baseVal + (double)tic * CyclesPerStep;
+		//	double frac = val - Math.Floor( val );
+		}
+
+		/// <summary>
+		/// Internal routine to determine the ordinals of the first minor tic mark
+		/// </summary>
+		/// <param name="baseVal">
+		/// The value of the first major tic for the axis.
+		/// </param>
+		/// <returns>
+		/// The ordinal position of the first minor tic, relative to the first major tic.
+		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
+		/// increments before the first major tic.
+		/// </returns>
+		override internal int CalcMinorStart(double baseVal)
+		{
+			return -9;
+		}
+
+		/// <summary>
+		/// Determine the value for any minor tic.
+		/// </summary>
+		/// <remarks>
+		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
+		/// <param name="baseVal">
+		/// The value of the first major tic (floating point double).  This tic value is the base
+		/// reference for all tics (including minor ones).
+		/// </param>
+		/// <param name="iTic">
+		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
+		/// </param>
+		/// <returns>
+		/// The specified minor tic value (floating point double).
+		/// </returns>
+		override internal double CalcMinorTicValue( double baseVal, int iTic )
+		{
+			double[] dLogVal = { 0, 0.301029995663981, 0.477121254719662, 0.602059991327962,
+									0.698970004336019, 0.778151250383644, 0.845098040014257,
+									0.903089986991944, 0.954242509439325, 1 };
+
+			return baseVal + Math.Floor( (double) iTic / 9.0 ) + dLogVal[( iTic + 9 ) % 9];
+		}
+		/// <summary>
+		/// Internal routine to determine the ordinals of the first and last major axis label.
+		/// </summary>
+		/// <returns>
+		/// This is the total number of major tics for this axis.
+		/// </returns>
+		override internal int CalcNumTics()
+		{
+			int nTics = 1;
+
+			//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
+			//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
+
+			//nTics = (int)( ( Math.Floor( Scale.SafeLog( _max ) + 1.0e-12 ) ) -
+			//		( Math.Ceiling( Scale.SafeLog( _min ) - 1.0e-12 ) ) + 1 ) / CyclesPerStep;
+			nTics = (int)( ( Scale.SafeLog( _max ) - Scale.SafeLog( _min ) ) / CyclesPerStep ) + 1;
+
+			if ( nTics < 1 )
+				nTics = 1;
+			else if ( nTics > 1000 )
+				nTics = 1000;
+
+			return nTics;
+		}
 		/// <summary>
 		/// Make a value label for an <see cref="AxisType.Log" /> <see cref="Axis" />.
 		/// </summary>

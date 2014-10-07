@@ -47,32 +47,23 @@ namespace ZedGraph
 	#region Fields
 
 		/// <summary>
-		/// Private field that holds a collection of <see cref="GraphPane"/> objects for inclusion
-		/// in this <see cref="MasterPane"/>.  Use the public property <see cref="PaneList"/>
-		/// to access this collection.
+		/// private field that stores the row/column item count that was specified to the
+		/// <see cref="SetLayout(Graphics,bool,int[],float[])"/> method.  This values will be
+		/// null if <see cref="SetLayout(Graphics,bool,int[],float[])"/> was never called.
 		/// </summary>
-		internal PaneList _paneList;
+		internal int[] _countList;
+
 		/// <summary>
 		/// Private field that sets the amount of space between the GraphPanes.  Use the public property
 		/// <see cref="InnerPaneGap"/> to access this value;
 		/// </summary>
 		internal float _innerPaneGap;
+
 		/// <summary>
-		///Private field that stores a boolean value which signifies whether all 
-		///<see cref="ZedGraph.GraphPane"/>s in the chart use the same entries in their 
-		///<see cref="Legend"/>  If set to true, only one set of entries will be displayed in 
-		///this <see cref="Legend"/> instance.  If set to false, this instance will display all 
-		///entries from all <see cref="ZedGraph.GraphPane"/>s.
+		/// Private field that stores the boolean value that determines whether
+		/// <see cref="_countList"/> is specifying rows or columns.
 		/// </summary>
-		private bool _isUniformLegendEntries;
-		/// <summary>
-		/// private field that determines if the
-		/// <see cref="DoLayout(Graphics)" />
-		/// function will automatically set
-		/// the <see cref="PaneBase.BaseDimension" /> of each <see cref="GraphPane" /> in the
-		/// <see cref="PaneList" /> such that the scale factors have the same value.
-		/// </summary>
-		private bool _isCommonScaleFactor;
+		internal bool _isColumnSpecified;
 
 		/// <summary>
 		/// private field that saves the paneLayout format specified when
@@ -83,17 +74,11 @@ namespace ZedGraph
 		internal PaneLayout _paneLayout;
 
 		/// <summary>
-		/// Private field that stores the boolean value that determines whether
-		/// <see cref="_countList"/> is specifying rows or columns.
+		/// Private field that holds a collection of <see cref="GraphPane"/> objects for inclusion
+		/// in this <see cref="MasterPane"/>.  Use the public property <see cref="PaneList"/>
+		/// to access this collection.
 		/// </summary>
-		internal bool _isColumnSpecified;
-		/// <summary>
-		/// private field that stores the row/column item count that was specified to the
-		/// <see cref="SetLayout(Graphics,bool,int[],float[])"/> method.  This values will be
-		/// null if <see cref="SetLayout(Graphics,bool,int[],float[])"/> was never called.
-		/// </summary>
-		internal int[] _countList;
-
+		internal PaneList _paneList;
 		/// <summary>
 		/// private field that stores the row/column size proportional values as specified
 		/// to the <see cref="SetLayout(Graphics,bool,int[],float[])"/> method.  This
@@ -102,18 +87,35 @@ namespace ZedGraph
 		/// </summary>
 		internal float[] _prop;
 
-/*		/// <summary>
-		/// private field to store the <see cref="PaneLayoutMgr" /> instance, which
-		/// manages the persistence and handling of pane layout information.
-		/// </summary>
-		private PaneLayoutMgr _paneLayoutMgr;
-*/
 		/// <summary>
 		/// private field that determines if anti-aliased drawing will be forced on.  Use the
 		/// public property <see cref="IsAntiAlias"/> to access this value.
 		/// </summary>
 		private bool _isAntiAlias = false;
 
+		/// <summary>
+		/// private field that determines if the
+		/// <see cref="DoLayout(Graphics)" />
+		/// function will automatically set
+		/// the <see cref="PaneBase.BaseDimension" /> of each <see cref="GraphPane" /> in the
+		/// <see cref="PaneList" /> such that the scale factors have the same value.
+		/// </summary>
+		private bool _isCommonScaleFactor;
+
+		/// <summary>
+		///Private field that stores a boolean value which signifies whether all 
+		///<see cref="ZedGraph.GraphPane"/>s in the chart use the same entries in their 
+		///<see cref="Legend"/>  If set to true, only one set of entries will be displayed in 
+		///this <see cref="Legend"/> instance.  If set to false, this instance will display all 
+		///entries from all <see cref="ZedGraph.GraphPane"/>s.
+		/// </summary>
+		private bool _isUniformLegendEntries;
+/*		/// <summary>
+		/// private field to store the <see cref="PaneLayoutMgr" /> instance, which
+		/// manages the persistence and handling of pane layout information.
+		/// </summary>
+		private PaneLayoutMgr _paneLayoutMgr;
+*/
 	#endregion
 
 	#region Defaults
@@ -123,6 +125,30 @@ namespace ZedGraph
 		/// </summary>
 		public new struct Default
 		{
+			/// <summary>
+			/// The default value for the <see cref="Default.InnerPaneGap"/> property.
+			/// This is the size of the margin between adjacent <see cref="GraphPane"/>
+			/// objects, in units of points (1/72 inch).
+			/// </summary>
+			/// <seealso cref="MasterPane.InnerPaneGap"/>
+			public static float InnerPaneGap = 10;
+
+			/// <summary>
+			/// The default value for the <see cref="IsCommonScaleFactor"/> property.
+			/// </summary>
+			public static bool IsCommonScaleFactor = false;
+
+			/// <summary>
+			/// The default value for the <see cref="Legend.IsVisible"/> property for
+			/// the <see cref="MasterPane"/> class.
+			/// </summary>
+			public static bool IsShowLegend = false;
+
+			/// <summary>
+			/// The default value for the <see cref="IsUniformLegendEntries"/> property.
+			/// </summary>
+			public static bool IsUniformLegendEntries = false;
+
 			/// <summary>
 			/// The default pane layout for
 			/// <see cref="DoLayout(Graphics)"/>
@@ -134,59 +160,11 @@ namespace ZedGraph
 			/// <seealso cref="SetLayout(Graphics,bool,int[],float[])" />
 			/// <seealso cref="ReSize(Graphics,RectangleF)" />
 			public static PaneLayout PaneLayout = PaneLayout.SquareColPreferred;
-
-			/// <summary>
-			/// The default value for the <see cref="Default.InnerPaneGap"/> property.
-			/// This is the size of the margin between adjacent <see cref="GraphPane"/>
-			/// objects, in units of points (1/72 inch).
-			/// </summary>
-			/// <seealso cref="MasterPane.InnerPaneGap"/>
-			public static float InnerPaneGap = 10;
-			
-			/// <summary>
-			/// The default value for the <see cref="Legend.IsVisible"/> property for
-			/// the <see cref="MasterPane"/> class.
-			/// </summary>
-			public static bool IsShowLegend = false;
-			/// <summary>
-			/// The default value for the <see cref="IsUniformLegendEntries"/> property.
-			/// </summary>
-			public static bool IsUniformLegendEntries = false;
-			/// <summary>
-			/// The default value for the <see cref="IsCommonScaleFactor"/> property.
-			/// </summary>
-			public static bool IsCommonScaleFactor = false;
 		}
 	#endregion
 
 	#region Properties
 
-		/// <summary>
-		/// Gets or sets the <see cref="PaneList"/> collection instance that holds the list of
-		/// <see cref="GraphPane"/> objects that are included in this <see cref="MasterPane"/>.
-		/// </summary>
-		/// <seealso cref="Add"/>
-		/// <seealso cref="MasterPane.this[int]"/>
-		public PaneList PaneList
-		{
-			get { return _paneList; }
-			set { _paneList = value; }
-		}
-/*
-		/// <summary>
-		/// Gets the <see cref="PaneLayoutMgr" /> instance, which manages the pane layout
-		/// settings, and handles the layout functions.
-		/// </summary>
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
-		/// <seealso cref="ReSize" />
-		public PaneLayoutMgr PaneLayoutMgr
-		{
-			get { return _paneLayoutMgr; }
-		}
-*/
 		/// <summary>
 		/// Gets or sets the size of the margin between adjacent <see cref="GraphPane"/>
 		/// objects.
@@ -201,13 +179,18 @@ namespace ZedGraph
 			get { return _innerPaneGap; }
 			set { _innerPaneGap = value; }
 		}
+
 		/// <summary>
-		/// Gets or set the value of the	 <see cref="IsUniformLegendEntries"/>
+		/// Gets or sets a value that determines if all drawing operations for this
+		/// <see cref="MasterPane" /> will be forced to operate in Anti-alias mode.
+		/// Note that if this value is set to "true", it overrides the setting for sub-objects.
+		/// Otherwise, the sub-object settings (such as <see cref="FontSpec.IsAntiAlias"/>)
+		/// will be honored.
 		/// </summary>
-		public bool IsUniformLegendEntries
+		public bool IsAntiAlias
 		{
-			get { return (_isUniformLegendEntries); }
-			set { _isUniformLegendEntries = value; } 
+			get { return _isAntiAlias; }
+			set { _isAntiAlias = value; }
 		}
 
 		/// <summary>
@@ -235,18 +218,40 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets a value that determines if all drawing operations for this
-		/// <see cref="MasterPane" /> will be forced to operate in Anti-alias mode.
-		/// Note that if this value is set to "true", it overrides the setting for sub-objects.
-		/// Otherwise, the sub-object settings (such as <see cref="FontSpec.IsAntiAlias"/>)
-		/// will be honored.
+		/// Gets or set the value of the	 <see cref="IsUniformLegendEntries"/>
 		/// </summary>
-		public bool IsAntiAlias
+		public bool IsUniformLegendEntries
 		{
-			get { return _isAntiAlias; }
-			set { _isAntiAlias = value; }
+			get { return (_isUniformLegendEntries); }
+			set { _isUniformLegendEntries = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="PaneList"/> collection instance that holds the list of
+		/// <see cref="GraphPane"/> objects that are included in this <see cref="MasterPane"/>.
+		/// </summary>
+		/// <seealso cref="Add"/>
+		/// <seealso cref="MasterPane.this[int]"/>
+		public PaneList PaneList
+		{
+			get { return _paneList; }
+			set { _paneList = value; }
+		}
+/*
+		/// <summary>
+		/// Gets the <see cref="PaneLayoutMgr" /> instance, which manages the pane layout
+		/// settings, and handles the layout functions.
+		/// </summary>
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
+		/// <seealso cref="ReSize" />
+		public PaneLayoutMgr PaneLayoutMgr
+		{
+			get { return _paneLayoutMgr; }
+		}
+*/
 	#endregion
 	
 	#region Constructors
@@ -280,19 +285,12 @@ namespace ZedGraph
 			InitLayout();
 		}
 
-		private void InitLayout()
-		{
-			_paneLayout = Default.PaneLayout;
-			_countList = null;
-			_isColumnSpecified = false;
-			_prop = null;
-		}
-
 		/// <summary>
 		/// The Copy Constructor - Make a deep-copy clone of this class instance.
 		/// </summary>
 		/// <param name="rhs">The <see cref="MasterPane"/> object from which to copy</param>
-		public MasterPane( MasterPane rhs ) : base( rhs )
+		public MasterPane(MasterPane rhs)
+			: base(rhs)
 		{
 			// copy all the value types
 			//_paneLayoutMgr = rhs._paneLayoutMgr.Clone();
@@ -311,6 +309,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public MasterPane Clone()
+		{
+			return new MasterPane(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" /> to make a deep copy.
 		/// </summary>
@@ -320,15 +327,13 @@ namespace ZedGraph
 			return this.Clone();
 		}
 
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public MasterPane Clone()
+		private void InitLayout()
 		{
-			return new MasterPane( this );
+			_paneLayout = Default.PaneLayout;
+			_countList = null;
+			_isColumnSpecified = false;
+			_prop = null;
 		}
-
 	#endregion
 
 	#region Serialization
@@ -473,6 +478,242 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Method that forces the scale factor calculations
+		/// (via <see cref="PaneBase.CalcScaleFactor" />),
+		/// to give a common scale factor for all <see cref="GraphPane" /> objects in the
+		/// <see cref="PaneList" />.
+		/// </summary>
+		/// <remarks>
+		/// This will make it such that a given font size will result in the same output font
+		/// size for all <see cref="GraphPane" />'s.  Note that this does not make the scale
+		/// factor for the <see cref="GraphPane" />'s the same as that of the
+		/// <see cref="MasterPane" />.
+		/// </remarks>
+		/// <seealso cref="IsCommonScaleFactor" />
+		public void CommonScaleFactor()
+		{
+			if (_isCommonScaleFactor)
+			{
+				// Find the maximum scaleFactor of all the GraphPanes
+				float maxFactor = 0;
+				foreach (GraphPane pane in PaneList)
+				{
+					pane.BaseDimension = PaneBase.Default.BaseDimension;
+					float scaleFactor = pane.CalcScaleFactor();
+					maxFactor = scaleFactor > maxFactor ? scaleFactor : maxFactor;
+				}
+
+				// Now, calculate the base dimension
+				foreach (GraphPane pane in PaneList)
+				{
+					float scaleFactor = pane.CalcScaleFactor();
+					pane.BaseDimension *= scaleFactor / maxFactor;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Render all the <see cref="GraphPane"/> objects in the <see cref="PaneList"/> to the
+		/// specified graphics device.
+		/// </summary>
+		/// <remarks>This method should be part of the Paint() update process.  Calling this routine
+		/// will redraw all
+		/// features of all the <see cref="GraphPane"/> items.  No preparation is required other than
+		/// instantiated <see cref="GraphPane"/> objects that have been added to the list with the
+		/// <see cref="Add"/> method.
+		/// </remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		public override void Draw(Graphics g)
+		{
+			// Save current AntiAlias mode
+			SmoothingMode sModeSave = g.SmoothingMode;
+			TextRenderingHint sHintSave = g.TextRenderingHint;
+			CompositingQuality sCompQual = g.CompositingQuality;
+			InterpolationMode sInterpMode = g.InterpolationMode;
+
+			SetAntiAliasMode(g, _isAntiAlias);
+
+			// Draw the pane border & background fill, the title, and the GraphObj objects that lie at
+			// ZOrder.GBehindAll
+			base.Draw(g);
+
+			if (_rect.Width <= 1 || _rect.Height <= 1)
+				return;
+
+			float scaleFactor = CalcScaleFactor();
+
+			// Clip everything to the rect
+			g.SetClip(_rect);
+
+			// For the MasterPane, All GraphItems go behind the GraphPanes, except those that
+			// are explicity declared as ZOrder.AInFront
+			_graphObjList.Draw(g, this, scaleFactor, ZOrder.G_BehindChartFill);
+			_graphObjList.Draw(g, this, scaleFactor, ZOrder.E_BehindCurves);
+			_graphObjList.Draw(g, this, scaleFactor, ZOrder.D_BehindAxis);
+			_graphObjList.Draw(g, this, scaleFactor, ZOrder.C_BehindChartBorder);
+
+			// Reset the clipping
+			g.ResetClip();
+
+			foreach (GraphPane pane in _paneList)
+				pane.Draw(g);
+
+			// Clip everything to the rect
+			g.SetClip(_rect);
+
+			_graphObjList.Draw(g, this, scaleFactor, ZOrder.B_BehindLegend);
+
+			// Recalculate the legend rect, just in case it has not yet been done
+			// innerRect is the area for the GraphPane's
+			RectangleF innerRect = CalcClientRect(g, scaleFactor);
+			_legend.CalcRect(g, this, scaleFactor, ref innerRect);
+			//this.legend.SetLocation( this, 
+
+			_legend.Draw(g, this, scaleFactor);
+
+			_graphObjList.Draw(g, this, scaleFactor, ZOrder.A_InFront);
+
+			// Reset the clipping
+			g.ResetClip();
+
+			// Restore original anti-alias mode
+			g.SmoothingMode = sModeSave;
+			g.TextRenderingHint = sHintSave;
+			g.CompositingQuality = sCompQual;
+			g.InterpolationMode = sInterpMode;
+
+		}
+
+		/// <summary>
+		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
+		/// <see paramref="mousePt"/> within its <see cref="Chart.Rect"/>.
+		/// </summary>
+		/// <param name="mousePt">The mouse point location where you want to search</param>
+		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
+		/// null if no <see cref="GraphPane"/> was found.</returns>
+		public GraphPane FindChartRect(PointF mousePt)
+		{
+			foreach (GraphPane pane in _paneList)
+			{
+				if (pane.Chart._rect.Contains(mousePt))
+					return pane;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Find the pane and the object within that pane that lies closest to the specified
+		/// mouse (screen) point.
+		/// </summary>
+		/// <remarks>
+		/// This method first finds the <see cref="GraphPane"/> within the list that contains
+		/// the specified mouse point.  It then calls the <see cref="GraphPane.FindNearestObject"/>
+		/// method to determine which object, if any, was clicked.  With the exception of the
+		/// <see paramref="pane"/>, all the parameters in this method are identical to those
+		/// in the <see cref="GraphPane.FindNearestObject"/> method.
+		/// If the mouse point lies within the <see cref="PaneBase.Rect"/> of any 
+		/// <see cref="GraphPane"/> item, then that pane will be returned (otherwise it will be
+		/// null).  Further, within the selected pane, if the mouse point is within the
+		/// bounding box of any of the items (or in the case
+		/// of <see cref="ArrowObj"/> and <see cref="CurveItem"/>, within
+		/// <see cref="GraphPane.Default.NearestTol"/> pixels), then the object will be returned.
+		/// You must check the type of the object to determine what object was
+		/// selected (for example, "if ( object is Legend ) ...").  The
+		/// <see paramref="index"/> parameter returns the index number of the item
+		/// within the selected object (such as the point number within a
+		/// <see cref="CurveItem"/> object.
+		/// </remarks>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that was clicked.</param>
+		/// <param name="nearestObj">A reference to the nearest object to the
+		/// specified screen point.  This can be any of <see cref="Axis"/>,
+		/// <see cref="Legend"/>, <see cref="PaneBase.Title"/>,
+		/// <see cref="TextObj"/>, <see cref="ArrowObj"/>, or <see cref="CurveItem"/>.
+		/// Note: If the pane title is selected, then the <see cref="GraphPane"/> object
+		/// will be returned.
+		/// </param>
+		/// <param name="index">The index number of the item within the selected object
+		/// (where applicable).  For example, for a <see cref="CurveItem"/> object,
+		/// <see paramref="index"/> will be the index number of the nearest data point,
+		/// accessible via <see cref="CurveItem.Points">CurveItem.Points[index]</see>.
+		/// index will be -1 if no data points are available.</param>
+		/// <returns>true if a <see cref="GraphPane"/> was found, false otherwise.</returns>
+		/// <seealso cref="GraphPane.FindNearestObject"/>
+		public bool FindNearestPaneObject(PointF mousePt, Graphics g, out GraphPane pane,
+			out object nearestObj, out int index)
+		{
+			pane = null;
+			nearestObj = null;
+			index = -1;
+
+			GraphObj saveGraphItem = null;
+			int saveIndex = -1;
+			float scaleFactor = CalcScaleFactor();
+
+			// See if the point is in a GraphObj
+			// If so, just save the object and index so we can see if other overlying objects were
+			// intersected as well.
+			if (this.GraphObjList.FindPoint(mousePt, this, g, scaleFactor, out index))
+			{
+				saveGraphItem = this.GraphObjList[index];
+				saveIndex = index;
+
+				// If it's an "In-Front" item, then just return it
+				if (saveGraphItem.ZOrder == ZOrder.A_InFront)
+				{
+					nearestObj = saveGraphItem;
+					index = saveIndex;
+					return true;
+				}
+			}
+
+			foreach (GraphPane tPane in _paneList)
+			{
+				if (tPane.Rect.Contains(mousePt))
+				{
+					pane = tPane;
+					return tPane.FindNearestObject(mousePt, g, out nearestObj, out index);
+				}
+			}
+
+			// If no items were found in the GraphPanes, then return the item found on the MasterPane (if any)
+			if (saveGraphItem != null)
+			{
+				nearestObj = saveGraphItem;
+				index = saveIndex;
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
+		/// <see paramref="mousePt"/> within its <see cref="PaneBase.Rect"/>.
+		/// </summary>
+		/// <param name="mousePt">The mouse point location where you want to search</param>
+		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
+		/// null if no <see cref="GraphPane"/> was found.</returns>
+		public GraphPane FindPane(PointF mousePt)
+		{
+			foreach (GraphPane pane in _paneList)
+			{
+				if (pane.Rect.Contains(mousePt))
+					return pane;
+			}
+
+			return null;
+		}
+
+		/// <summary>
 		/// Redo the layout using the current size of the <see cref="PaneBase.Rect"/>,
 		/// and also handle resizing the
 		/// contents by calling <see cref="DoLayout(Graphics)"/>.
@@ -519,246 +760,96 @@ namespace ZedGraph
 			DoLayout( g );
 			CommonScaleFactor();
 		}
-
-		/// <summary>
-		/// Method that forces the scale factor calculations
-		/// (via <see cref="PaneBase.CalcScaleFactor" />),
-		/// to give a common scale factor for all <see cref="GraphPane" /> objects in the
-		/// <see cref="PaneList" />.
-		/// </summary>
-		/// <remarks>
-		/// This will make it such that a given font size will result in the same output font
-		/// size for all <see cref="GraphPane" />'s.  Note that this does not make the scale
-		/// factor for the <see cref="GraphPane" />'s the same as that of the
-		/// <see cref="MasterPane" />.
-		/// </remarks>
-		/// <seealso cref="IsCommonScaleFactor" />
-		public void CommonScaleFactor()
-		{
-			if ( _isCommonScaleFactor )
-			{
-				// Find the maximum scaleFactor of all the GraphPanes
-				float maxFactor = 0;
-				foreach ( GraphPane pane in PaneList )
-				{
-					pane.BaseDimension = PaneBase.Default.BaseDimension;
-					float scaleFactor = pane.CalcScaleFactor();
-					maxFactor = scaleFactor > maxFactor ? scaleFactor : maxFactor;
-				}
-
-				// Now, calculate the base dimension
-				foreach ( GraphPane pane in PaneList )
-				{
-					float scaleFactor = pane.CalcScaleFactor();
-					pane.BaseDimension *= scaleFactor / maxFactor;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Render all the <see cref="GraphPane"/> objects in the <see cref="PaneList"/> to the
-		/// specified graphics device.
-		/// </summary>
-		/// <remarks>This method should be part of the Paint() update process.  Calling this routine
-		/// will redraw all
-		/// features of all the <see cref="GraphPane"/> items.  No preparation is required other than
-		/// instantiated <see cref="GraphPane"/> objects that have been added to the list with the
-		/// <see cref="Add"/> method.
-		/// </remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		public override void Draw( Graphics g )
-		{
-			// Save current AntiAlias mode
-			SmoothingMode sModeSave = g.SmoothingMode;
-			TextRenderingHint sHintSave = g.TextRenderingHint;
-			CompositingQuality sCompQual = g.CompositingQuality;
-			InterpolationMode sInterpMode = g.InterpolationMode;
-
-			SetAntiAliasMode( g, _isAntiAlias );
-
-			// Draw the pane border & background fill, the title, and the GraphObj objects that lie at
-			// ZOrder.GBehindAll
-			base.Draw( g );
-
-			if ( _rect.Width <= 1 || _rect.Height <= 1 )
-				return;
-
-			float scaleFactor = CalcScaleFactor();
-
-			// Clip everything to the rect
-			g.SetClip( _rect );
-
-			// For the MasterPane, All GraphItems go behind the GraphPanes, except those that
-			// are explicity declared as ZOrder.AInFront
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.G_BehindChartFill );
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.E_BehindCurves );
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.D_BehindAxis );
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.C_BehindChartBorder );
-
-			// Reset the clipping
-			g.ResetClip();
-
-			foreach ( GraphPane pane in _paneList )
-				pane.Draw( g );
-
-			// Clip everything to the rect
-			g.SetClip( _rect );
-
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.B_BehindLegend );
-			
-			// Recalculate the legend rect, just in case it has not yet been done
-			// innerRect is the area for the GraphPane's
-			RectangleF innerRect = CalcClientRect( g, scaleFactor );
-			_legend.CalcRect( g, this, scaleFactor, ref innerRect );
-			//this.legend.SetLocation( this, 
-			
-			_legend.Draw( g, this, scaleFactor );
-
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.A_InFront );
-			
-			// Reset the clipping
-			g.ResetClip();
-
-			// Restore original anti-alias mode
-			g.SmoothingMode = sModeSave;
-			g.TextRenderingHint = sHintSave;
-			g.CompositingQuality = sCompQual;
-			g.InterpolationMode = sInterpMode;
-
-		}
-
-		/// <summary>
-		/// Find the pane and the object within that pane that lies closest to the specified
-		/// mouse (screen) point.
-		/// </summary>
-		/// <remarks>
-		/// This method first finds the <see cref="GraphPane"/> within the list that contains
-		/// the specified mouse point.  It then calls the <see cref="GraphPane.FindNearestObject"/>
-		/// method to determine which object, if any, was clicked.  With the exception of the
-		/// <see paramref="pane"/>, all the parameters in this method are identical to those
-		/// in the <see cref="GraphPane.FindNearestObject"/> method.
-		/// If the mouse point lies within the <see cref="PaneBase.Rect"/> of any 
-		/// <see cref="GraphPane"/> item, then that pane will be returned (otherwise it will be
-		/// null).  Further, within the selected pane, if the mouse point is within the
-		/// bounding box of any of the items (or in the case
-		/// of <see cref="ArrowObj"/> and <see cref="CurveItem"/>, within
-		/// <see cref="GraphPane.Default.NearestTol"/> pixels), then the object will be returned.
-		/// You must check the type of the object to determine what object was
-		/// selected (for example, "if ( object is Legend ) ...").  The
-		/// <see paramref="index"/> parameter returns the index number of the item
-		/// within the selected object (such as the point number within a
-		/// <see cref="CurveItem"/> object.
-		/// </remarks>
-		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that was clicked.</param>
-		/// <param name="nearestObj">A reference to the nearest object to the
-		/// specified screen point.  This can be any of <see cref="Axis"/>,
-		/// <see cref="Legend"/>, <see cref="PaneBase.Title"/>,
-		/// <see cref="TextObj"/>, <see cref="ArrowObj"/>, or <see cref="CurveItem"/>.
-		/// Note: If the pane title is selected, then the <see cref="GraphPane"/> object
-		/// will be returned.
-		/// </param>
-		/// <param name="index">The index number of the item within the selected object
-		/// (where applicable).  For example, for a <see cref="CurveItem"/> object,
-		/// <see paramref="index"/> will be the index number of the nearest data point,
-		/// accessible via <see cref="CurveItem.Points">CurveItem.Points[index]</see>.
-		/// index will be -1 if no data points are available.</param>
-		/// <returns>true if a <see cref="GraphPane"/> was found, false otherwise.</returns>
-		/// <seealso cref="GraphPane.FindNearestObject"/>
-		public bool FindNearestPaneObject( PointF mousePt, Graphics g, out GraphPane pane,
-			out object nearestObj, out int index )
-		{
-			pane = null;
-			nearestObj = null;
-			index = -1;
-
-			GraphObj	saveGraphItem = null;
-			int			saveIndex = -1;
-			float		scaleFactor = CalcScaleFactor();
-
-			// See if the point is in a GraphObj
-			// If so, just save the object and index so we can see if other overlying objects were
-			// intersected as well.
-			if ( this.GraphObjList.FindPoint( mousePt, this, g, scaleFactor, out index ) )
-			{
-				saveGraphItem = this.GraphObjList[index];
-				saveIndex = index;
-
-				// If it's an "In-Front" item, then just return it
-				if ( saveGraphItem.ZOrder == ZOrder.A_InFront )
-				{
-					nearestObj = saveGraphItem;
-					index = saveIndex;
-					return true;
-				}
-			}
-
-			foreach ( GraphPane tPane in _paneList )
-			{
-				if ( tPane.Rect.Contains( mousePt ) )
-				{
-					pane = tPane;
-					return tPane.FindNearestObject( mousePt, g, out nearestObj, out index );
-				}
-			}
-
-			// If no items were found in the GraphPanes, then return the item found on the MasterPane (if any)
-			if ( saveGraphItem != null )
-			{
-				nearestObj = saveGraphItem;
-				index = saveIndex;
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
-		/// <see paramref="mousePt"/> within its <see cref="PaneBase.Rect"/>.
-		/// </summary>
-		/// <param name="mousePt">The mouse point location where you want to search</param>
-		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
-		/// null if no <see cref="GraphPane"/> was found.</returns>
-		public GraphPane FindPane( PointF mousePt )
-		{
-			foreach ( GraphPane pane in _paneList )
-			{
-				if ( pane.Rect.Contains( mousePt ) )
-					return pane;
-			}
-			
-			return null;
-		}
-
-		/// <summary>
-		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
-		/// <see paramref="mousePt"/> within its <see cref="Chart.Rect"/>.
-		/// </summary>
-		/// <param name="mousePt">The mouse point location where you want to search</param>
-		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
-		/// null if no <see cref="GraphPane"/> was found.</returns>
-		public GraphPane FindChartRect( PointF mousePt )
-		{
-			foreach ( GraphPane pane in _paneList )
-			{
-				if ( pane.Chart._rect.Contains( mousePt ) )
-					return pane;
-			}
-			
-			return null;
-		}
-
 	#endregion
 
 	#region Layout Methods
+
+		/// <summary>
+		/// Modify the <see cref="GraphPane" /> <see cref="PaneBase.Rect" /> sizes of each
+		/// <see cref="GraphPane" /> such that they fit within the <see cref="MasterPane" />
+		/// in a pre-configured layout.
+		/// </summary>
+		/// <remarks>The <see cref="SetLayout(Graphics,PaneLayout)" /> method (and overloads) is
+		/// used for setting the layout configuration.</remarks>
+		/// <seealso cref="SetLayout(Graphics,PaneLayout)" />
+		/// <seealso cref="SetLayout(Graphics,int,int)" />
+		/// <seealso cref="SetLayout(Graphics,bool,int[])" />
+		/// <seealso cref="SetLayout(Graphics,bool,int[],float[])" />
+		public void DoLayout(Graphics g)
+		{
+			if (_countList != null)
+				DoLayout(g, _isColumnSpecified, _countList, _prop);
+			else
+			{
+				int count = _paneList.Count;
+				if (count == 0)
+					return;
+
+				int rows,
+						cols,
+						root = (int)(Math.Sqrt((double)count) + 0.9999999);
+
+				//float[] widthList = new float[5];
+
+				switch (_paneLayout)
+				{
+					case PaneLayout.ForceSquare:
+						rows = root;
+						cols = root;
+						DoLayout(g, rows, cols);
+						break;
+					case PaneLayout.SingleColumn:
+						rows = count;
+						cols = 1;
+						DoLayout(g, rows, cols);
+						break;
+					case PaneLayout.SingleRow:
+						rows = 1;
+						cols = count;
+						DoLayout(g, rows, cols);
+						break;
+					default:
+					case PaneLayout.SquareColPreferred:
+						rows = root;
+						cols = root;
+						if (count <= root * (root - 1))
+							rows--;
+						DoLayout(g, rows, cols);
+						break;
+					case PaneLayout.SquareRowPreferred:
+						rows = root;
+						cols = root;
+						if (count <= root * (root - 1))
+							cols--;
+						DoLayout(g, rows, cols);
+						break;
+					case PaneLayout.ExplicitCol12:
+						DoLayout(g, true, new int[2] { 1, 2 }, null);
+						break;
+					case PaneLayout.ExplicitCol21:
+						DoLayout(g, true, new int[2] { 2, 1 }, null);
+						break;
+					case PaneLayout.ExplicitCol23:
+						DoLayout(g, true, new int[2] { 2, 3 }, null);
+						break;
+					case PaneLayout.ExplicitCol32:
+						DoLayout(g, true, new int[2] { 3, 2 }, null);
+						break;
+					case PaneLayout.ExplicitRow12:
+						DoLayout(g, false, new int[2] { 1, 2 }, null);
+						break;
+					case PaneLayout.ExplicitRow21:
+						DoLayout(g, false, new int[2] { 2, 1 }, null);
+						break;
+					case PaneLayout.ExplicitRow23:
+						DoLayout(g, false, new int[2] { 2, 3 }, null);
+						break;
+					case PaneLayout.ExplicitRow32:
+						DoLayout(g, false, new int[2] { 3, 2 }, null);
+						break;
+				}
+			}
+		}
 
 		/// <overloads>The SetLayout() methods setup the desired layout of the
 		/// <see cref="GraphPane" /> objects within a <see cref="MasterPane" />.  These functions
@@ -922,94 +1013,6 @@ namespace ZedGraph
 				DoLayout( g );
 			}
 		}
-
-		/// <summary>
-		/// Modify the <see cref="GraphPane" /> <see cref="PaneBase.Rect" /> sizes of each
-		/// <see cref="GraphPane" /> such that they fit within the <see cref="MasterPane" />
-		/// in a pre-configured layout.
-		/// </summary>
-		/// <remarks>The <see cref="SetLayout(Graphics,PaneLayout)" /> method (and overloads) is
-		/// used for setting the layout configuration.</remarks>
-		/// <seealso cref="SetLayout(Graphics,PaneLayout)" />
-		/// <seealso cref="SetLayout(Graphics,int,int)" />
-		/// <seealso cref="SetLayout(Graphics,bool,int[])" />
-		/// <seealso cref="SetLayout(Graphics,bool,int[],float[])" />
-		public void DoLayout( Graphics g )
-		{
-			if ( _countList != null )
-				DoLayout( g, _isColumnSpecified, _countList, _prop );
-			else
-			{
-				int count = _paneList.Count;
-				if ( count == 0 )
-					return;
-
-				int rows,
-						cols,
-						root = (int)( Math.Sqrt( (double)count ) + 0.9999999 );
-
-				//float[] widthList = new float[5];
-
-				switch ( _paneLayout )
-				{
-					case PaneLayout.ForceSquare:
-						rows = root;
-						cols = root;
-						DoLayout( g, rows, cols );
-						break;
-					case PaneLayout.SingleColumn:
-						rows = count;
-						cols = 1;
-						DoLayout( g, rows, cols );
-						break;
-					case PaneLayout.SingleRow:
-						rows = 1;
-						cols = count;
-						DoLayout( g, rows, cols );
-						break;
-					default:
-					case PaneLayout.SquareColPreferred:
-						rows = root;
-						cols = root;
-						if ( count <= root * ( root - 1 ) )
-							rows--;
-						DoLayout( g, rows, cols );
-						break;
-					case PaneLayout.SquareRowPreferred:
-						rows = root;
-						cols = root;
-						if ( count <= root * ( root - 1 ) )
-							cols--;
-						DoLayout( g, rows, cols );
-						break;
-					case PaneLayout.ExplicitCol12:
-						DoLayout( g, true, new int[2] { 1, 2 }, null );
-						break;
-					case PaneLayout.ExplicitCol21:
-						DoLayout( g, true, new int[2] { 2, 1 }, null );
-						break;
-					case PaneLayout.ExplicitCol23:
-						DoLayout( g, true, new int[2] { 2, 3 }, null );
-						break;
-					case PaneLayout.ExplicitCol32:
-						DoLayout( g, true, new int[2] { 3, 2 }, null );
-						break;
-					case PaneLayout.ExplicitRow12:
-						DoLayout( g, false, new int[2] { 1, 2 }, null );
-						break;
-					case PaneLayout.ExplicitRow21:
-						DoLayout( g, false, new int[2] { 2, 1 }, null );
-						break;
-					case PaneLayout.ExplicitRow23:
-						DoLayout( g, false, new int[2] { 2, 3 }, null );
-						break;
-					case PaneLayout.ExplicitRow32:
-						DoLayout( g, false, new int[2] { 3, 2 }, null );
-						break;
-				}
-			}
-		}
-
 		/// <summary>
 		/// Internal method that applies a previously set layout with a specific
 		/// row and column count.  This method is only called by

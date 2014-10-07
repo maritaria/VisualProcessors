@@ -42,6 +42,19 @@ namespace ZedGraph
 	#region Fields
 
 		/// <summary>
+		/// The result of the autosize calculation, which is the size of the bars in
+		/// user scale units.  This is converted to pixels at draw time.
+		/// </summary>
+		internal double _userScaleSize = 1.0;
+
+		/// <summary>
+		/// Private field that determines if the <see cref="Size" /> property will be
+		/// calculated automatically based on the minimum axis scale step size between
+		/// bars.  Use the public property <see cref="IsAutoSize" /> to access this value.
+		/// </summary>
+		protected Boolean _isAutoSize;
+
+		/// <summary>
 		/// Private field that stores the visibility of the <see cref="OHLCBar"/> open and
 		/// close line segments ("wings").  Use the public
 		/// property <see cref="IsOpenCloseVisible"/> to access this value.  If this value is
@@ -54,20 +67,6 @@ namespace ZedGraph
 		/// segments.  Use the public property <see cref="Size"/> to access this value.
 		/// </summary>
 		protected float _size;
-
-		/// <summary>
-		/// Private field that determines if the <see cref="Size" /> property will be
-		/// calculated automatically based on the minimum axis scale step size between
-		/// bars.  Use the public property <see cref="IsAutoSize" /> to access this value.
-		/// </summary>
-		protected Boolean _isAutoSize;
-
-		/// <summary>
-		/// The result of the autosize calculation, which is the size of the bars in
-		/// user scale units.  This is converted to pixels at draw time.
-		/// </summary>
-		internal double _userScaleSize = 1.0;
-
 	#endregion
 
 	#region Defaults
@@ -78,27 +77,39 @@ namespace ZedGraph
 		/// </summary>
 		new public struct Default
 		{
-			// Default Symbol properties
 			/// <summary>
-			/// The default width for the candlesticks (see <see cref="OHLCBar.Size" />),
-			/// in units of points.
+			/// The default value for the <see cref="ZedGraph.OHLCBar.IsAutoSize" /> property.
 			/// </summary>
-			public static float Size = 12;
+			public static Boolean IsAutoSize = true;
+
 			/// <summary>
 			/// The default display mode for symbols (<see cref="OHLCBar.IsOpenCloseVisible"/> property).
 			/// true to display symbols, false to hide them.
 			/// </summary>
 			public static bool IsOpenCloseVisible = true;
 
+			// Default Symbol properties
 			/// <summary>
-			/// The default value for the <see cref="ZedGraph.OHLCBar.IsAutoSize" /> property.
+			/// The default width for the candlesticks (see <see cref="OHLCBar.Size" />),
+			/// in units of points.
 			/// </summary>
-			public static Boolean IsAutoSize = true;
+			public static float Size = 12;
 		}
 
 	#endregion
 
 	#region Properties
+
+		/// <summary>
+		/// Gets or sets a value that determines if the <see cref="Size" /> property will be
+		/// calculated automatically based on the minimum axis scale step size between
+		/// bars.
+		/// </summary>
+		public Boolean IsAutoSize
+		{
+			get { return _isAutoSize; }
+			set { _isAutoSize = value; }
+		}
 
 		/// <summary>
 		/// Gets or sets a property that shows or hides the <see cref="OHLCBar"/> open/close "wings".
@@ -133,18 +144,6 @@ namespace ZedGraph
 			get { return _size; }
 			set { _size = value; _isAutoSize = false; }
 		}
-
-		/// <summary>
-		/// Gets or sets a value that determines if the <see cref="Size" /> property will be
-		/// calculated automatically based on the minimum axis scale step size between
-		/// bars.
-		/// </summary>
-		public Boolean IsAutoSize
-		{
-			get { return _isAutoSize; }
-			set { _isAutoSize = value; }
-		}
-
 	#endregion
 
 	#region Constructors
@@ -185,6 +184,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public OHLCBar Clone()
+		{
+			return new OHLCBar(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -193,16 +201,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public OHLCBar Clone()
-		{
-			return new OHLCBar( this );
-		}
-
 	#endregion
 
 	#region Serialization

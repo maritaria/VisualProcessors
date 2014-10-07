@@ -67,6 +67,38 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Move the position of the object at the specified index
+		/// to the new relative position in the list.</summary>
+		/// <remarks>For Graphic type objects, this method controls the
+		/// Z-Order of the items.  Objects at the beginning of the list
+		/// appear in front of objects at the end of the list.</remarks>
+		/// <param name="index">The zero-based index of the object
+		/// to be moved.</param>
+		/// <param name="relativePos">The relative number of positions to move
+		/// the object.  A value of -1 will move the
+		/// object one position earlier in the list, a value
+		/// of 1 will move it one position later.  To move an item to the
+		/// beginning of the list, use a large negative value (such as -999).
+		/// To move it to the end of the list, use a large positive value.
+		/// </param>
+		/// <returns>The new position for the object, or -1 if the object
+		/// was not found.</returns>
+		public int Move(int index, int relativePos)
+		{
+			if (index < 0 || index >= List.Count)
+				return -1;
+			object obj = List[index];
+			List.RemoveAt(index);
+			index += relativePos;
+			if (index < 0)
+				index = 0;
+			if (index > List.Count)
+				index = List.Count;
+			List.Insert(index, obj);
+			return index;
+		}
+
+		/// <summary>
 		/// Remove an object from the collection at the specified ordinal location.
 		/// </summary>
 		/// <param name="index">
@@ -90,39 +122,6 @@ namespace ZedGraph
 		{
 			List.Remove( item );
 		}
-
-		/// <summary>
-		/// Move the position of the object at the specified index
-		/// to the new relative position in the list.</summary>
-		/// <remarks>For Graphic type objects, this method controls the
-		/// Z-Order of the items.  Objects at the beginning of the list
-		/// appear in front of objects at the end of the list.</remarks>
-		/// <param name="index">The zero-based index of the object
-		/// to be moved.</param>
-		/// <param name="relativePos">The relative number of positions to move
-		/// the object.  A value of -1 will move the
-		/// object one position earlier in the list, a value
-		/// of 1 will move it one position later.  To move an item to the
-		/// beginning of the list, use a large negative value (such as -999).
-		/// To move it to the end of the list, use a large positive value.
-		/// </param>
-		/// <returns>The new position for the object, or -1 if the object
-		/// was not found.</returns>
-		public int Move( int index, int relativePos )
-		{
-			if ( index < 0 || index >= List.Count )
-				return -1;
-			object obj = List[index];
-			List.RemoveAt( index );
-			index += relativePos;
-			if ( index < 0 )
-				index = 0;
-			if ( index > List.Count )
-				index = List.Count;
-			List.Insert( index, obj );
-			return index;
-		}
-
 	/*	
 	#region Serialization
 		/// <summary>

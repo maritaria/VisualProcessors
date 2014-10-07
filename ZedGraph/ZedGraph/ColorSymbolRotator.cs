@@ -18,22 +18,22 @@
 //=============================================================================
 
 using System;
-using Color		 = System.Drawing.Color;
+using Color = System.Drawing.Color;
 
 namespace ZedGraph
 {
 	/// <summary>
 	/// Class used to get the next color/symbol for GraphPane.AddCurve methods.
 	/// </summary>
-	/// 
+	///
 	/// <author> Jerry Vos modified by John Champion </author>
 	/// <version> $Revision: 3.4 $ $Date: 2006-06-24 20:26:43 $ </version>
 	public class ColorSymbolRotator
 	{
-	#region Static fields
+		#region Static fields
+
 		/// <summary>
-		/// The <see cref="Color"/>s <see cref="ColorSymbolRotator"/> 
-		/// rotates through.
+		///  The <see cref="Color" />s <see cref="ColorSymbolRotator" /> rotates through.
 		/// </summary>
 		public static readonly Color[] COLORS = new Color[]
 		{
@@ -50,8 +50,7 @@ namespace ZedGraph
 		};
 
 		/// <summary>
-		/// The <see cref="SymbolType"/>s <see cref="ColorSymbolRotator"/> 
-		/// rotates through.
+		///  The <see cref="SymbolType" />s <see cref="ColorSymbolRotator" /> rotates through.
 		/// </summary>
 		public static readonly SymbolType[] SYMBOLS = new SymbolType[]
 		{
@@ -65,31 +64,67 @@ namespace ZedGraph
 			SymbolType.XCross,
 			SymbolType.HDash,
 			SymbolType.VDash
-		};		
+		};
 
 		private static ColorSymbolRotator _staticInstance;
-	#endregion
-	
-	#region Fields
+
+		#endregion Static fields
+
+		#region Fields
+
 		/// <summary>
-		/// The index of the next color to be used. Note: may be 
-		/// > COLORS.Length, it is reset to 0 on the next call if it is.
+		///  The index of the next color to be used. Note: may be &gt; COLORS.Length, it is reset to
+		///  0 on the next call if it is.
 		/// </summary>
 		protected int colorIndex = 0;
 
 		/// <summary>
-		/// The index of the next symbol to be used. Note: may be 
-		/// > SYMBOLS.Length, it is reset to 0 on the next call if it is.
+		///  The index of the next symbol to be used. Note: may be &gt; SYMBOLS.Length, it is reset
+		///  to 0 on the next call if it is.
 		/// </summary>
 		protected int symbolIndex = 0;
-	#endregion
 
-	#region Properties
+		#endregion Fields
+
+		#region Properties
+
 		/// <summary>
-		/// Retrieves the next color in the rotation  Calling this
-		/// method has the side effect of incrementing the color index.
-		/// <seealso cref="NextSymbol"/>
-		/// <seealso cref="NextColorIndex"/>
+		///  Retrieves the <see cref="ColorSymbolRotator" /> instance used by the static methods.
+		///  <seealso cref="StaticNextColor" /><seealso cref="StaticNextSymbol" />
+		/// </summary>
+		public static ColorSymbolRotator StaticInstance
+		{
+			get
+			{
+				if (_staticInstance == null)
+					_staticInstance = new ColorSymbolRotator();
+
+				return _staticInstance;
+			}
+		}
+
+		/// <summary>
+		///  Retrieves the next color from this class's static <see cref="ColorSymbolRotator" />
+		///  instance <seealso cref="StaticInstance" /><seealso cref="StaticNextSymbol" />
+		/// </summary>
+		public static Color StaticNextColor
+		{
+			get { return StaticInstance.NextColor; }
+		}
+
+		/// <summary>
+		///  Retrieves the next symbol type from this class's static <see cref="ColorSymbolRotator"
+		///  /> instance <seealso cref="StaticInstance" /><seealso cref="StaticNextColor" />
+		/// </summary>
+		public static SymbolType StaticNextSymbol
+		{
+			get { return StaticInstance.NextSymbol; }
+		}
+
+		/// <summary>
+		///  Retrieves the next color in the rotation Calling this method has the side effect of
+		///  incrementing the color index. <seealso cref="NextSymbol" /><seealso
+		///  cref="NextColorIndex" />
 		/// </summary>
 		public Color NextColor
 		{
@@ -97,8 +132,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Retrieves the index of the next color to be used.  Calling this
-		/// method has the side effect of incrementing the color index.
+		///  Retrieves the index of the next color to be used. Calling this method has the side
+		///  effect of incrementing the color index.
 		/// </summary>
 		public int NextColorIndex
 		{
@@ -116,10 +151,9 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Retrieves the next color in the rotation.  Calling this
-		/// method has the side effect of incrementing the symbol index.
-		/// <seealso cref="NextColor"/>
-		/// <seealso cref="NextSymbolIndex"/>
+		///  Retrieves the next color in the rotation. Calling this method has the side effect of
+		///  incrementing the symbol index. <seealso cref="NextColor" /><seealso
+		///  cref="NextSymbolIndex" />
 		/// </summary>
 		public SymbolType NextSymbol
 		{
@@ -127,8 +161,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Retrieves the index of the next symbol to be used.  Calling this
-		/// method has the side effect of incrementing the symbol index.
+		///  Retrieves the index of the next symbol to be used. Calling this method has the side
+		///  effect of incrementing the symbol index.
 		/// </summary>
 		public int NextSymbolIndex
 		{
@@ -145,44 +179,6 @@ namespace ZedGraph
 			}
 		}
 
-		/// <summary>
-		/// Retrieves the <see cref="ColorSymbolRotator"/> instance used by the
-		/// static methods.
-		/// <seealso cref="StaticNextColor"/>
-		/// <seealso cref="StaticNextSymbol"/>
-		/// </summary>
-		public static ColorSymbolRotator StaticInstance
-		{
-			get
-			{
-				if (_staticInstance == null)
-					_staticInstance = new ColorSymbolRotator();
-
-				return _staticInstance;
-			}
-		}
-		
-		/// <summary>
-		/// Retrieves the next color from this class's static 
-		/// <see cref="ColorSymbolRotator"/> instance
-		/// <seealso cref="StaticInstance"/>
-		/// <seealso cref="StaticNextSymbol"/>
-		/// </summary>
-		public static Color StaticNextColor
-		{
-			get { return StaticInstance.NextColor; } 
-		}
-
-		/// <summary>
-		/// Retrieves the next symbol type from this class's static 
-		/// <see cref="ColorSymbolRotator"/> instance
-		/// <seealso cref="StaticInstance"/>
-		/// <seealso cref="StaticNextColor"/>
-		/// </summary>
-		public static SymbolType StaticNextSymbol
-		{
-			get { return StaticInstance.NextSymbol; } 
-		}
-	#endregion
+		#endregion Properties
 	}
 }

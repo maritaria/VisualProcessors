@@ -11,6 +11,8 @@ using VisualProcessors;
 using VisualProcessors.Controls;
 using VisualProcessors.Forms;
 using VisualProcessors.Processing;
+using ZedGraph;
+using System.Reflection;
 
 namespace VisualProcessors
 {
@@ -43,7 +45,7 @@ namespace VisualProcessors
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new PipelineForm(dp));
+			Application.Run(new PipelineForm());
 		}
 	}
 }

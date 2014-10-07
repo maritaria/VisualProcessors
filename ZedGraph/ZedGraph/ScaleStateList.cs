@@ -73,13 +73,25 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// 
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
+		/// <param name="list"></param>
+		public void ApplyScale(YAxisList list)
 		{
-			return this.Clone();
+			int count = Math.Min(list.Count, this.Count);
+			for (int i = 0; i < count; i++)
+				this[i].ApplyScale(list[i]);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="list"></param>
+		public void ApplyScale(Y2AxisList list)
+		{
+			int count = Math.Min(list.Count, this.Count);
+			for (int i = 0; i < count; i++)
+				this[i].ApplyScale(list[i]);
 		}
 
 		/// <summary>
@@ -88,9 +100,18 @@ namespace ZedGraph
 		/// <returns>A new, independent copy of this class</returns>
 		public ScaleStateList Clone()
 		{
-			return new ScaleStateList( this );
+			return new ScaleStateList(this);
 		}
 
+		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
 		/// <summary>
 		/// Iterate through the list of <see cref="ScaleState" /> objects, comparing them
 		/// to the state of the specified <see cref="YAxisList" /> <see cref="Axis" />
@@ -152,27 +173,5 @@ namespace ZedGraph
 					List.Add( state );
 				}
 		*/
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="list"></param>
-		public void ApplyScale( YAxisList list )
-		{
-			int count = Math.Min( list.Count, this.Count );
-			for ( int i = 0; i < count; i++ )
-				this[i].ApplyScale( list[i] );
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="list"></param>
-		public void ApplyScale( Y2AxisList list )
-		{
-			int count = Math.Min( list.Count, this.Count );
-			for ( int i = 0; i < count; i++ )
-				this[i].ApplyScale( list[i] );
-		}
 	}
 }

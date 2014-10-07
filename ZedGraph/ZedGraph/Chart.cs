@@ -37,9 +37,11 @@ namespace ZedGraph
 	public class Chart : ICloneable, ISerializable
 	{
 		/// <summary>
-		/// The rectangle that contains the area bounded by the axes, in pixel units
+		/// Private field that stores the <see cref="ZedGraph.Border"/> data for this
+		/// <see cref="Chart"/>.  Use the public property <see cref="Border"/> to
+		/// access this value.
 		/// </summary>
-		internal RectangleF _rect;
+		internal Border _border;
 
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
@@ -48,18 +50,15 @@ namespace ZedGraph
 		/// </summary>
 		internal Fill _fill;
 
-		/// <summary>
-		/// Private field that stores the <see cref="ZedGraph.Border"/> data for this
-		/// <see cref="Chart"/>.  Use the public property <see cref="Border"/> to
-		/// access this value.
-		/// </summary>
-		internal Border _border;
-
 		/// <summary>Private field that determines if the <see cref="Rect"/> will be
 		/// sized automatically.  Use the public property <see cref="IsRectAuto"/> to access
 		/// this value. </summary>
 		internal bool _isRectAuto;
 
+		/// <summary>
+		/// The rectangle that contains the area bounded by the axes, in pixel units
+		/// </summary>
+		internal RectangleF _rect;
 	#region Constructors
 
 		/// <summary>
@@ -85,6 +84,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Chart Clone()
+		{
+			return new Chart(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -93,42 +101,9 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public Chart Clone()
-		{
-			return new Chart( this );
-		}
-
 	#endregion
 
 	#region Properties
-
-		/// <summary>
-		/// Gets or sets the rectangle that contains the area bounded by the axes
-		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
-		/// If you set this value manually, then the <see cref="IsRectAuto"/>
-		/// value will automatically be set to false.
-		/// </summary>
-		/// <value>The rectangle units are in screen pixels</value>
-		public RectangleF Rect
-		{
-			get { return _rect; }
-			set { _rect = value; _isRectAuto = false; }
-		}
-
-		/// <summary>
-		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
-		/// <see cref="Chart"/>.
-		/// </summary>
-		public Fill Fill
-		{
-			get { return _fill; }
-			set { _fill = value; }
-		}
 
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Border"/> class for drawing the border
@@ -140,6 +115,16 @@ namespace ZedGraph
 		{
 			get { return _border; }
 			set { _border = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="Chart"/>.
+		/// </summary>
+		public Fill Fill
+		{
+			get { return _fill; }
+			set { _fill = value; }
 		}
 
 		/// <summary>
@@ -162,6 +147,18 @@ namespace ZedGraph
 			set { _isRectAuto = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the rectangle that contains the area bounded by the axes
+		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
+		/// If you set this value manually, then the <see cref="IsRectAuto"/>
+		/// value will automatically be set to false.
+		/// </summary>
+		/// <value>The rectangle units are in screen pixels</value>
+		public RectangleF Rect
+		{
+			get { return _rect; }
+			set { _rect = value; _isRectAuto = false; }
+		}
 	#endregion
 
 	#region Serialization
@@ -220,27 +217,29 @@ namespace ZedGraph
 			/// </summary>
 			public static Color BorderColor = Color.Black;
 			/// <summary>
-			/// The default color for the <see cref="Chart"/> background.
-			/// (<see cref="Chart.Fill"/> property). 
-			/// </summary>
-			public static Color FillColor = Color.White;
-			/// <summary>
-			/// The default brush for the <see cref="GraphPane.Chart"/> background.
-			/// (<see cref="ZedGraph.Fill.Brush"/> property of <see cref="Chart.Fill"/>). 
-			/// </summary>
-			public static Brush FillBrush = null;
-			/// <summary>
-			/// The default <see cref="FillType"/> for the <see cref="GraphPane.Chart"/> background.
-			/// (<see cref="ZedGraph.Fill.Type"/> property of <see cref="Chart.Fill"/>). 
-			/// </summary>
-			public static FillType FillType = FillType.Brush;
-			/// <summary>
 			/// The default pen width for drawing the 
 			/// <see cref="GraphPane.Chart"/> border
 			/// (<see cref="Chart.Border"/> property).
 			/// Units are in points (1/72 inch).
 			/// </summary>
 			public static float BorderPenWidth = 1F;
+
+			/// <summary>
+			/// The default brush for the <see cref="GraphPane.Chart"/> background.
+			/// (<see cref="ZedGraph.Fill.Brush"/> property of <see cref="Chart.Fill"/>). 
+			/// </summary>
+			public static Brush FillBrush = null;
+
+			/// <summary>
+			/// The default color for the <see cref="Chart"/> background.
+			/// (<see cref="Chart.Fill"/> property). 
+			/// </summary>
+			public static Color FillColor = Color.White;
+			/// <summary>
+			/// The default <see cref="FillType"/> for the <see cref="GraphPane.Chart"/> background.
+			/// (<see cref="ZedGraph.Fill.Type"/> property of <see cref="Chart.Fill"/>). 
+			/// </summary>
+			public static FillType FillType = FillType.Brush;
 			/// <summary>
 			/// The default display mode for the <see cref="Chart"/> border
 			/// (<see cref="Chart.Border"/> property). true

@@ -45,6 +45,7 @@ namespace VisualProcessors.Processing
 			AddInputChannel("Green", true);
 			SetupLists();
 		}
+
 		private void SetupLists()
 		{
 			m_PointListRed = new RollingPointPairList(2000);

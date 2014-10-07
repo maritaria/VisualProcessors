@@ -44,11 +44,10 @@ namespace ZedGraph
 
 	#region Fields
 		/// <summary>
-		/// Private field that stores the size (width) of this
-        /// <see cref="HiLowBar"/> in points (1/72 inch).  Use the public
-        /// property <see cref="Size"/> to access this value.
+		/// The result of the autosize calculation, which is the size of the bars in
+		/// user scale units.  This is converted to pixels at draw time.
 		/// </summary>
-		private float		_size;
+		internal double _userScaleSize = 1.0;
 
 		/// <summary>
 		/// Private field that determines whether the bar width will be based on
@@ -59,11 +58,11 @@ namespace ZedGraph
 		private bool _isAutoSize;
 
 		/// <summary>
-		/// The result of the autosize calculation, which is the size of the bars in
-		/// user scale units.  This is converted to pixels at draw time.
+		/// Private field that stores the size (width) of this
+        /// <see cref="HiLowBar"/> in points (1/72 inch).  Use the public
+        /// property <see cref="Size"/> to access this value.
 		/// </summary>
-		internal double _userScaleSize = 1.0;
-
+		private float		_size;
 	#endregion
 
 	#region Default
@@ -73,17 +72,17 @@ namespace ZedGraph
 		/// </summary>
 		new public struct Default
 		{
+			/// <summary>
+			/// Default value for the <see cref="HiLowBar.IsAutoSize" /> property.
+			/// </summary>
+			public static bool IsAutoSize = true;
+
 			// Default HiLowBar properties
 			/// <summary>
 			/// The default size (width) for the bars (<see cref="HiLowBar.Size"/> property),
 			/// in units of points.
 			/// </summary>
 			public static float Size = 7;
-
-			/// <summary>
-			/// Default value for the <see cref="HiLowBar.IsAutoSize" /> property.
-			/// </summary>
-			public static bool IsAutoSize = true;
 		}
 	#endregion
 
@@ -145,6 +144,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		new public HiLowBar Clone()
+		{
+			return new HiLowBar(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -153,16 +161,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		new public HiLowBar Clone()
-		{
-			return new HiLowBar( this );
-		}
-
 	#endregion
 
 	#region Serialization
@@ -204,6 +202,23 @@ namespace ZedGraph
 
 	#region Properties
 		/// <summary>
+		/// Determines whether the bar width will be based on
+		/// the <see cref="Size"/> value, or it will be based on available
+		/// space similar to <see cref="BarItem"/> objects.
+		/// </summary>
+		/// <remarks>If true, then the value of <see cref="Size"/> is ignored. 
+		/// If this value is true, then <see cref="BarSettings.MinClusterGap"/> will be used to
+		/// determine the total space between each bar.  If the base axis is non-ordinal, then
+		/// <see cref="BarSettings.ClusterScaleWidth" /> will be active.  In this case, you may
+		/// want to make sure that <see cref="BarSettings.ClusterScaleWidthAuto" /> is true.
+		/// </remarks>
+		public bool IsAutoSize
+		{
+			get { return _isAutoSize; }
+			set { _isAutoSize = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets the size of the <see cref="HiLowBar"/>
 		/// </summary>
 		/// <remarks>The size of the bars can be set by this value, which
@@ -223,23 +238,6 @@ namespace ZedGraph
 		{
 			get { return _size; }
 			set { _size = value; _isAutoSize = false; }
-		}
-
-		/// <summary>
-		/// Determines whether the bar width will be based on
-		/// the <see cref="Size"/> value, or it will be based on available
-		/// space similar to <see cref="BarItem"/> objects.
-		/// </summary>
-		/// <remarks>If true, then the value of <see cref="Size"/> is ignored. 
-		/// If this value is true, then <see cref="BarSettings.MinClusterGap"/> will be used to
-		/// determine the total space between each bar.  If the base axis is non-ordinal, then
-		/// <see cref="BarSettings.ClusterScaleWidth" /> will be active.  In this case, you may
-		/// want to make sure that <see cref="BarSettings.ClusterScaleWidthAuto" /> is true.
-		/// </remarks>
-		public bool IsAutoSize
-		{
-			get { return _isAutoSize; }
-			set { _isAutoSize = value; }
 		}
 	#endregion
 

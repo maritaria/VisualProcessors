@@ -23,7 +23,90 @@ using System.Drawing.Drawing2D;
 
 
 namespace ZedGraph
-{	
+{
+	/// <summary>
+	/// Enumeration type for the different horizontal text alignment options
+	/// </summary>
+	/// <seealso cref="FontSpec"/>
+	public enum AlignH
+	{
+		/// <summary>
+		/// Position the text so that its left edge is aligned with the
+		/// specified X,Y location.  Used by the
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
+		/// </summary>
+		Left,
+		/// <summary>
+		/// Position the text so that its center is aligned (horizontally) with the
+		/// specified X,Y location.  Used by the
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
+		/// </summary>
+		Center,
+		/// <summary>
+		/// Position the text so that its right edge is aligned with the
+		/// specified X,Y location.  Used by the
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
+		/// </summary>
+		Right
+	}
+
+	/// <summary>
+	/// Enumeration type for the different proximal alignment options
+	/// </summary>
+	/// <seealso cref="FontSpec"/>
+	/// <seealso cref="Scale.Align"/>
+	public enum AlignP
+	{
+		/// <summary>
+		/// Position the text so that its "inside" edge (the edge that is
+		/// nearest to the alignment reference point or object) is aligned.
+		/// Used by the <see cref="Scale.Align"/> method to align text
+		/// to the axis.
+		/// </summary>
+		Inside,
+		/// <summary>
+		/// Position the text so that its center is aligned with the
+		/// reference object or point.
+		/// Used by the <see cref="Scale.Align"/> method to align text
+		/// to the axis.
+		/// </summary>
+		Center,
+		/// <summary>
+		/// Position the text so that its right edge (the edge that is
+		/// farthest from the alignment reference point or object) is aligned.
+		/// Used by the <see cref="Scale.Align"/> method to align text
+		/// to the axis.
+		/// </summary>
+		Outside
+	}
+
+	/// <summary>
+	/// Enumeration type for the different vertical text alignment options
+	/// </summary>
+	/// specified X,Y location.  Used by the
+	/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
+	public enum AlignV
+	{
+		/// <summary>
+		/// Position the text so that its top edge is aligned with the
+		/// specified X,Y location.  Used by the
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
+		/// </summary>
+		Top,
+		/// <summary>
+		/// Position the text so that its center is aligned (vertically) with the
+		/// specified X,Y location.  Used by the
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
+		/// </summary>
+		Center,
+		/// <summary>
+		/// Position the text so that its bottom edge is aligned with the
+		/// specified X,Y location.  Used by the
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
+		/// </summary>
+		Bottom
+	}
+
 	/// <summary>
 	/// Enumeration type for the various axis types that are available
 	/// </summary>
@@ -76,303 +159,78 @@ namespace ZedGraph
 	}
 
 	/// <summary>
-	/// Enumeration type for the various types of fills that can be used with <see cref="Bar"/>
-	/// charts.
+	/// Enumeration type that defines the base axis from which <see cref="Bar"/> graphs
+	/// are displayed. The bars can be drawn on any of the four axes (<see cref="XAxis"/>,
+	/// <see cref="X2Axis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
 	/// </summary>
-	public enum FillType
+	/// <seealso cref="BarSettings.Base"/>
+	public enum BarBase
 	{
-		/// <summary> No fill </summary>
-		None,
-		/// <summary> A solid fill using <see cref="System.Drawing.SolidBrush"/> </summary>
-		Solid,
-		/// <summary> A custom fill using either <see cref="LinearGradientBrush"/> or
-		/// <see cref="TextureBrush"/></summary>
-		Brush,
 		/// <summary>
-		/// Fill with a single solid color based on the X value of the data.</summary>
-		/// <remarks>The X value is
-		/// used to determine the color value based on a gradient brush, and using a data range
-		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
-		/// range by initializing the <see cref="Fill"/> class with your own custom
-		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
-		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
-		/// </remarks>
-		/// <seealso cref="Fill.RangeMin"/>
-		/// <seealso cref="Fill.RangeMax"/>
-		/// <seealso cref="Fill.RangeDefault"/>
-		GradientByX,
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="XAxis"/>.
+		/// </summary>
+		X,
 		/// <summary>
-		/// Fill with a single solid color based on the Z value of the data.</summary>
-		/// <remarks>The Z value is
-		/// used to determine the color value based on a gradient brush, and using a data range
-		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
-		/// range by initializing the <see cref="Fill"/> class with your own custom
-		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
-		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
-		/// </remarks>
-		/// <seealso cref="Fill.RangeMin"/>
-		/// <seealso cref="Fill.RangeMax"/>
-		/// <seealso cref="Fill.RangeDefault"/>
-		GradientByY,
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="X2Axis"/>.
+		/// </summary>
+		X2,
 		/// <summary>
-		/// Fill with a single solid color based on the Z value of the data.</summary>
-		/// <remarks>The Z value is
-		/// used to determine the color value based on a gradient brush, and using a data range
-		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
-		/// range by initializing the <see cref="Fill"/> class with your own custom
-		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
-		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
-		/// </remarks>
-		/// <seealso cref="Fill.RangeMin"/>
-		/// <seealso cref="Fill.RangeMax"/>
-		/// <seealso cref="Fill.RangeDefault"/>
-		GradientByZ,
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="YAxis"/>.
+		/// </summary>
+		Y,
 		/// <summary>
-		/// Fill with a single solid color based on the "ColorValue" property of the data.</summary>
-		/// <remarks>The "ColorValue" property is
-		/// used to determine the color value based on a gradient brush, and using a data range
-		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
-		/// range by initializing the <see cref="Fill"/> class with your own custom
-		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
-		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
-		/// </remarks>
-		/// <seealso cref="Fill.RangeMin"/>
-		/// <seealso cref="Fill.RangeMax"/>
-		/// <seealso cref="Fill.RangeDefault"/>
-		GradientByColorValue
-
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="Y2Axis"/>.
+		/// </summary>
+		Y2
 	}
 
 	/// <summary>
-	/// Enumeration type for the various axis date and time unit types that are available
+	/// Enumeration type that defines the available types of <see cref="BarItem"/> graphs.
 	/// </summary>
-	public enum DateUnit
-	{
-		/// <summary> Yearly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
-		/// </summary>
-		Year,
-		/// <summary> Monthly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
-		/// </summary>
-		Month,
-		/// <summary> Daily units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
-		/// </summary>
-		Day,
-		/// <summary> Hourly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
-		/// </summary>
-		Hour,
-		/// <summary> Minute units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
-		/// </summary>
-		Minute,
-		/// <summary> Second units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
-		/// </summary>
-		Second,
-		/// <summary> Millisecond units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
-		/// </summary>
-		Millisecond
-	}
-
-	/// <summary>
-	/// Enumeration type for the various symbol shapes that are available
-	/// </summary>
-	/// <seealso cref="ZedGraph.Symbol.Fill"/>
-	public enum SymbolType 
-	{
-		/// <summary> Square-shaped <see cref="ZedGraph.Symbol"/> </summary>
-		Square,
-		/// <summary> Rhombus-shaped <see cref="ZedGraph.Symbol"/> </summary>
-		Diamond,
-		/// <summary> Equilateral triangle <see cref="ZedGraph.Symbol"/> </summary>
-		Triangle,
-		/// <summary> Uniform circle <see cref="ZedGraph.Symbol"/> </summary>
-		Circle,
-		/// <summary> "X" shaped <see cref="ZedGraph.Symbol"/>.  This symbol cannot
-		/// be filled since it has no outline. </summary>
-		XCross,
-		/// <summary> "+" shaped <see cref="ZedGraph.Symbol"/>.  This symbol cannot
-		/// be filled since it has no outline. </summary>
-		Plus,
-		/// <summary> Asterisk-shaped <see cref="ZedGraph.Symbol"/>.  This symbol
-		/// cannot be filled since it has no outline. </summary>
-		Star,
-		/// <summary> Unilateral triangle <see cref="ZedGraph.Symbol"/>, pointing
-		/// down. </summary>
-		TriangleDown,
-		/// <summary>
-		/// Horizontal dash <see cref="ZedGraph.Symbol"/>.  This symbol cannot be
-		/// filled since it has no outline.
-		/// </summary>
-		HDash,
-		/// <summary>
-		/// Vertical dash <see cref="ZedGraph.Symbol"/>.  This symbol cannot be
-		/// filled since it has no outline.
-		/// </summary>
-		VDash,
-		/// <summary> A symbol defined by the <see cref="Symbol.UserSymbol"/> propery.
-		/// If no symbol is defined, the <see cref="Symbol.Default.Type"/>. symbol will
-		/// be used.
-		/// </summary>
-		UserDefined,
-		/// <summary> A Default symbol type (the symbol type will be obtained
-		/// from <see cref="Symbol.Default.Type"/>. </summary>
-		Default,
-		/// <summary> No symbol is shown (this is equivalent to using
-		/// <see cref="Symbol.IsVisible"/> = false.</summary>
-		None
-	}
-
-	/// <summary>
-	/// Enumeration type that defines the possible legend locations
-	/// </summary>
-	/// <seealso cref="Legend.Position"/>
-	public enum LegendPos
+	/// <seealso cref="BarSettings.Type"/>
+	public enum BarType
 	{
 		/// <summary>
-		/// Locate the <see cref="Legend"/> above the <see cref="Chart.Rect"/>
+		/// Draw each <see cref="BarItem"/> side by side in clusters.
 		/// </summary>
-		Top,
+		Cluster,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> on the left side of the <see cref="Chart.Rect"/>
+		/// Draw the <see cref="BarItem"/> bars one on top of the other.  The bars will
+		/// be drawn such that the last bar in the <see cref="CurveList"/> will be behind
+		/// all other bars.  Note that the bar values are not summed up for the overlay
+		/// mode.  The data values must be summed before being passed
+		/// to <see cref="GraphPane.AddBar(string,IPointList,Color)"/>.
+		/// For example, if the first bar of
+		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
+		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
+		/// appear to be 20 units on top of the first bar.
 		/// </summary>
-		Left,
+		Overlay,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> on the right side of the <see cref="Chart.Rect"/>
+		/// Draw the <see cref="BarItem"/> bars one on top of the other.  The bars will
+		/// be drawn such that the bars are sorted according to the maximum value, with
+		/// the tallest bar at each point at the back and the shortest bar at the front.
+		/// This is similar to the <see cref="Overlay"/> mode, but the bars are sorted at
+		/// each base value.
+		/// The data values must be summed before being passed
+		/// to <see cref="GraphPane.AddBar(string,IPointList,Color)"/>.  For example, if the first bar of
+		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
+		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
+		/// appear to be 20 units on top of the first bar.
 		/// </summary>
-		Right,
+		SortedOverlay,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> below the <see cref="Chart.Rect"/>
+		/// Draw the <see cref="BarItem"/> bars in an additive format so that they stack on
+		/// top of one another.  The value of the last bar drawn will be the sum of the values
+		/// of all prior bars.
 		/// </summary>
-		Bottom,
+		Stack,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
-		/// top-left corner.  
+		/// Draw the <see cref="BarItem"/> bars in a format whereby the height of each
+		/// represents the percentage of the total each one represents.  Negative values
+		///are displayed below the zero line as percentages of the absolute total of all values. 
 		/// </summary>
-		InsideTopLeft,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
-		/// top-right corner. 
-		/// </summary>
-		InsideTopRight,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
-		/// bottom-left corner.
-		/// </summary>
-		InsideBotLeft,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
-		/// bottom-right corner. 
-		/// </summary>
-		InsideBotRight,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> as a floating object above the graph at the
-		/// location specified by <see cref="Legend.Location"/>.
-		/// </summary>
-		Float,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> centered above the <see cref="Chart.Rect"/>
-		/// </summary>
-		TopCenter,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> centered below the <see cref="Chart.Rect"/>
-		/// </summary>
-		BottomCenter,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> above the <see cref="Chart.Rect"/>, but flush
-		/// against the left margin of the <see cref="PaneBase.Rect" />.
-		/// </summary>
-		TopFlushLeft,
-		/// <summary>
-		/// Locate the <see cref="Legend"/> below the <see cref="Chart.Rect"/>, but flush
-		/// against the left margin of the <see cref="PaneBase.Rect" />.
-		/// </summary>
-		BottomFlushLeft
-
-	}
-
-	/// <summary>
-	/// Enumeration type for the different horizontal text alignment options
-	/// </summary>
-	/// <seealso cref="FontSpec"/>
-	public enum AlignH
-	{
-		/// <summary>
-		/// Position the text so that its left edge is aligned with the
-		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
-		/// </summary>
-		Left,
-		/// <summary>
-		/// Position the text so that its center is aligned (horizontally) with the
-		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
-		/// </summary>
-		Center,
-		/// <summary>
-		/// Position the text so that its right edge is aligned with the
-		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
-		/// </summary>
-		Right
-	}
-	
-	/// <summary>
-	/// Enumeration type for the different proximal alignment options
-	/// </summary>
-	/// <seealso cref="FontSpec"/>
-	/// <seealso cref="Scale.Align"/>
-	public enum AlignP
-	{
-		/// <summary>
-		/// Position the text so that its "inside" edge (the edge that is
-		/// nearest to the alignment reference point or object) is aligned.
-		/// Used by the <see cref="Scale.Align"/> method to align text
-		/// to the axis.
-		/// </summary>
-		Inside,
-		/// <summary>
-		/// Position the text so that its center is aligned with the
-		/// reference object or point.
-		/// Used by the <see cref="Scale.Align"/> method to align text
-		/// to the axis.
-		/// </summary>
-		Center,
-		/// <summary>
-		/// Position the text so that its right edge (the edge that is
-		/// farthest from the alignment reference point or object) is aligned.
-		/// Used by the <see cref="Scale.Align"/> method to align text
-		/// to the axis.
-		/// </summary>
-		Outside
-	}
-	
-	/// <summary>
-	/// Enumeration type for the different vertical text alignment options
-	/// </summary>
-	/// specified X,Y location.  Used by the
-	/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
-	public enum AlignV
-	{
-		/// <summary>
-		/// Position the text so that its top edge is aligned with the
-		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
-		/// </summary>
-		Top,
-		/// <summary>
-		/// Position the text so that its center is aligned (vertically) with the
-		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
-		/// </summary>
-		Center,
-		/// <summary>
-		/// Position the text so that its bottom edge is aligned with the
-		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
-		/// </summary>
-		Bottom
+		PercentStack
 	}
 
 	/// <summary>
@@ -488,77 +346,174 @@ namespace ZedGraph
 		XChartFractionY2Scale
 
 	}
-	
+
 	/// <summary>
-	/// Enumeration type that defines how a curve is drawn.  Curves can be drawn
-	/// as ordinary lines by connecting the points directly, or in a stair-step
-	/// fashion as a series of discrete, constant values.  In a stair step plot,
-	/// all lines segments are either horizontal or vertical.  In a non-step (line)
-	/// plot, the lines can be any angle.
+	/// Enumeration type for the various axis date and time unit types that are available
 	/// </summary>
-	/// <seealso cref="Line.StepType"/>
-	public enum StepType
+	public enum DateUnit
+	{
+		/// <summary> Yearly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Year,
+		/// <summary> Monthly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Month,
+		/// <summary> Daily units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Day,
+		/// <summary> Hourly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Hour,
+		/// <summary> Minute units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Minute,
+		/// <summary> Second units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Second,
+		/// <summary> Millisecond units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Millisecond
+	}
+
+	/// <summary>
+	/// Enumeration type for the various types of fills that can be used with <see cref="Bar"/>
+	/// charts.
+	/// </summary>
+	public enum FillType
+	{
+		/// <summary> No fill </summary>
+		None,
+		/// <summary> A solid fill using <see cref="System.Drawing.SolidBrush"/> </summary>
+		Solid,
+		/// <summary> A custom fill using either <see cref="LinearGradientBrush"/> or
+		/// <see cref="TextureBrush"/></summary>
+		Brush,
+		/// <summary>
+		/// Fill with a single solid color based on the X value of the data.</summary>
+		/// <remarks>The X value is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
+		GradientByX,
+		/// <summary>
+		/// Fill with a single solid color based on the Z value of the data.</summary>
+		/// <remarks>The Z value is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
+		GradientByY,
+		/// <summary>
+		/// Fill with a single solid color based on the Z value of the data.</summary>
+		/// <remarks>The Z value is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
+		GradientByZ,
+		/// <summary>
+		/// Fill with a single solid color based on the "ColorValue" property of the data.</summary>
+		/// <remarks>The "ColorValue" property is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
+		GradientByColorValue
+
+	}
+	/// <summary>
+	/// Enumeration type that defines the possible legend locations
+	/// </summary>
+	/// <seealso cref="Legend.Position"/>
+	public enum LegendPos
 	{
 		/// <summary>
-		/// Draw the <see cref="CurveItem"/> as a stair-step in which each
-		/// point defines the
-		/// beginning (left side) of a new stair.  This implies the points are
-		/// defined at the beginning of an "event."
+		/// Locate the <see cref="Legend"/> above the <see cref="Chart.Rect"/>
 		/// </summary>
-		ForwardStep,
+		Top,
 		/// <summary>
-		/// Draw the <see cref="CurveItem"/> as a stair-step in which each
-		/// point defines the end (right side) of a new stair.  This implies
-		/// the points are defined at the end of an "event."
+		/// Locate the <see cref="Legend"/> on the left side of the <see cref="Chart.Rect"/>
 		/// </summary>
-		RearwardStep,
+		Left,
 		/// <summary>
-		/// Draw the <see cref="CurveItem"/> as an ordinary line, in which the
-		/// points are connected directly by line segments.
+		/// Locate the <see cref="Legend"/> on the right side of the <see cref="Chart.Rect"/>
 		/// </summary>
-		NonStep,
+		Right,
 		/// <summary>
-		/// Draw the <see cref="CurveItem"/> as a segment in which each point defines the
-		/// beginning (left side) of a new "stair."  This implies the points are defined
-		/// at the beginning of an "event."  Note that ForwardSegment is different
-		/// from ForwardStep in that it does not draw the vertical portion of the step.
+		/// Locate the <see cref="Legend"/> below the <see cref="Chart.Rect"/>
 		/// </summary>
-		ForwardSegment,
+		Bottom,
 		/// <summary>
-		/// Draw the <see cref="CurveItem"/> as a segment in which each point defines the
-		/// end (right side) of a new "stair."  This implies the points are defined
-		/// at the end of an "event."  Note that RearwardSegment is different
-		/// from RearwardStep in that it does not draw the vertical portion of the step.
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
+		/// top-left corner.  
 		/// </summary>
-		RearwardSegment
+		InsideTopLeft,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
+		/// top-right corner. 
+		/// </summary>
+		InsideTopRight,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
+		/// bottom-left corner.
+		/// </summary>
+		InsideBotLeft,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
+		/// bottom-right corner. 
+		/// </summary>
+		InsideBotRight,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> as a floating object above the graph at the
+		/// location specified by <see cref="Legend.Location"/>.
+		/// </summary>
+		Float,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> centered above the <see cref="Chart.Rect"/>
+		/// </summary>
+		TopCenter,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> centered below the <see cref="Chart.Rect"/>
+		/// </summary>
+		BottomCenter,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> above the <see cref="Chart.Rect"/>, but flush
+		/// against the left margin of the <see cref="PaneBase.Rect" />.
+		/// </summary>
+		TopFlushLeft,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> below the <see cref="Chart.Rect"/>, but flush
+		/// against the left margin of the <see cref="PaneBase.Rect" />.
+		/// </summary>
+		BottomFlushLeft
+
 	}
-	
-	/// <summary>
-	/// Enumeration type that defines the base axis from which <see cref="Bar"/> graphs
-	/// are displayed. The bars can be drawn on any of the four axes (<see cref="XAxis"/>,
-	/// <see cref="X2Axis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
-	/// </summary>
-	/// <seealso cref="BarSettings.Base"/>
-	public enum BarBase
-	{
-		/// <summary>
-		/// Draw the <see cref="Bar"/> chart based from the <see cref="XAxis"/>.
-		/// </summary>
-		X,
-		/// <summary>
-		/// Draw the <see cref="Bar"/> chart based from the <see cref="X2Axis"/>.
-		/// </summary>
-		X2,
-		/// <summary>
-		/// Draw the <see cref="Bar"/> chart based from the <see cref="YAxis"/>.
-		/// </summary>
-		Y,
-		/// <summary>
-		/// Draw the <see cref="Bar"/> chart based from the <see cref="Y2Axis"/>.
-		/// </summary>
-		Y2
-	}
-	
+
 	/// <summary>
 	/// Enumeration type that defines the available types of <see cref="LineItem"/> graphs.
 	/// </summary>
@@ -574,201 +529,7 @@ namespace ZedGraph
 		/// </summary>
 		Stack
 	}
-	
-	/// <summary>
-	/// Enumeration type that defines the available types of <see cref="BarItem"/> graphs.
-	/// </summary>
-	/// <seealso cref="BarSettings.Type"/>
-	public enum BarType
-	{
-		/// <summary>
-		/// Draw each <see cref="BarItem"/> side by side in clusters.
-		/// </summary>
-		Cluster,
-		/// <summary>
-		/// Draw the <see cref="BarItem"/> bars one on top of the other.  The bars will
-		/// be drawn such that the last bar in the <see cref="CurveList"/> will be behind
-		/// all other bars.  Note that the bar values are not summed up for the overlay
-		/// mode.  The data values must be summed before being passed
-		/// to <see cref="GraphPane.AddBar(string,IPointList,Color)"/>.
-		/// For example, if the first bar of
-		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
-		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
-		/// appear to be 20 units on top of the first bar.
-		/// </summary>
-		Overlay,
-		/// <summary>
-		/// Draw the <see cref="BarItem"/> bars one on top of the other.  The bars will
-		/// be drawn such that the bars are sorted according to the maximum value, with
-		/// the tallest bar at each point at the back and the shortest bar at the front.
-		/// This is similar to the <see cref="Overlay"/> mode, but the bars are sorted at
-		/// each base value.
-		/// The data values must be summed before being passed
-		/// to <see cref="GraphPane.AddBar(string,IPointList,Color)"/>.  For example, if the first bar of
-		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
-		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
-		/// appear to be 20 units on top of the first bar.
-		/// </summary>
-		SortedOverlay,
-		/// <summary>
-		/// Draw the <see cref="BarItem"/> bars in an additive format so that they stack on
-		/// top of one another.  The value of the last bar drawn will be the sum of the values
-		/// of all prior bars.
-		/// </summary>
-		Stack,
-		/// <summary>
-		/// Draw the <see cref="BarItem"/> bars in a format whereby the height of each
-		/// represents the percentage of the total each one represents.  Negative values
-		///are displayed below the zero line as percentages of the absolute total of all values. 
-		/// </summary>
-		PercentStack 
-	}
-	
-	/// <summary>
-	/// Enumeration type that defines which set of data points - X or Y - is used  
-	/// <seealso cref="System.Collections.ArrayList.Sort()"/> to perform the sort.
-	/// </summary>
-	public enum SortType
-	{
-	   /// <summary>
-	   /// Use the Y values to sort the list.
-	   /// </summary>
-	   YValues,
-	   /// <summary>
-	   /// Use the X values to sort the list.
-	   /// </summary>
-	   XValues
-	};
 
-	/// <summary>
-	/// Enumeration that specifies a Z-Order position for <see cref="GraphObj"/>
-	/// objects.
-	/// </summary>
-	/// <remarks>This enumeration allows you to set the layering of various graph
-	/// features.  Except for the <see cref="GraphObj"/> objects, other feature types
-	/// all have a fixed depth as follows (front to back):
-	/// <list>
-	/// <see cref="Legend"/> objects
-	/// The border around <see cref="Chart.Rect"/>
-	/// <see cref="CurveItem"/> objects
-	/// The <see cref="Axis"/> features
-	/// The background fill of the <see cref="Chart.Rect"/>
-	/// The pane <see cref="PaneBase.Title"/>
-	/// The background fill of the <see cref="PaneBase.Rect"/>
-	/// </list>
-	/// You cannot place anything behind the <see cref="PaneBase.Rect"/>
-	/// background fill, but <see cref="GraphObj.ZOrder"/> allows you to
-	/// explicitly control the depth of <see cref="GraphObj"/> objects
-	/// between all other object types.  For items of equal <see cref="ZOrder"/>,
-	/// such as multiple <see cref="CurveItem"/>'s or <see cref="GraphObj"/>'s
-	/// having the same <see cref="ZOrder"/> value, the relative depth is
-	/// controlled by the ordinal position in the list (either
-	/// <see cref="CurveList"/> or <see cref="GraphObjList"/>).
-	/// <see cref="GraphObj"/> objects
-	/// can be placed in the <see cref="GraphObjList"/> of either a
-	/// <see cref="GraphPane"/> or a <see cref="MasterPane"/>.  For a
-	/// <see cref="GraphPane"/>-based <see cref="GraphObj"/>, all <see cref="ZOrder"/>
-	/// values are applicable.  For a <see cref="MasterPane"/>-based
-	/// <see cref="GraphObj"/>, any <see cref="ZOrder"/> value can be used, but there
-	/// are really only three depths:
-	/// <list><see cref="ZOrder.H_BehindAll"/> will place the item behind the pane title,
-	/// <see cref="ZOrder.A_InFront"/> will place on top of all other graph features,
-	/// any other value places the object above the pane title, but behind the <see cref="GraphPane"/>'s.
-	/// </list>
-	/// </remarks>
-	public enum ZOrder
-	{
-	   /// <summary>
-	   /// Specifies that the <see cref="GraphObj"/> will be behind all other
-	   /// objects (including the <see cref="PaneBase"/> <see cref="PaneBase.Title"/>).
-	   /// </summary>
-	   H_BehindAll,
-	   /// <summary>
-	   /// Specifies that the <see cref="GraphObj"/> will be behind the
-	   /// <see cref="Chart.Rect"/> background <see cref="Fill"/>
-	   /// (see <see cref="Chart.Fill"/>).
-	   /// </summary>
-	   G_BehindChartFill,
-		/// <summary>
-		/// Specifies that the <see cref="GraphObj"/> will be behind the grid lines.
-		/// </summary>
-		F_BehindGrid,
-		/// <summary>
-		/// Specifies that the <see cref="GraphObj"/> will be behind the
-		/// <see cref="CurveItem"/> objects.
-		/// </summary>
-		E_BehindCurves,
-		/// <summary>
-	   /// Specifies that the <see cref="GraphObj"/> will be behind the
-	   /// <see cref="Axis"/> objects.
-	   /// </summary>
-	   D_BehindAxis,
-	   /// <summary>
-	   /// Specifies that the <see cref="GraphObj"/> will be behind the
-	   /// <see cref="Chart"/> border.
-	   /// </summary>
-	   C_BehindChartBorder,
-	   /// <summary>
-	   /// Specifies that the <see cref="GraphObj"/> will be behind the
-	   /// <see cref="Legend"/> object.
-	   /// </summary>
-	   B_BehindLegend,
-	   /// <summary>
-	   /// Specifies that the <see cref="GraphObj"/> will be in front of
-	   /// all other objects, except for the other <see cref="GraphObj"/>
-	   /// objects that have the same <see cref="ZOrder"/> and are before
-	   /// this object in the <see cref="GraphObjList"/>.
-	   /// </summary>
-	   A_InFront
-	}
-
-	/// <summary>
-	/// Enumeration that determines the type of label that is displayed for each pie slice
-	/// (see <see cref="PieItem.LabelType"/>).
-	/// </summary>
-	public enum PieLabelType
-	{
-		/// <summary>
-		/// Displays <see cref="CurveItem.Label"/> and <see cref="PieItem.Value"/> for
-		/// a slice in a Pie Chart.
-		/// </summary>
-		Name_Value,
-
-		/// <summary>
-		/// Displays <see cref="CurveItem.Label"/> and <see cref="PieItem.Value"/> (as % of total) for
-		/// a slice in a Pie Chart.
-		/// </summary>
-		Name_Percent,		
-
-		/// <summary>
-		/// Displays a <see cref="CurveItem.Label"/> containing the <see cref="PieItem.Value"/> both  
-		/// as an absolute number and as percentage of the total.
-		/// </summary>
-		Name_Value_Percent,		
-
-		/// <summary>
-		/// Displays <see cref="PieItem.Value"/> for
-		/// a slice in a Pie Chart.
-		/// </summary>
-		Value,
-
-		/// <summary>
-		/// Displays <see cref="PieItem.Value"/> (as % of total) for
-		/// a slice in a Pie Chart.
-		/// </summary>
-		Percent,
-
-		/// <summary>
-		/// Displays <see cref="CurveItem.Label"/> for a slice in a Pie Chart.
-		/// </summary>
-		Name,
-
-		/// <summary>
-		///No label displayed. 
-		/// </summary>
-		None
-	}
-	
 	/// <summary>
 	/// Define the auto layout options for the
 	/// <see cref="MasterPane.SetLayout(Graphics,PaneLayout)"/> method.
@@ -850,6 +611,53 @@ namespace ZedGraph
 	}
 
 	/// <summary>
+	/// Enumeration that determines the type of label that is displayed for each pie slice
+	/// (see <see cref="PieItem.LabelType"/>).
+	/// </summary>
+	public enum PieLabelType
+	{
+		/// <summary>
+		/// Displays <see cref="CurveItem.Label"/> and <see cref="PieItem.Value"/> for
+		/// a slice in a Pie Chart.
+		/// </summary>
+		Name_Value,
+
+		/// <summary>
+		/// Displays <see cref="CurveItem.Label"/> and <see cref="PieItem.Value"/> (as % of total) for
+		/// a slice in a Pie Chart.
+		/// </summary>
+		Name_Percent,
+
+		/// <summary>
+		/// Displays a <see cref="CurveItem.Label"/> containing the <see cref="PieItem.Value"/> both  
+		/// as an absolute number and as percentage of the total.
+		/// </summary>
+		Name_Value_Percent,
+
+		/// <summary>
+		/// Displays <see cref="PieItem.Value"/> for
+		/// a slice in a Pie Chart.
+		/// </summary>
+		Value,
+
+		/// <summary>
+		/// Displays <see cref="PieItem.Value"/> (as % of total) for
+		/// a slice in a Pie Chart.
+		/// </summary>
+		Percent,
+
+		/// <summary>
+		/// Displays <see cref="CurveItem.Label"/> for a slice in a Pie Chart.
+		/// </summary>
+		Name,
+
+		/// <summary>
+		///No label displayed. 
+		/// </summary>
+		None
+	}
+
+	/// <summary>
 	/// Enum for specifying the type of data to be returned by the ZedGraphWeb Render() method.
 	/// </summary>
 	public enum RenderModeType
@@ -864,5 +672,193 @@ namespace ZedGraph
 		RawImage
 	}
 
+	/// <summary>
+	/// Enumeration type that defines which set of data points - X or Y - is used  
+	/// <seealso cref="System.Collections.ArrayList.Sort()"/> to perform the sort.
+	/// </summary>
+	public enum SortType
+	{
+		/// <summary>
+		/// Use the Y values to sort the list.
+		/// </summary>
+		YValues,
+		/// <summary>
+		/// Use the X values to sort the list.
+		/// </summary>
+		XValues
+	};
 
+	/// <summary>
+	/// Enumeration type that defines how a curve is drawn.  Curves can be drawn
+	/// as ordinary lines by connecting the points directly, or in a stair-step
+	/// fashion as a series of discrete, constant values.  In a stair step plot,
+	/// all lines segments are either horizontal or vertical.  In a non-step (line)
+	/// plot, the lines can be any angle.
+	/// </summary>
+	/// <seealso cref="Line.StepType"/>
+	public enum StepType
+	{
+		/// <summary>
+		/// Draw the <see cref="CurveItem"/> as a stair-step in which each
+		/// point defines the
+		/// beginning (left side) of a new stair.  This implies the points are
+		/// defined at the beginning of an "event."
+		/// </summary>
+		ForwardStep,
+		/// <summary>
+		/// Draw the <see cref="CurveItem"/> as a stair-step in which each
+		/// point defines the end (right side) of a new stair.  This implies
+		/// the points are defined at the end of an "event."
+		/// </summary>
+		RearwardStep,
+		/// <summary>
+		/// Draw the <see cref="CurveItem"/> as an ordinary line, in which the
+		/// points are connected directly by line segments.
+		/// </summary>
+		NonStep,
+		/// <summary>
+		/// Draw the <see cref="CurveItem"/> as a segment in which each point defines the
+		/// beginning (left side) of a new "stair."  This implies the points are defined
+		/// at the beginning of an "event."  Note that ForwardSegment is different
+		/// from ForwardStep in that it does not draw the vertical portion of the step.
+		/// </summary>
+		ForwardSegment,
+		/// <summary>
+		/// Draw the <see cref="CurveItem"/> as a segment in which each point defines the
+		/// end (right side) of a new "stair."  This implies the points are defined
+		/// at the end of an "event."  Note that RearwardSegment is different
+		/// from RearwardStep in that it does not draw the vertical portion of the step.
+		/// </summary>
+		RearwardSegment
+	}
+
+	/// <summary>
+	/// Enumeration type for the various symbol shapes that are available
+	/// </summary>
+	/// <seealso cref="ZedGraph.Symbol.Fill"/>
+	public enum SymbolType 
+	{
+		/// <summary> Square-shaped <see cref="ZedGraph.Symbol"/> </summary>
+		Square,
+		/// <summary> Rhombus-shaped <see cref="ZedGraph.Symbol"/> </summary>
+		Diamond,
+		/// <summary> Equilateral triangle <see cref="ZedGraph.Symbol"/> </summary>
+		Triangle,
+		/// <summary> Uniform circle <see cref="ZedGraph.Symbol"/> </summary>
+		Circle,
+		/// <summary> "X" shaped <see cref="ZedGraph.Symbol"/>.  This symbol cannot
+		/// be filled since it has no outline. </summary>
+		XCross,
+		/// <summary> "+" shaped <see cref="ZedGraph.Symbol"/>.  This symbol cannot
+		/// be filled since it has no outline. </summary>
+		Plus,
+		/// <summary> Asterisk-shaped <see cref="ZedGraph.Symbol"/>.  This symbol
+		/// cannot be filled since it has no outline. </summary>
+		Star,
+		/// <summary> Unilateral triangle <see cref="ZedGraph.Symbol"/>, pointing
+		/// down. </summary>
+		TriangleDown,
+		/// <summary>
+		/// Horizontal dash <see cref="ZedGraph.Symbol"/>.  This symbol cannot be
+		/// filled since it has no outline.
+		/// </summary>
+		HDash,
+		/// <summary>
+		/// Vertical dash <see cref="ZedGraph.Symbol"/>.  This symbol cannot be
+		/// filled since it has no outline.
+		/// </summary>
+		VDash,
+		/// <summary> A symbol defined by the <see cref="Symbol.UserSymbol"/> propery.
+		/// If no symbol is defined, the <see cref="Symbol.Default.Type"/>. symbol will
+		/// be used.
+		/// </summary>
+		UserDefined,
+		/// <summary> A Default symbol type (the symbol type will be obtained
+		/// from <see cref="Symbol.Default.Type"/>. </summary>
+		Default,
+		/// <summary> No symbol is shown (this is equivalent to using
+		/// <see cref="Symbol.IsVisible"/> = false.</summary>
+		None
+	}
+	/// <summary>
+	/// Enumeration that specifies a Z-Order position for <see cref="GraphObj"/>
+	/// objects.
+	/// </summary>
+	/// <remarks>This enumeration allows you to set the layering of various graph
+	/// features.  Except for the <see cref="GraphObj"/> objects, other feature types
+	/// all have a fixed depth as follows (front to back):
+	/// <list>
+	/// <see cref="Legend"/> objects
+	/// The border around <see cref="Chart.Rect"/>
+	/// <see cref="CurveItem"/> objects
+	/// The <see cref="Axis"/> features
+	/// The background fill of the <see cref="Chart.Rect"/>
+	/// The pane <see cref="PaneBase.Title"/>
+	/// The background fill of the <see cref="PaneBase.Rect"/>
+	/// </list>
+	/// You cannot place anything behind the <see cref="PaneBase.Rect"/>
+	/// background fill, but <see cref="GraphObj.ZOrder"/> allows you to
+	/// explicitly control the depth of <see cref="GraphObj"/> objects
+	/// between all other object types.  For items of equal <see cref="ZOrder"/>,
+	/// such as multiple <see cref="CurveItem"/>'s or <see cref="GraphObj"/>'s
+	/// having the same <see cref="ZOrder"/> value, the relative depth is
+	/// controlled by the ordinal position in the list (either
+	/// <see cref="CurveList"/> or <see cref="GraphObjList"/>).
+	/// <see cref="GraphObj"/> objects
+	/// can be placed in the <see cref="GraphObjList"/> of either a
+	/// <see cref="GraphPane"/> or a <see cref="MasterPane"/>.  For a
+	/// <see cref="GraphPane"/>-based <see cref="GraphObj"/>, all <see cref="ZOrder"/>
+	/// values are applicable.  For a <see cref="MasterPane"/>-based
+	/// <see cref="GraphObj"/>, any <see cref="ZOrder"/> value can be used, but there
+	/// are really only three depths:
+	/// <list><see cref="ZOrder.H_BehindAll"/> will place the item behind the pane title,
+	/// <see cref="ZOrder.A_InFront"/> will place on top of all other graph features,
+	/// any other value places the object above the pane title, but behind the <see cref="GraphPane"/>'s.
+	/// </list>
+	/// </remarks>
+	public enum ZOrder
+	{
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphObj"/> will be behind all other
+	   /// objects (including the <see cref="PaneBase"/> <see cref="PaneBase.Title"/>).
+	   /// </summary>
+	   H_BehindAll,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
+	   /// <see cref="Chart.Rect"/> background <see cref="Fill"/>
+	   /// (see <see cref="Chart.Fill"/>).
+	   /// </summary>
+	   G_BehindChartFill,
+		/// <summary>
+		/// Specifies that the <see cref="GraphObj"/> will be behind the grid lines.
+		/// </summary>
+		F_BehindGrid,
+		/// <summary>
+		/// Specifies that the <see cref="GraphObj"/> will be behind the
+		/// <see cref="CurveItem"/> objects.
+		/// </summary>
+		E_BehindCurves,
+		/// <summary>
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
+	   /// <see cref="Axis"/> objects.
+	   /// </summary>
+	   D_BehindAxis,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
+	   /// <see cref="Chart"/> border.
+	   /// </summary>
+	   C_BehindChartBorder,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
+	   /// <see cref="Legend"/> object.
+	   /// </summary>
+	   B_BehindLegend,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphObj"/> will be in front of
+	   /// all other objects, except for the other <see cref="GraphObj"/>
+	   /// objects that have the same <see cref="ZOrder"/> and are before
+	   /// this object in the <see cref="GraphObjList"/>.
+	   /// </summary>
+	   A_InFront
+	}
 }

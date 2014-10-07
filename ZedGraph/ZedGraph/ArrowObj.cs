@@ -38,17 +38,17 @@ namespace ZedGraph
 	{
 		#region Fields
 		/// <summary>
-		/// Private field that stores the arrowhead size, measured in points.
-		/// Use the public property <see cref="Size"/> to access this value.
-		/// </summary>
-		private float _size;
-		/// <summary>
 		/// Private boolean field that stores the arrowhead state.
 		/// Use the public property <see cref="IsArrowHead"/> to access this value.
 		/// </summary>
 		/// <value> true if an arrowhead is to be drawn, false otherwise </value>
 		private bool _isArrowHead;
 
+		/// <summary>
+		/// Private field that stores the arrowhead size, measured in points.
+		/// Use the public property <see cref="Size"/> to access this value.
+		/// </summary>
+		private float _size;
 		#endregion
 
 		#region Defaults
@@ -59,20 +59,33 @@ namespace ZedGraph
 		new public struct Default
 		{
 			/// <summary>
-			/// The default size for the <see cref="ArrowObj"/> item arrowhead
-			/// (<see cref="ArrowObj.Size"/> property).  Units are in points (1/72 inch).
-			/// </summary>
-			public static float Size = 12.0F;
-			/// <summary>
 			/// The default display mode for the <see cref="ArrowObj"/> item arrowhead
 			/// (<see cref="ArrowObj.IsArrowHead"/> property).  true to show the
 			/// arrowhead, false to hide it.
 			/// </summary>
 			public static bool IsArrowHead = true;
+
+			/// <summary>
+			/// The default size for the <see cref="ArrowObj"/> item arrowhead
+			/// (<see cref="ArrowObj.Size"/> property).  Units are in points (1/72 inch).
+			/// </summary>
+			public static float Size = 12.0F;
 		}
 		#endregion
 
 		#region Properties
+		/// <summary>
+		/// Determines whether or not to draw an arrowhead
+		/// </summary>
+		/// <value> true to show the arrowhead, false to show the line segment
+		/// only</value>
+		/// <seealso cref="Default.IsArrowHead"/>
+		public bool IsArrowHead
+		{
+			get { return _isArrowHead; }
+			set { _isArrowHead = value; }
+		}
+
 		/// <summary>
 		/// The size of the arrowhead.
 		/// </summary>
@@ -85,17 +98,6 @@ namespace ZedGraph
 		{
 			get { return _size; }
 			set { _size = value; }
-		}
-		/// <summary>
-		/// Determines whether or not to draw an arrowhead
-		/// </summary>
-		/// <value> true to show the arrowhead, false to show the line segment
-		/// only</value>
-		/// <seealso cref="Default.IsArrowHead"/>
-		public bool IsArrowHead
-		{
-			get { return _isArrowHead; }
-			set { _isArrowHead = value; }
 		}
 		#endregion
 
@@ -172,6 +174,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public new ArrowObj Clone()
+		{
+			return new ArrowObj(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -180,16 +191,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public new ArrowObj Clone()
-		{
-			return new ArrowObj( this );
-		}
-
 		#endregion
 
 		#region Serialization

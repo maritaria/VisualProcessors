@@ -40,39 +40,13 @@ namespace ZedGraph
 	#region Fields
 
 		/// <summary>
-		/// Private field that stores the fill color.  Use the public
-		/// property <see cref="Color"/> to access this value.  This property is
-		/// only applicable if the <see cref="Type"/> is not <see cref="ZedGraph.FillType.None"/>.
-		/// </summary>
-		private Color _color;
-		/// <summary>
-		/// Private field that stores the secondary color for gradientByValue fills.  Use the public
-		/// property <see cref="SecondaryValueGradientColor"/> to access this value.  This property is
-		/// only applicable if the <see cref="Type"/> is <see cref="ZedGraph.FillType.GradientByX"/>,
-		/// <see cref="ZedGraph.FillType.GradientByY"/>, or <see cref="ZedGraph.FillType.GradientByZ"/>.
-		/// </summary>
-		private Color _secondaryValueGradientColor;
-		/// <summary>
 		/// Private field that stores the custom fill brush.  Use the public
 		/// property <see cref="Brush"/> to access this value.  This property is
 		/// only applicable if the 
 		/// <see cref="Type"/> property is set to <see cref="ZedGraph.FillType.Brush"/>.
 		/// </summary>
-		protected Brush	_brush;
-		/// <summary>
-		/// Private field that determines the type of color fill.  Use the public
-		/// property <see cref="Type"/> to access this value.  The fill color
-		/// is determined by the property <see cref="Color"/> or
-		/// <see cref="Brush"/>.
-		/// </summary>
-		private FillType	_type;
-		/// <summary>
-		/// Private field that determines if the brush will be scaled to the bounding box
-		/// of the filled object.  If this value is false, then the brush will only be aligned
-		/// with the filled object based on the <see cref="AlignH"/> and <see cref="AlignV"/>
-		/// properties.
-		/// </summary>
-		private bool		_isScaled;
+		protected Brush _brush;
+
 		/// <summary>
 		/// Private field that determines how the brush will be aligned with the filled object
 		/// in the horizontal direction.  This value is a <see cref="ZedGraph.AlignH"/> enumeration.
@@ -81,7 +55,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="AlignH"/>
 		/// <seealso cref="AlignV"/>
-		private AlignH		_alignH;
+		private AlignH _alignH;
+
 		/// <summary>
 		/// Private field that determines how the brush will be aligned with the filled object
 		/// in the vertical direction.  This value is a <see cref="ZedGraph.AlignV"/> enumeration.
@@ -90,41 +65,74 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="AlignH"/>
 		/// <seealso cref="AlignV"/>
-		private AlignV		_alignV;
-
-		private double	_rangeMin;
-		private double	_rangeMax;
-		private double _rangeDefault;
-		private Bitmap	_gradientBM;
+		private AlignV _alignV;
 
 		/// <summary>
-		/// Private field that saves the image passed to the constructor.
-		/// This is used strictly for serialization.
+		/// Private field the saves the angle of the fill.  This is used strictly for serialization.
 		/// </summary>
-		private Image	_image;
+		private float _angle;
+
 		/// <summary>
-		/// Private field that saves the image wrapmode passed to the constructor.
-		/// This is used strictly for serialization.
+		/// Private field that stores the fill color.  Use the public
+		/// property <see cref="Color"/> to access this value.  This property is
+		/// only applicable if the <see cref="Type"/> is not <see cref="ZedGraph.FillType.None"/>.
 		/// </summary>
-		private WrapMode _wrapMode;
+		private Color _color;
 		/// <summary>
 		/// Private field that saves the list of colors used to create the
 		/// <see cref="LinearGradientBrush"/> in the constructor.  This is used strictly
 		/// for serialization.
 		/// </summary>
 		private Color[] _colorList;
+
+		private Bitmap _gradientBM;
+
+		/// <summary>
+		/// Private field that saves the image passed to the constructor.
+		/// This is used strictly for serialization.
+		/// </summary>
+		private Image _image;
+
+		/// <summary>
+		/// Private field that determines if the brush will be scaled to the bounding box
+		/// of the filled object.  If this value is false, then the brush will only be aligned
+		/// with the filled object based on the <see cref="AlignH"/> and <see cref="AlignV"/>
+		/// properties.
+		/// </summary>
+		private bool _isScaled;
+
 		/// <summary>
 		/// Private field that saves the list of positions used to create the
 		/// <see cref="LinearGradientBrush"/> in the constructor.  This is used strictly
 		/// for serialization.
 		/// </summary>
 		private float[] _positionList;
+
+		private double _rangeDefault;
+
+		private double _rangeMax;
+
+		private double _rangeMin;
+
 		/// <summary>
-		/// Private field the saves the angle of the fill.  This is used strictly for serialization.
+		/// Private field that stores the secondary color for gradientByValue fills.  Use the public
+		/// property <see cref="SecondaryValueGradientColor"/> to access this value.  This property is
+		/// only applicable if the <see cref="Type"/> is <see cref="ZedGraph.FillType.GradientByX"/>,
+		/// <see cref="ZedGraph.FillType.GradientByY"/>, or <see cref="ZedGraph.FillType.GradientByZ"/>.
 		/// </summary>
-		private float _angle;
-
-
+		private Color _secondaryValueGradientColor;
+		/// <summary>
+		/// Private field that determines the type of color fill.  Use the public
+		/// property <see cref="Type"/> to access this value.  The fill color
+		/// is determined by the property <see cref="Color"/> or
+		/// <see cref="Brush"/>.
+		/// </summary>
+		private FillType	_type;
+		/// <summary>
+		/// Private field that saves the image wrapmode passed to the constructor.
+		/// This is used strictly for serialization.
+		/// </summary>
+		private WrapMode _wrapMode;
 	#endregion
 
 	#region Defaults
@@ -134,26 +142,394 @@ namespace ZedGraph
 		/// </summary>
 		public struct Default
 		{
+			/// <summary>
+			/// The default horizontal alignment for <see cref="Brush"/> fills.
+			/// This is the default value for the <see cref="Fill.AlignH"/> property.
+			/// </summary>
+			public static AlignH AlignH = AlignH.Center;
+
+			/// <summary>
+			/// The default vertical alignment for <see cref="Brush"/> fills.
+			/// This is the default value for the <see cref="Fill.AlignV"/> property.
+			/// </summary>
+			public static AlignV AlignV = AlignV.Center;
+
 			// Default Fill properties
 			/// <summary>
 			/// The default scaling mode for <see cref="Brush"/> fills.
 			/// This is the default value for the <see cref="Fill.IsScaled"/> property.
 			/// </summary>
 			public static bool IsScaled = true;
-			/// <summary>
-			/// The default horizontal alignment for <see cref="Brush"/> fills.
-			/// This is the default value for the <see cref="Fill.AlignH"/> property.
-			/// </summary>
-			public static AlignH AlignH = AlignH.Center;
-			/// <summary>
-			/// The default vertical alignment for <see cref="Brush"/> fills.
-			/// This is the default value for the <see cref="Fill.AlignV"/> property.
-			/// </summary>
-			public static AlignV AlignV = AlignV.Center;
 		}
 	#endregion
 	
 	#region Constructors
+		/// <summary>
+		/// The default constructor.  Initialized to no fill.
+		/// </summary>
+		public Fill()
+		{
+			Init();
+		}
+
+		/// <summary>
+		/// Constructor that specifies the color, brush, and type for this fill.
+		/// </summary>
+		/// <param name="color">The color of the fill for solid fills</param>
+		/// <param name="brush">A custom brush for fills.  Can be a <see cref="SolidBrush"/>,
+		/// <see cref="LinearGradientBrush"/>, or <see cref="TextureBrush"/>.</param>
+		/// <param name="type">The <see cref="FillType"/> for this fill.</param>
+		public Fill(Color color, Brush brush, FillType type)
+		{
+			Init();
+			_color = color;
+			_brush = brush;
+			_type = type;
+		}
+
+		/// <summary>
+		/// Constructor that creates a solid color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Solid"/>, and setting <see cref="Color"/> to the
+		/// specified color value.
+		/// </summary>
+		/// <param name="color">The color of the solid fill</param>
+		public Fill(Color color)
+		{
+			Init();
+			_color = color;
+			if (color != Color.Empty)
+				_type = FillType.Solid;
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors and angle.
+		/// </summary>
+		/// <param name="color1">The first color for the gradient fill</param>
+		/// <param name="color2">The second color for the gradient fill</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill(Color color1, Color color2, float angle)
+		{
+			Init();
+			_color = color2;
+
+			ColorBlend blend = new ColorBlend(2);
+			blend.Colors[0] = color1;
+			blend.Colors[1] = color2;
+			blend.Positions[0] = 0.0f;
+			blend.Positions[1] = 1.0f;
+			_type = FillType.Brush;
+
+			this.CreateBrushFromBlend(blend, angle);
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.
+		/// </summary>
+		/// <param name="color1">The first color for the gradient fill</param>
+		/// <param name="color2">The second color for the gradient fill</param>
+		public Fill(Color color1, Color color2)
+			: this(color1, color2, 0.0F)
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of three colors.
+		/// </summary>
+		/// <param name="color1">The first color for the gradient fill</param>
+		/// <param name="color2">The second color for the gradient fill</param>
+		/// <param name="color3">The third color for the gradient fill</param>
+		public Fill(Color color1, Color color2, Color color3) :
+			this(color1, color2, color3, 0.0f)
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of three colors
+		/// </summary>
+		/// <param name="color1">The first color for the gradient fill</param>
+		/// <param name="color2">The second color for the gradient fill</param>
+		/// <param name="color3">The third color for the gradient fill</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill(Color color1, Color color2, Color color3, float angle)
+		{
+			Init();
+			_color = color3;
+
+			ColorBlend blend = new ColorBlend(3);
+			blend.Colors[0] = color1;
+			blend.Colors[1] = color2;
+			blend.Colors[2] = color3;
+			blend.Positions[0] = 0.0f;
+			blend.Positions[1] = 0.5f;
+			blend.Positions[2] = 1.0f;
+			_type = FillType.Brush;
+
+			this.CreateBrushFromBlend(blend, angle);
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on a <see cref="ColorBlend"/> object.  The gradient
+		/// angle is defaulted to zero.
+		/// </summary>
+		/// <param name="blend">The <see cref="ColorBlend"/> object that defines the colors
+		/// and positions along the gradient.</param>
+		public Fill(ColorBlend blend) :
+			this(blend, 0.0F)
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on a <see cref="ColorBlend"/> object, drawn at the
+		/// specified angle (degrees).
+		/// </summary>
+		/// <param name="blend">The <see cref="ColorBlend"/> object that defines the colors
+		/// and positions along the gradient.</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill(ColorBlend blend, float angle)
+		{
+			Init();
+			_type = FillType.Brush;
+			this.CreateBrushFromBlend(blend, angle);
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at an
+		/// angle of zero (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		public Fill(Color[] colors) :
+			this(colors, 0.0F)
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
+		/// specified angle (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill(Color[] colors, float angle)
+		{
+			Init();
+			_color = colors[colors.Length - 1];
+
+			ColorBlend blend = new ColorBlend();
+			blend.Colors = colors;
+			blend.Positions = new float[colors.Length];
+			blend.Positions[0] = 0.0F;
+			for (int i = 1; i < colors.Length; i++)
+				blend.Positions[i] = (float)i / (float)(colors.Length - 1);
+			_type = FillType.Brush;
+
+			this.CreateBrushFromBlend(blend, angle);
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
+		/// an angle of zero (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		/// <param name="positions">The array of floating point values that defines the color
+		/// positions along the gradient.  Values should range from 0 to 1.</param>
+		public Fill(Color[] colors, float[] positions) :
+			this(colors, positions, 0.0F)
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
+		/// specified angle (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		/// <param name="positions">The array of floating point values that defines the color
+		/// positions along the gradient.  Values should range from 0 to 1.</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill(Color[] colors, float[] positions, float angle)
+		{
+			Init();
+			_color = colors[colors.Length - 1];
+
+			ColorBlend blend = new ColorBlend();
+			blend.Colors = colors;
+			blend.Positions = positions;
+			_type = FillType.Brush;
+
+			this.CreateBrushFromBlend(blend, angle);
+		}
+
+		/// <summary>
+		/// Constructor that creates a texture fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> and using the specified image.
+		/// </summary>
+		/// <param name="image">The <see cref="Image"/> to use for filling</param>
+		/// <param name="wrapMode">The <see cref="WrapMode"/> class that controls the image wrapping properties</param>
+		public Fill(Image image, WrapMode wrapMode)
+		{
+			Init();
+			_color = Color.White;
+			_brush = new TextureBrush(image, wrapMode);
+			_type = FillType.Brush;
+			_image = image;
+			_wrapMode = wrapMode;
+		}
+
+		/// <summary>
+		/// Constructor that creates a <see cref="Brush"/> fill, using a user-supplied, custom
+		/// <see cref="Brush"/>.  The brush will be scaled to fit the destination screen object
+		/// unless you manually change <see cref="IsScaled"/> to false;
+		/// </summary>
+		/// <param name="brush">The <see cref="Brush"/> to use for fancy fills.  Typically, this would
+		/// be a <see cref="LinearGradientBrush"/> or a <see cref="TextureBrush"/> class</param>
+		public Fill(Brush brush)
+			: this(brush, Default.IsScaled)
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a <see cref="Brush"/> fill, using a user-supplied, custom
+		/// <see cref="Brush"/>.  The brush will be scaled to fit the destination screen object
+		/// according to the <see paramref="isScaled"/> parameter.
+		/// </summary>
+		/// <param name="brush">The <see cref="Brush"/> to use for fancy fills.  Typically, this would
+		/// be a <see cref="LinearGradientBrush"/> or a <see cref="TextureBrush"/> class</param>
+		/// <param name="isScaled">Determines if the brush will be scaled to fit the bounding box
+		/// of the destination object.  true to scale it, false to leave it unscaled</param>
+		public Fill(Brush brush, bool isScaled)
+		{
+			Init();
+			_isScaled = isScaled;
+			_color = Color.White;
+			_brush = (Brush)brush.Clone();
+			_type = FillType.Brush;
+		}
+
+		/// <summary>
+		/// Constructor that creates a <see cref="Brush"/> fill, using a user-supplied, custom
+		/// <see cref="Brush"/>.  This constructor will make the brush unscaled (see <see cref="IsScaled"/>),
+		/// but it provides <see paramref="alignH"/> and <see paramref="alignV"/> parameters to control
+		/// alignment of the brush with respect to the filled object.
+		/// </summary>
+		/// <param name="brush">The <see cref="Brush"/> to use for fancy fills.  Typically, this would
+		/// be a <see cref="LinearGradientBrush"/> or a <see cref="TextureBrush"/> class</param>
+		/// <param name="alignH">Controls the horizontal alignment of the brush within the filled object
+		/// (see <see cref="AlignH"/></param>
+		/// <param name="alignV">Controls the vertical alignment of the brush within the filled object
+		/// (see <see cref="AlignV"/></param>
+		public Fill(Brush brush, AlignH alignH, AlignV alignV)
+		{
+			Init();
+			_alignH = alignH;
+			_alignV = alignV;
+			_isScaled = false;
+			_color = Color.White;
+			_brush = (Brush)brush.Clone();
+			_type = FillType.Brush;
+		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The Fill object from which to copy</param>
+		public Fill(Fill rhs)
+		{
+			_color = rhs._color;
+			_secondaryValueGradientColor = rhs._color;
+
+			if (rhs._brush != null)
+				_brush = (Brush)rhs._brush.Clone();
+			else
+				_brush = null;
+			_type = rhs._type;
+			_alignH = rhs.AlignH;
+			_alignV = rhs.AlignV;
+			_isScaled = rhs.IsScaled;
+			_rangeMin = rhs._rangeMin;
+			_rangeMax = rhs._rangeMax;
+			_rangeDefault = rhs._rangeDefault;
+			_gradientBM = null;
+
+			if (rhs._colorList != null)
+				_colorList = (Color[])rhs._colorList.Clone();
+			else
+				_colorList = null;
+
+			if (rhs._positionList != null)
+			{
+				_positionList = (float[])rhs._positionList.Clone();
+			}
+			else
+				_positionList = null;
+
+			if (rhs._image != null)
+				_image = (Image)rhs._image.Clone();
+			else
+				_image = null;
+
+			_angle = rhs._angle;
+			_wrapMode = rhs._wrapMode;
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Fill Clone()
+		{
+			return new Fill(this);
+		}
+
+		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		private void CreateBrushFromBlend(ColorBlend blend, float angle)
+		{
+			_angle = angle;
+
+			_colorList = (Color[])blend.Colors.Clone();
+			_positionList = (float[])blend.Positions.Clone();
+
+			_brush = new LinearGradientBrush(new Rectangle(0, 0, 100, 100),
+				Color.Red, Color.White, angle);
+			((LinearGradientBrush)_brush).InterpolationColors = blend;
+		}
+
 		/// <summary>
 		/// Generic initializer to default values
 		/// </summary>
@@ -178,371 +554,6 @@ namespace ZedGraph
 			_wrapMode = WrapMode.Tile;
 
 		}
-
-		/// <summary>
-		/// The default constructor.  Initialized to no fill.
-		/// </summary>
-		public Fill()
-		{
-			Init();
-		}
-		
-		/// <summary>
-		/// Constructor that specifies the color, brush, and type for this fill.
-		/// </summary>
-		/// <param name="color">The color of the fill for solid fills</param>
-		/// <param name="brush">A custom brush for fills.  Can be a <see cref="SolidBrush"/>,
-		/// <see cref="LinearGradientBrush"/>, or <see cref="TextureBrush"/>.</param>
-		/// <param name="type">The <see cref="FillType"/> for this fill.</param>
-		public Fill( Color color, Brush brush, FillType type )
-		{
-			Init();
-			_color = color;
-			_brush = brush;
-			_type = type;
-		}
-		
-		/// <summary>
-		/// Constructor that creates a solid color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Solid"/>, and setting <see cref="Color"/> to the
-		/// specified color value.
-		/// </summary>
-		/// <param name="color">The color of the solid fill</param>
-		public Fill( Color color )
-		{
-			Init();
-			_color = color;
-			if ( color != Color.Empty )
-				_type = FillType.Solid;
-		}
-		
-		/// <summary>
-		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors and angle.
-		/// </summary>
-		/// <param name="color1">The first color for the gradient fill</param>
-		/// <param name="color2">The second color for the gradient fill</param>
-		/// <param name="angle">The angle (degrees) of the gradient fill</param>
-		public Fill( Color color1, Color color2, float angle )
-		{
-			Init();
-			_color = color2;
-
-			ColorBlend blend = new ColorBlend( 2 );
-			blend.Colors[0] = color1;
-			blend.Colors[1] = color2;
-			blend.Positions[0] = 0.0f;
-			blend.Positions[1] = 1.0f;
-			_type = FillType.Brush;
-
-			this.CreateBrushFromBlend( blend, angle );
-		}
-		
-		/// <summary>
-		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.
-		/// </summary>
-		/// <param name="color1">The first color for the gradient fill</param>
-		/// <param name="color2">The second color for the gradient fill</param>
-		public Fill( Color color1, Color color2 ) : this( color1, color2, 0.0F )
-		{
-		}
-		
-		/// <summary>
-		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of three colors.
-		/// </summary>
-		/// <param name="color1">The first color for the gradient fill</param>
-		/// <param name="color2">The second color for the gradient fill</param>
-		/// <param name="color3">The third color for the gradient fill</param>
-		public Fill( Color color1, Color color2, Color color3 ) :
-			this( color1, color2, color3, 0.0f )
-		{
-		}
-
-		/// <summary>
-		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of three colors
-		/// </summary>
-		/// <param name="color1">The first color for the gradient fill</param>
-		/// <param name="color2">The second color for the gradient fill</param>
-		/// <param name="color3">The third color for the gradient fill</param>
-		/// <param name="angle">The angle (degrees) of the gradient fill</param>
-		public Fill( Color color1, Color color2, Color color3, float angle )
-		{
-			Init();
-			_color = color3;
-
-			ColorBlend blend = new ColorBlend( 3 );
-			blend.Colors[0] = color1;
-			blend.Colors[1] = color2;
-			blend.Colors[2] = color3;
-			blend.Positions[0] = 0.0f;
-			blend.Positions[1] = 0.5f;
-			blend.Positions[2] = 1.0f;
-			_type = FillType.Brush;
-			
-			this.CreateBrushFromBlend( blend, angle );
-		}
-		
-		/// <summary>
-		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of many colors based on a <see cref="ColorBlend"/> object.  The gradient
-		/// angle is defaulted to zero.
-		/// </summary>
-		/// <param name="blend">The <see cref="ColorBlend"/> object that defines the colors
-		/// and positions along the gradient.</param>
-		public Fill( ColorBlend blend ) :
-			this( blend, 0.0F )
-		{
-		}
-
-		/// <summary>
-		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of many colors based on a <see cref="ColorBlend"/> object, drawn at the
-		/// specified angle (degrees).
-		/// </summary>
-		/// <param name="blend">The <see cref="ColorBlend"/> object that defines the colors
-		/// and positions along the gradient.</param>
-		/// <param name="angle">The angle (degrees) of the gradient fill</param>
-		public Fill( ColorBlend blend, float angle )
-		{
-			Init();
-			_type = FillType.Brush;
-			this.CreateBrushFromBlend( blend, angle );
-		}
-
-		/// <summary>
-		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at an
-		/// angle of zero (degrees).  The <see paramref="colors"/> array is used to create
-		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
-		/// across the gradient.
-		/// </summary>
-		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
-		/// along the gradient.</param>
-		public Fill( Color[] colors ) :
-			this( colors, 0.0F )
-		{
-		}
-
-		/// <summary>
-		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
-		/// specified angle (degrees).  The <see paramref="colors"/> array is used to create
-		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
-		/// across the gradient.
-		/// </summary>
-		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
-		/// along the gradient.</param>
-		/// <param name="angle">The angle (degrees) of the gradient fill</param>
-		public Fill( Color[] colors, float angle )
-		{
-			Init();
-			_color = colors[ colors.Length - 1 ];
-
-			ColorBlend blend = new ColorBlend();
-			blend.Colors = colors;
-			blend.Positions = new float[colors.Length];
-			blend.Positions[0] = 0.0F;
-			for ( int i=1; i<colors.Length; i++ )
-				blend.Positions[i] = (float) i / (float)( colors.Length - 1 );
-			_type = FillType.Brush;
-
-			this.CreateBrushFromBlend( blend, angle );
-		}
-
-		/// <summary>
-		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
-		/// an angle of zero (degrees).  The <see paramref="colors"/> array is used to create
-		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
-		/// across the gradient.
-		/// </summary>
-		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
-		/// along the gradient.</param>
-		/// <param name="positions">The array of floating point values that defines the color
-		/// positions along the gradient.  Values should range from 0 to 1.</param>
-		public Fill( Color[] colors, float[] positions ) :
-			this( colors, positions, 0.0F )
-		{
-		}
-
-		/// <summary>
-		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
-		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
-		/// specified angle (degrees).  The <see paramref="colors"/> array is used to create
-		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
-		/// across the gradient.
-		/// </summary>
-		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
-		/// along the gradient.</param>
-		/// <param name="positions">The array of floating point values that defines the color
-		/// positions along the gradient.  Values should range from 0 to 1.</param>
-		/// <param name="angle">The angle (degrees) of the gradient fill</param>
-		public Fill( Color[] colors, float[] positions, float angle )
-		{
-			Init();
-			_color = colors[ colors.Length - 1 ];
-
-			ColorBlend blend = new ColorBlend();
-			blend.Colors = colors;
-			blend.Positions = positions;
-			_type = FillType.Brush;
-
-			this.CreateBrushFromBlend( blend, angle );
-		}
-
-		/// <summary>
-		/// Constructor that creates a texture fill, setting <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/> and using the specified image.
-		/// </summary>
-		/// <param name="image">The <see cref="Image"/> to use for filling</param>
-		/// <param name="wrapMode">The <see cref="WrapMode"/> class that controls the image wrapping properties</param>
-		public Fill( Image image, WrapMode wrapMode )
-		{
-			Init();
-			_color = Color.White;
-			_brush = new TextureBrush( image, wrapMode );
-			_type = FillType.Brush;
-			_image = image;
-			_wrapMode = wrapMode;
-		}
-		
-		/// <summary>
-		/// Constructor that creates a <see cref="Brush"/> fill, using a user-supplied, custom
-		/// <see cref="Brush"/>.  The brush will be scaled to fit the destination screen object
-		/// unless you manually change <see cref="IsScaled"/> to false;
-		/// </summary>
-		/// <param name="brush">The <see cref="Brush"/> to use for fancy fills.  Typically, this would
-		/// be a <see cref="LinearGradientBrush"/> or a <see cref="TextureBrush"/> class</param>
-		public Fill( Brush brush ) : this( brush, Default.IsScaled )
-		{
-		}
-		
-		/// <summary>
-		/// Constructor that creates a <see cref="Brush"/> fill, using a user-supplied, custom
-		/// <see cref="Brush"/>.  The brush will be scaled to fit the destination screen object
-		/// according to the <see paramref="isScaled"/> parameter.
-		/// </summary>
-		/// <param name="brush">The <see cref="Brush"/> to use for fancy fills.  Typically, this would
-		/// be a <see cref="LinearGradientBrush"/> or a <see cref="TextureBrush"/> class</param>
-		/// <param name="isScaled">Determines if the brush will be scaled to fit the bounding box
-		/// of the destination object.  true to scale it, false to leave it unscaled</param>
-		public Fill( Brush brush, bool isScaled )
-		{
-			Init();
-			_isScaled = isScaled;
-			_color = Color.White;
-			_brush = (Brush) brush.Clone();
-			_type = FillType.Brush;
-		}
-		
-		/// <summary>
-		/// Constructor that creates a <see cref="Brush"/> fill, using a user-supplied, custom
-		/// <see cref="Brush"/>.  This constructor will make the brush unscaled (see <see cref="IsScaled"/>),
-		/// but it provides <see paramref="alignH"/> and <see paramref="alignV"/> parameters to control
-		/// alignment of the brush with respect to the filled object.
-		/// </summary>
-		/// <param name="brush">The <see cref="Brush"/> to use for fancy fills.  Typically, this would
-		/// be a <see cref="LinearGradientBrush"/> or a <see cref="TextureBrush"/> class</param>
-		/// <param name="alignH">Controls the horizontal alignment of the brush within the filled object
-		/// (see <see cref="AlignH"/></param>
-		/// <param name="alignV">Controls the vertical alignment of the brush within the filled object
-		/// (see <see cref="AlignV"/></param>
-		public Fill( Brush brush, AlignH alignH, AlignV alignV )
-		{
-			Init();
-			_alignH = alignH;
-			_alignV = alignV;
-			_isScaled = false;
-			_color = Color.White;
-			_brush = (Brush) brush.Clone();
-			_type = FillType.Brush;
-		}
-
-		/// <summary>
-		/// The Copy Constructor
-		/// </summary>
-		/// <param name="rhs">The Fill object from which to copy</param>
-		public Fill( Fill rhs )
-		{
-			_color = rhs._color;
-			_secondaryValueGradientColor = rhs._color;
-
-			if ( rhs._brush != null )
-				_brush = (Brush) rhs._brush.Clone();
-			else
-				_brush = null;
-			_type = rhs._type;
-			_alignH = rhs.AlignH;
-			_alignV = rhs.AlignV;
-            _isScaled = rhs.IsScaled;
-			_rangeMin = rhs._rangeMin;
-			_rangeMax = rhs._rangeMax;
-			_rangeDefault = rhs._rangeDefault;
-			_gradientBM = null;
-
-			if ( rhs._colorList != null )
-				_colorList = (Color[]) rhs._colorList.Clone();
-			else
-				_colorList = null;
-
-			if ( rhs._positionList != null )
-			{
-				_positionList = (float[]) rhs._positionList.Clone();
-			}
-			else
-				_positionList = null;
-
-			if ( rhs._image != null )
-				_image = (Image) rhs._image.Clone();
-			else
-				_image = null;
-
-			_angle = rhs._angle;
-			_wrapMode = rhs._wrapMode;
-		}
-
-		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
-		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
-		{
-			return this.Clone();
-		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public Fill Clone()
-		{
-			return new Fill( this );
-		}
-
-		private void CreateBrushFromBlend( ColorBlend blend, float angle )
-		{
-			_angle = angle;
-
-			_colorList = (Color[]) blend.Colors.Clone();
-			_positionList = (float[]) blend.Positions.Clone();
-
-			_brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
-				Color.Red, Color.White, angle );
-			((LinearGradientBrush)_brush).InterpolationColors = blend;
-		}
-
 	#endregion
 
 	#region Serialization
@@ -640,38 +651,27 @@ namespace ZedGraph
 	#region Properties
 
 		/// <summary>
-		/// The fill color.  This property is used as a single color to make a solid fill
-		/// (<see cref="Type"/> is <see cref="FillType.Solid"/>), or it can be used in 
-		/// combination with <see cref="System.Drawing.Color.White"/> to make a
-		/// <see cref="LinearGradientBrush"/>
-		/// when <see cref="Type"/> is <see cref="FillType.Brush"/> and <see cref="Brush"/>
-		/// is null.
+		/// Determines how the brush will be aligned with the filled object
+		/// in the horizontal direction.  This value is a <see cref="ZedGraph.AlignH"/> enumeration.
+		/// This field only applies if <see cref="IsScaled"/> is false.
 		/// </summary>
-		/// <seealso cref="Type"/>
-		public Color Color
+		/// <seealso cref="AlignV"/>
+		public AlignH AlignH
 		{
-			get { return _color; }
-			set { _color = value; }
+			get { return _alignH; }
+			set { _alignH = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the secondary color for gradientByValue fills.
+		/// Determines how the brush will be aligned with the filled object
+		/// in the vertical direction.  This value is a <see cref="ZedGraph.AlignV"/> enumeration.
+		/// This field only applies if <see cref="IsScaled"/> is false.
 		/// </summary>
-		/// <remarks>
-		/// This property is only applicable if the <see cref="Type"/> is
-		/// <see cref="ZedGraph.FillType.GradientByX"/>,
-		/// <see cref="ZedGraph.FillType.GradientByY"/>, or
-		/// <see cref="ZedGraph.FillType.GradientByZ"/>.  Once the gradient-by-value logic picks
-		/// a color, a new gradient will be created using the SecondaryValueGradientColor, the
-		/// resulting gradient-by-value color, and the angle setting for this
-		/// <see cref="Fill" />. Use a value of <see cref="System.Drawing.Color.Empty">Color.Empty</see> to have
-		/// a solid-color <see cref="Fill" /> resulting from a gradient-by-value
-		/// <see cref="FillType" />.
-		/// </remarks>
-		public Color SecondaryValueGradientColor
+		/// <seealso cref="AlignH"/>
+		public AlignV AlignV
 		{
-			get { return _secondaryValueGradientColor; }
-			set { _secondaryValueGradientColor = value; }
+			get { return _alignV; }
+			set { _alignV = value; }
 		}
 
 		/// <summary>
@@ -685,73 +685,20 @@ namespace ZedGraph
 			get { return _brush; }
 			set { _brush = value; }
 		}
-		/// <summary>
-		/// Determines the type of fill, which can be either solid
-		/// color (<see cref="ZedGraph.FillType.Solid"/>) or a custom brush
-		/// (<see cref="ZedGraph.FillType.Brush"/>).  See <see cref="Type"/> for
-		/// more information.
-		/// </summary>
-		/// <seealso cref="ZedGraph.Fill.Color"/>
-		public FillType Type
-		{
-			get { return _type; }
-			set { _type = value; }
-		}
-		/// <summary>
-		/// This property determines the type of color fill. 
-		/// Returns true if the <see cref="Type"/> property is either
-		/// <see cref="FillType.Solid"/> or
-		/// <see cref="FillType.Brush"/>.  If set to true, this property
-		/// will automatically set the <see cref="Type"/> to
-		/// <see cref="FillType.Brush"/>.  If set to false, this property
-		/// will automatically set the <see cref="Type"/> to
-		/// <see cref="FillType.None"/>.  In order to get a regular
-		/// solid-color fill, you have to manually set <see cref="Type"/>
-		/// to <see cref="FillType.Solid"/>.
-		/// </summary>
-		/// <seealso cref="Color"/>
-		/// <seealso cref="Brush"/>
-		/// <seealso cref="Type"/>
-		public bool IsVisible
-		{
-			get { return _type != FillType.None; }
-			set { _type = value ? ( _type == FillType.None ? FillType.Brush : _type ) : FillType.None; }
-		}
 
 		/// <summary>
-		/// Determines if the brush will be scaled to the bounding box
-		/// of the filled object.  If this value is false, then the brush will only be aligned
-		/// with the filled object based on the <see cref="AlignH"/> and <see cref="AlignV"/>
-		/// properties.
+		/// The fill color.  This property is used as a single color to make a solid fill
+		/// (<see cref="Type"/> is <see cref="FillType.Solid"/>), or it can be used in 
+		/// combination with <see cref="System.Drawing.Color.White"/> to make a
+		/// <see cref="LinearGradientBrush"/>
+		/// when <see cref="Type"/> is <see cref="FillType.Brush"/> and <see cref="Brush"/>
+		/// is null.
 		/// </summary>
-		public bool IsScaled
+		/// <seealso cref="Type"/>
+		public Color Color
 		{
-			get { return _isScaled; }
-			set { _isScaled = value; }
-		}
-		
-		/// <summary>
-		/// Determines how the brush will be aligned with the filled object
-		/// in the horizontal direction.  This value is a <see cref="ZedGraph.AlignH"/> enumeration.
-		/// This field only applies if <see cref="IsScaled"/> is false.
-		/// </summary>
-		/// <seealso cref="AlignV"/>
-		public AlignH AlignH
-		{
-			get { return _alignH; }
-			set { _alignH = value; }
-		}
-		
-		/// <summary>
-		/// Determines how the brush will be aligned with the filled object
-		/// in the vertical direction.  This value is a <see cref="ZedGraph.AlignV"/> enumeration.
-		/// This field only applies if <see cref="IsScaled"/> is false.
-		/// </summary>
-		/// <seealso cref="AlignH"/>
-		public AlignV AlignV
-		{
-			get { return _alignV; }
-			set { _alignV = value; }
+			get { return _color; }
+			set { _color = value; }
 		}
 
 		/// <summary>
@@ -779,41 +726,44 @@ namespace ZedGraph
 		/// <seealso cref="FillType.GradientByZ"/>
 		public bool IsGradientValueType
 		{
-			get { return _type == FillType.GradientByX || _type == FillType.GradientByY ||
-					_type == FillType.GradientByZ || _type == FillType.GradientByColorValue; }
+			get
+			{
+				return _type == FillType.GradientByX || _type == FillType.GradientByY ||
+				  _type == FillType.GradientByZ || _type == FillType.GradientByColorValue;
+			}
 		}
 
 		/// <summary>
-		/// The minimum user-scale value for the gradient-by-value determination.  This defines
-		/// the user-scale value for the start of the gradient.
+		/// Determines if the brush will be scaled to the bounding box
+		/// of the filled object.  If this value is false, then the brush will only be aligned
+		/// with the filled object based on the <see cref="AlignH"/> and <see cref="AlignV"/>
+		/// properties.
 		/// </summary>
-		/// <seealso cref="FillType.GradientByX"/>
-		/// <seealso cref="FillType.GradientByY"/>
-		/// <seealso cref="FillType.GradientByZ"/>
-		/// <seealso cref="IsGradientValueType"/>
-		/// <seealso cref="RangeMax"/>
-		/// <seealso cref="RangeDefault"/>
-		/// <value>A double value, in user scale unit</value>
-		public double RangeMin
+		public bool IsScaled
 		{
-			get { return _rangeMin; }
-			set { _rangeMin = value; }
+			get { return _isScaled; }
+			set { _isScaled = value; }
 		}
+
 		/// <summary>
-		/// The maximum user-scale value for the gradient-by-value determination.  This defines
-		/// the user-scale value for the end of the gradient.
+		/// This property determines the type of color fill. 
+		/// Returns true if the <see cref="Type"/> property is either
+		/// <see cref="FillType.Solid"/> or
+		/// <see cref="FillType.Brush"/>.  If set to true, this property
+		/// will automatically set the <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/>.  If set to false, this property
+		/// will automatically set the <see cref="Type"/> to
+		/// <see cref="FillType.None"/>.  In order to get a regular
+		/// solid-color fill, you have to manually set <see cref="Type"/>
+		/// to <see cref="FillType.Solid"/>.
 		/// </summary>
-		/// <seealso cref="FillType.GradientByX"/>
-		/// <seealso cref="FillType.GradientByY"/>
-		/// <seealso cref="FillType.GradientByZ"/>
-		/// <seealso cref="IsGradientValueType"/>
-		/// <seealso cref="RangeMin"/>
-		/// <seealso cref="RangeDefault"/>
-		/// <value>A double value, in user scale unit</value>
-		public double RangeMax
+		/// <seealso cref="Color"/>
+		/// <seealso cref="Brush"/>
+		/// <seealso cref="Type"/>
+		public bool IsVisible
 		{
-			get { return _rangeMax; }
-			set { _rangeMax = value; }
+			get { return _type != FillType.None; }
+			set { _type = value ? (_type == FillType.None ? FillType.Brush : _type) : FillType.None; }
 		}
 
 		/// <summary>
@@ -840,9 +790,123 @@ namespace ZedGraph
 			set { _rangeDefault = value; }
 		}
 
+		/// <summary>
+		/// The maximum user-scale value for the gradient-by-value determination.  This defines
+		/// the user-scale value for the end of the gradient.
+		/// </summary>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		/// <seealso cref="IsGradientValueType"/>
+		/// <seealso cref="RangeMin"/>
+		/// <seealso cref="RangeDefault"/>
+		/// <value>A double value, in user scale unit</value>
+		public double RangeMax
+		{
+			get { return _rangeMax; }
+			set { _rangeMax = value; }
+		}
+
+		/// <summary>
+		/// The minimum user-scale value for the gradient-by-value determination.  This defines
+		/// the user-scale value for the start of the gradient.
+		/// </summary>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		/// <seealso cref="IsGradientValueType"/>
+		/// <seealso cref="RangeMax"/>
+		/// <seealso cref="RangeDefault"/>
+		/// <value>A double value, in user scale unit</value>
+		public double RangeMin
+		{
+			get { return _rangeMin; }
+			set { _rangeMin = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the secondary color for gradientByValue fills.
+		/// </summary>
+		/// <remarks>
+		/// This property is only applicable if the <see cref="Type"/> is
+		/// <see cref="ZedGraph.FillType.GradientByX"/>,
+		/// <see cref="ZedGraph.FillType.GradientByY"/>, or
+		/// <see cref="ZedGraph.FillType.GradientByZ"/>.  Once the gradient-by-value logic picks
+		/// a color, a new gradient will be created using the SecondaryValueGradientColor, the
+		/// resulting gradient-by-value color, and the angle setting for this
+		/// <see cref="Fill" />. Use a value of <see cref="System.Drawing.Color.Empty">Color.Empty</see> to have
+		/// a solid-color <see cref="Fill" /> resulting from a gradient-by-value
+		/// <see cref="FillType" />.
+		/// </remarks>
+		public Color SecondaryValueGradientColor
+		{
+			get { return _secondaryValueGradientColor; }
+			set { _secondaryValueGradientColor = value; }
+		}
+		/// <summary>
+		/// Determines the type of fill, which can be either solid
+		/// color (<see cref="ZedGraph.FillType.Solid"/>) or a custom brush
+		/// (<see cref="ZedGraph.FillType.Brush"/>).  See <see cref="Type"/> for
+		/// more information.
+		/// </summary>
+		/// <seealso cref="ZedGraph.Fill.Color"/>
+		public FillType Type
+		{
+			get { return _type; }
+			set { _type = value; }
+		}
 	#endregion
 
 	#region Methods
+
+		/// <summary>
+		/// Fill the background of the <see cref="RectangleF"/> area, using the
+		/// fill type from this <see cref="Fill"/>.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">The <see cref="RectangleF"/> struct specifying the area
+		/// to be filled</param>
+		public void Draw(Graphics g, RectangleF rect)
+		{
+			Draw(g, rect, null);
+			/*
+			if ( this.IsVisible )
+			{
+				using( Brush brush = this.MakeBrush( rect ) )
+				{
+					g.FillRectangle( brush, rect );
+					//brush.Dispose();
+				}
+			}
+			*/
+		}
+
+		/// <summary>
+		/// Fill the background of the <see cref="RectangleF"/> area, using the
+		/// fill type from this <see cref="Fill"/>.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">The <see cref="RectangleF"/> struct specifying the area
+		/// to be filled</param>
+		/// <param name="pt">The data value to be used in case it's a
+		/// <see cref="FillType.GradientByX" />, <see cref="FillType.GradientByY" />, or
+		/// <see cref="FillType.GradientByZ" /> <see cref="FillType" />.</param>
+		public void Draw(Graphics g, RectangleF rect, PointPair pt)
+		{
+			if (this.IsVisible)
+			{
+				using (Brush brush = this.MakeBrush(rect, pt))
+				{
+					g.FillRectangle(brush, rect);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Create a fill brush using current properties.  This method will construct a brush based on the
@@ -1089,57 +1153,6 @@ namespace ZedGraph
 				// If they didn't provide a brush, make one using the fillcolor gradient to white
 				return new LinearGradientBrush( rect, Color.White, _color, 0F );
 		}
-
-		/// <summary>
-		/// Fill the background of the <see cref="RectangleF"/> area, using the
-		/// fill type from this <see cref="Fill"/>.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct specifying the area
-		/// to be filled</param>
-		public void Draw( Graphics g, RectangleF rect )
-		{
-			Draw( g, rect, null );
-			/*
-			if ( this.IsVisible )
-			{
-				using( Brush brush = this.MakeBrush( rect ) )
-				{
-					g.FillRectangle( brush, rect );
-					//brush.Dispose();
-				}
-			}
-			*/
-		}
-
-		/// <summary>
-		/// Fill the background of the <see cref="RectangleF"/> area, using the
-		/// fill type from this <see cref="Fill"/>.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct specifying the area
-		/// to be filled</param>
-		/// <param name="pt">The data value to be used in case it's a
-		/// <see cref="FillType.GradientByX" />, <see cref="FillType.GradientByY" />, or
-		/// <see cref="FillType.GradientByZ" /> <see cref="FillType" />.</param>
-		public void Draw( Graphics g, RectangleF rect, PointPair pt )
-		{
-			if ( this.IsVisible )
-			{
-				using ( Brush brush = this.MakeBrush( rect, pt ) )
-				{
-					g.FillRectangle( brush, rect );
-				}
-			}
-		}
-
-
 	#endregion
 	}
 }

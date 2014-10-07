@@ -37,18 +37,25 @@ namespace ZedGraph
 	public class TextObj : GraphObj, ICloneable, ISerializable
 	{
 	#region Fields
-		/// <summary> Private field to store the actual text string for this
-		/// <see cref="TextObj"/>.  Use the public property <see cref="TextObj.Text"/>
-		/// to access this value.
-		/// </summary>
-		private string _text;
 		/// <summary>
 		/// Private field to store the <see cref="FontSpec"/> class used to render
 		/// this <see cref="TextObj"/>.  Use the public property <see cref="FontSpec"/>
 		/// to access this class.
 		/// </summary>
-		private FontSpec	_fontSpec;
+		private FontSpec _fontSpec;
 
+		/// <summary>
+		/// Private field holding the SizeF into which this <see cref="TextObj"/>
+		/// should be rendered. Use the public property <see cref="TextObj.LayoutArea"/>
+		/// to access this value.
+		/// </summary>
+		private SizeF _layoutArea;
+
+		/// <summary> Private field to store the actual text string for this
+		/// <see cref="TextObj"/>.  Use the public property <see cref="TextObj.Text"/>
+		/// to access this value.
+		/// </summary>
+		private string _text;
 		/*
 		/// <summary>
 		/// Private field to indicate whether this <see cref="TextObj"/> is to be
@@ -58,15 +65,6 @@ namespace ZedGraph
 		/// </summary>
 		private bool isWrapped;
 		*/
-
-		/// <summary>
-		/// Private field holding the SizeF into which this <see cref="TextObj"/>
-		/// should be rendered. Use the public property <see cref="TextObj.LayoutArea"/>
-		/// to access this value.
-		/// </summary>
-		private SizeF _layoutArea;
-
-
 		#endregion
 
 	#region Defaults
@@ -88,10 +86,30 @@ namespace ZedGraph
 			*/
 
 			/// <summary>
+			/// The default font bold mode for the <see cref="TextObj"/> text
+			/// (<see cref="ZedGraph.FontSpec.IsBold"/> property). true
+			/// for a bold typeface, false otherwise.
+			/// </summary>
+			public static bool FontBold = false;
+
+			/// <summary>
+			/// The default font color for the <see cref="TextObj"/> text
+			/// (<see cref="ZedGraph.FontSpec.FontColor"/> property).
+			/// </summary>
+			public static Color FontColor = Color.Black;
+
+			/// <summary>
 			/// The default font family for the <see cref="TextObj"/> text
 			/// (<see cref="ZedGraph.FontSpec.Family"/> property).
 			/// </summary>
 			public static string FontFamily = "Arial";
+			/// <summary>
+			/// The default font italic mode for the <see cref="TextObj"/> text
+			/// (<see cref="ZedGraph.FontSpec.IsItalic"/> property). true
+			/// for an italic typeface, false otherwise.
+			/// </summary>
+			public static bool FontItalic = false;
+
 			/// <summary>
 			/// The default font size for the <see cref="TextObj"/> text
 			/// (<see cref="ZedGraph.FontSpec.Size"/> property).  Units are
@@ -99,28 +117,11 @@ namespace ZedGraph
 			/// </summary>
 			public static float FontSize = 12.0F;
 			/// <summary>
-			/// The default font color for the <see cref="TextObj"/> text
-			/// (<see cref="ZedGraph.FontSpec.FontColor"/> property).
-			/// </summary>
-			public static Color FontColor = Color.Black;
-			/// <summary>
-			/// The default font bold mode for the <see cref="TextObj"/> text
-			/// (<see cref="ZedGraph.FontSpec.IsBold"/> property). true
-			/// for a bold typeface, false otherwise.
-			/// </summary>
-			public static bool FontBold = false;
-			/// <summary>
 			/// The default font underline mode for the <see cref="TextObj"/> text
 			/// (<see cref="ZedGraph.FontSpec.IsUnderline"/> property). true
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool FontUnderline = false;
-			/// <summary>
-			/// The default font italic mode for the <see cref="TextObj"/> text
-			/// (<see cref="ZedGraph.FontSpec.IsItalic"/> property). true
-			/// for an italic typeface, false otherwise.
-			/// </summary>
-			public static bool FontItalic = false;
 		}
 	#endregion
 
@@ -136,6 +137,27 @@ namespace ZedGraph
 			set { this.isWrapped = value; } 
 		}
 		*/
+
+		/// <summary>
+		/// Gets a reference to the <see cref="FontSpec"/> class used to render
+		/// this <see cref="TextObj"/>
+		/// </summary>
+		/// <seealso cref="Default.FontColor"/>
+		/// <seealso cref="Default.FontBold"/>
+		/// <seealso cref="Default.FontItalic"/>
+		/// <seealso cref="Default.FontUnderline"/>
+		/// <seealso cref="Default.FontFamily"/>
+		/// <seealso cref="Default.FontSize"/>
+		public FontSpec FontSpec
+		{
+			get { return _fontSpec; }
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException("Uninitialized FontSpec in TextObj");
+				_fontSpec = value;
+			}
+		}
 
 		/// <summary>
 		/// 
@@ -155,26 +177,6 @@ namespace ZedGraph
 		{
 			get { return _text; }
 			set { _text = value; }
-		}
-		/// <summary>
-		/// Gets a reference to the <see cref="FontSpec"/> class used to render
-		/// this <see cref="TextObj"/>
-		/// </summary>
-		/// <seealso cref="Default.FontColor"/>
-		/// <seealso cref="Default.FontBold"/>
-		/// <seealso cref="Default.FontItalic"/>
-		/// <seealso cref="Default.FontUnderline"/>
-		/// <seealso cref="Default.FontFamily"/>
-		/// <seealso cref="Default.FontSize"/>
-		public FontSpec FontSpec
-		{
-			get { return _fontSpec; }
-			set
-			{
-				if ( value == null )
-					throw new ArgumentNullException( "Uninitialized FontSpec in TextObj" );
-				_fontSpec = value;
-			}
 		}
 	#endregion
 	
@@ -200,22 +202,6 @@ namespace ZedGraph
 			Init( text );
 		}
 
-		private void Init( string text )
-		{
-			if ( text != null )
-				_text = text;
-			else
-				text = "Text";
-			
-			_fontSpec = new FontSpec(
-				Default.FontFamily, Default.FontSize,
-				Default.FontColor, Default.FontBold,
-				Default.FontItalic, Default.FontUnderline );
-			
-			//this.isWrapped = Default.IsWrapped ;
-			_layoutArea = new SizeF( 0, 0 );
-		}
-		
 		/// <summary>
 		/// Constructor that sets all <see cref="TextObj"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
@@ -234,10 +220,10 @@ namespace ZedGraph
 		/// <param name="coordType">The <see cref="CoordType"/> enum value that
 		/// indicates what type of coordinate system the x and y parameters are
 		/// referenced to.</param>
-		public TextObj( string text, double x, double y, CoordType coordType )
-			: base( x, y, coordType )
+		public TextObj(string text, double x, double y, CoordType coordType)
+			: base(x, y, coordType)
 		{
-			Init( text );
+			Init(text);
 		}
 
 		/// <summary>
@@ -262,28 +248,39 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public TextObj( string text, double x, double y, CoordType coordType, AlignH alignH, AlignV alignV )
-			: base( x, y, coordType, alignH, alignV )
+		public TextObj(string text, double x, double y, CoordType coordType, AlignH alignH, AlignV alignV)
+			: base(x, y, coordType, alignH, alignV)
 		{
-			Init( text );
+			Init(text);
 		}
 
 		/// <summary>
 		/// Parameterless constructor that initializes a new <see cref="TextObj"/>.
 		/// </summary>
-		public TextObj() : base( 0, 0 )
+		public TextObj()
+			: base(0, 0)
 		{
-			Init( "" );
+			Init("");
 		}
-		
+
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="TextObj"/> object from which to copy</param>
-		public TextObj( TextObj rhs ) : base( rhs )
+		public TextObj(TextObj rhs)
+			: base(rhs)
 		{
 			_text = rhs.Text;
-			_fontSpec = new FontSpec( rhs.FontSpec );
+			_fontSpec = new FontSpec(rhs.FontSpec);
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public TextObj Clone()
+		{
+			return new TextObj(this);
 		}
 
 		/// <summary>
@@ -296,13 +293,20 @@ namespace ZedGraph
 			return this.Clone();
 		}
 
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public TextObj Clone()
+		private void Init(string text)
 		{
-			return new TextObj( this );
+			if ( text != null )
+				_text = text;
+			else
+				text = "Text";
+			
+			_fontSpec = new FontSpec(
+				Default.FontFamily, Default.FontSize,
+				Default.FontColor, Default.FontBold,
+				Default.FontItalic, Default.FontUnderline );
+			
+			//this.isWrapped = Default.IsWrapped ;
+			_layoutArea = new SizeF( 0, 0 );
 		}
 	#endregion
 
@@ -386,7 +390,26 @@ namespace ZedGraph
 
 			}
 		}
-		
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		override public void GetCoords(PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords)
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			PointF pix = _location.Transform(pane);
+
+			PointF[] pts = _fontSpec.GetBox(g, _text, pix.X, pix.Y, _location.AlignH,
+				_location.AlignV, scaleFactor, new SizeF());
+
+			shape = "poly";
+			coords = String.Format("{0:f0},{1:f0},{2:f0},{3:f0},{4:f0},{5:f0},{6:f0},{7:f0},",
+						pts[0].X, pts[0].Y, pts[1].X, pts[1].Y,
+						pts[2].X, pts[2].Y, pts[3].X, pts[3].Y);
+		}
+
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
 		/// <see cref="TextObj"/>.  This method takes into account rotation and alignment
@@ -420,27 +443,6 @@ namespace ZedGraph
 			return _fontSpec.PointInBox( pt, g, _text, pix.X, pix.Y,
 								_location.AlignH, _location.AlignV, scaleFactor, this.LayoutArea );
 		}
-
-		/// <summary>
-		/// Determines the shape type and Coords values for this GraphObj
-		/// </summary>
-		override public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
-				out string shape, out string coords )
-		{
-			// transform the x,y location from the user-defined
-			// coordinate frame to the screen pixel location
-			PointF pix = _location.Transform( pane );
-
-			PointF[] pts = _fontSpec.GetBox( g, _text, pix.X, pix.Y, _location.AlignH,
-				_location.AlignV, scaleFactor, new SizeF() );
-
-			shape = "poly";
-			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0},{4:f0},{5:f0},{6:f0},{7:f0},",
-						pts[0].X, pts[0].Y, pts[1].X, pts[1].Y,
-						pts[2].X, pts[2].Y, pts[3].X, pts[3].Y );
-		}
-
-		
 	#endregion
 	
 	}

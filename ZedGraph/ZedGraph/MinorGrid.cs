@@ -34,15 +34,12 @@ namespace ZedGraph
 	[Serializable]
 	public class MinorGrid : ICloneable, ISerializable
 	{
-		internal bool	_isVisible;
-
+		internal Color _color;
 		internal float _dashOn,
 							_dashOff,
 							_penWidth;
 
-		internal Color _color;
-
-
+		internal bool _isVisible;
 	#region Constructors
 
 		/// <summary>
@@ -73,6 +70,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public MinorGrid Clone()
+		{
+			return new MinorGrid(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -81,35 +87,39 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public MinorGrid Clone()
-		{
-			return new MinorGrid( this );
-		}
-
 	#endregion
 
 	#region Properties
 
 		/// <summary>
-		/// Gets or sets a value that determines if the major <see cref="Axis"/> gridlines
-		/// (at each labeled value) will be visible
+		/// The color to use for drawing this <see cref="Axis"/> grid.
 		/// </summary>
-		/// <value>true to show the gridlines, false otherwise</value>
-		/// <seealso cref="Default.IsVisible">Default.IsShowGrid</seealso>.
-		/// <seealso cref="Color"/>
+		/// <value> The color is defined using the
+		/// <see cref="System.Drawing.Color"/> class</value>
+		/// <seealso cref="Default.Color"/>.
 		/// <seealso cref="PenWidth"/>
-		/// <seealso cref="DashOn"/>
-		/// <seealso cref="DashOff"/>
-		/// <seealso cref="IsVisible"/>
-		public bool IsVisible
+		public Color Color
 		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
+			get { return _color; }
+			set { _color = value; }
+		}
+
+		/// <summary>
+		/// The "Dash Off" mode for drawing the grid.
+		/// </summary>
+		/// <remarks>
+		/// This is the distance,
+		/// in points (1/72 inch), of the spaces between the dash segments that make up
+		/// the dashed grid lines.
+		/// </remarks>
+		/// <value>The dash off length is defined in points (1/72 inch)</value>
+		/// <seealso cref="DashOn"/>
+		/// <seealso cref="IsVisible"/>
+		/// <seealso cref="Default.DashOff"/>.
+		public float DashOff
+		{
+			get { return _dashOff; }
+			set { _dashOff = value; }
 		}
 
 		/// <summary>
@@ -128,22 +138,22 @@ namespace ZedGraph
 			get { return _dashOn; }
 			set { _dashOn = value; }
 		}
+
 		/// <summary>
-		/// The "Dash Off" mode for drawing the grid.
+		/// Gets or sets a value that determines if the major <see cref="Axis"/> gridlines
+		/// (at each labeled value) will be visible
 		/// </summary>
-		/// <remarks>
-		/// This is the distance,
-		/// in points (1/72 inch), of the spaces between the dash segments that make up
-		/// the dashed grid lines.
-		/// </remarks>
-		/// <value>The dash off length is defined in points (1/72 inch)</value>
+		/// <value>true to show the gridlines, false otherwise</value>
+		/// <seealso cref="Default.IsVisible">Default.IsShowGrid</seealso>.
+		/// <seealso cref="Color"/>
+		/// <seealso cref="PenWidth"/>
 		/// <seealso cref="DashOn"/>
+		/// <seealso cref="DashOff"/>
 		/// <seealso cref="IsVisible"/>
-		/// <seealso cref="Default.DashOff"/>.
-		public float DashOff
+		public bool IsVisible
 		{
-			get { return _dashOff; }
-			set { _dashOff = value; }
+			get { return _isVisible; }
+			set { _isVisible = value; }
 		}
 		/// <summary>
 		/// The pen width used for drawing the grid lines.
@@ -157,19 +167,6 @@ namespace ZedGraph
 			get { return _penWidth; }
 			set { _penWidth = value; }
 		}
-		/// <summary>
-		/// The color to use for drawing this <see cref="Axis"/> grid.
-		/// </summary>
-		/// <value> The color is defined using the
-		/// <see cref="System.Drawing.Color"/> class</value>
-		/// <seealso cref="Default.Color"/>.
-		/// <seealso cref="PenWidth"/>
-		public Color Color
-		{
-			get { return _color; }
-			set { _color = value; }
-		}
-
 	#endregion
 
 	#region Serialization
@@ -230,21 +227,6 @@ namespace ZedGraph
 		public struct Default
 		{
 			/// <summary>
-			/// The default "dash on" size for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="MinorGrid.DashOn"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float DashOn = 1.0F;
-			/// <summary>
-			/// The default "dash off" size for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="MinorGrid.DashOff"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float DashOff = 10.0F;
-			/// <summary>
-			/// The default pen width for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="MinorGrid.PenWidth"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float PenWidth = 1.0F;
-			/// <summary>
 			/// The default color for the <see cref="Axis"/> minor grid lines
 			/// (<see cref="MinorGrid.Color"/> property).  This color only affects the
 			/// minor grid lines.
@@ -252,12 +234,28 @@ namespace ZedGraph
 			public static Color Color = Color.Gray;
 
 			/// <summary>
+			/// The default "dash off" size for drawing the <see cref="Axis"/> minor grid
+			/// (<see cref="MinorGrid.DashOff"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float DashOff = 10.0F;
+
+			/// <summary>
+			/// The default "dash on" size for drawing the <see cref="Axis"/> minor grid
+			/// (<see cref="MinorGrid.DashOn"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float DashOn = 1.0F;
+			/// <summary>
 			/// The default display mode for the <see cref="Axis"/> minor grid lines
 			/// (<see cref="MinorGrid.IsVisible"/> property). true
 			/// to show the minor grid lines, false to hide them.
 			/// </summary>
 			public static bool IsVisible = false;
 
+			/// <summary>
+			/// The default pen width for drawing the <see cref="Axis"/> minor grid
+			/// (<see cref="MinorGrid.PenWidth"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float PenWidth = 1.0F;
 		}
 
 	#endregion

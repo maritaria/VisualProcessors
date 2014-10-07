@@ -40,21 +40,13 @@ namespace ZedGraph
 	#region Fields
 
 		/// <summary>
-		/// Private field that stores the pen width for this line.
-		/// Use the public property <see cref="Width"/> to access this value.
+		/// Private field that stores the color of this line.  Use the public
+		/// property <see cref="Color"/> to access this value.  If this value is
+		/// false, the line will not be shown (but the <see cref="Symbol"/> may
+		/// still be shown).
 		/// </summary>
-		internal float _width;
-		/// <summary>
-		/// Private field that stores the <see cref="DashStyle"/> for this
-		/// line.  Use the public
-		/// property <see cref="Style"/> to access this value.
-		/// </summary>
-		internal DashStyle _style;
-		/// <summary>
-		/// private field that stores the "Dash On" length for drawing the line.  Use the
-		/// public property <see cref="DashOn" /> to access this value.
-		/// </summary>
-		internal float _dashOn;
+		internal Color _color;
+
 		/// <summary>
 		/// private field that stores the "Dash Off" length for drawing the line.  Use the
 		/// public property <see cref="DashOff" /> to access this value.
@@ -62,25 +54,10 @@ namespace ZedGraph
 		internal float _dashOff;
 
 		/// <summary>
-		/// Private field that stores the visibility of this line.  Use the public
-		/// property <see cref="IsVisible"/> to access this value.
+		/// private field that stores the "Dash On" length for drawing the line.  Use the
+		/// public property <see cref="DashOn" /> to access this value.
 		/// </summary>
-		internal bool _isVisible;
-
-		/// <summary>
-		/// private field that determines if the line is drawn using
-		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
-		/// Use the public property <see cref="IsAntiAlias" /> to access
-		/// this value.
-		/// </summary>
-		internal bool _isAntiAlias;
-		/// <summary>
-		/// Private field that stores the color of this line.  Use the public
-		/// property <see cref="Color"/> to access this value.  If this value is
-		/// false, the line will not be shown (but the <see cref="Symbol"/> may
-		/// still be shown).
-		/// </summary>
-		internal Color _color;
+		internal float _dashOn;
 
 		/// <summary>
 		/// Internal field that stores a custom <see cref="Fill" /> class.  This
@@ -91,7 +68,32 @@ namespace ZedGraph
 		/// </summary>
 		internal Fill _gradientFill;
 
+		/// <summary>
+		/// private field that determines if the line is drawn using
+		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
+		/// Use the public property <see cref="IsAntiAlias" /> to access
+		/// this value.
+		/// </summary>
+		internal bool _isAntiAlias;
 
+		/// <summary>
+		/// Private field that stores the visibility of this line.  Use the public
+		/// property <see cref="IsVisible"/> to access this value.
+		/// </summary>
+		internal bool _isVisible;
+
+		/// <summary>
+		/// Private field that stores the <see cref="DashStyle"/> for this
+		/// line.  Use the public
+		/// property <see cref="Style"/> to access this value.
+		/// </summary>
+		internal DashStyle _style;
+
+		/// <summary>
+		/// Private field that stores the pen width for this line.
+		/// Use the public property <see cref="Width"/> to access this value.
+		/// </summary>
+		internal float _width;
 	#endregion
 
 	#region Defaults
@@ -103,31 +105,11 @@ namespace ZedGraph
 		public struct Default
 		{
 			/// <summary>
-			/// The default mode for displaying line segments (<see cref="LineBase.IsVisible"/>
-			/// property).  True to show the line segments, false to hide them.
+			/// The default color for the line.
+			/// This is the default value for the <see cref="LineBase.Color"/> property.
 			/// </summary>
-			public static bool IsVisible = true;
-			/// <summary>
-			/// The default width for line segments (<see cref="LineBase.Width"/> property).
-			/// Units are points (1/72 inch).
-			/// </summary>
-			public static float Width = 1;
-			/// <summary>
-			/// The default value for the <see cref="LineBase.IsAntiAlias"/>
-			/// property.
-			/// </summary>
-			public static bool IsAntiAlias = false;
+			public static Color Color = Color.Black;
 
-			/// <summary>
-			/// The default drawing style for line segments (<see cref="LineBase.Style"/> property).
-			/// This is defined with the <see cref="DashStyle"/> enumeration.
-			/// </summary>
-			public static DashStyle Style = DashStyle.Solid;
-			/// <summary>
-			/// The default "dash on" size for drawing the line
-			/// (<see cref="LineBase.DashOn"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float DashOn = 1.0F;
 			/// <summary>
 			/// The default "dash off" size for drawing the the line
 			/// (<see cref="LineBase.DashOff"/> property). Units are in points (1/72 inch).
@@ -135,10 +117,33 @@ namespace ZedGraph
 			public static float DashOff = 1.0F;
 
 			/// <summary>
-			/// The default color for the line.
-			/// This is the default value for the <see cref="LineBase.Color"/> property.
+			/// The default "dash on" size for drawing the line
+			/// (<see cref="LineBase.DashOn"/> property). Units are in points (1/72 inch).
 			/// </summary>
-			public static Color Color = Color.Black;
+			public static float DashOn = 1.0F;
+
+			/// <summary>
+			/// The default value for the <see cref="LineBase.IsAntiAlias"/>
+			/// property.
+			/// </summary>
+			public static bool IsAntiAlias = false;
+
+			/// <summary>
+			/// The default mode for displaying line segments (<see cref="LineBase.IsVisible"/>
+			/// property).  True to show the line segments, false to hide them.
+			/// </summary>
+			public static bool IsVisible = true;
+			/// <summary>
+			/// The default drawing style for line segments (<see cref="LineBase.Style"/> property).
+			/// This is defined with the <see cref="DashStyle"/> enumeration.
+			/// </summary>
+			public static DashStyle Style = DashStyle.Solid;
+
+			/// <summary>
+			/// The default width for line segments (<see cref="LineBase.Width"/> property).
+			/// Units are points (1/72 inch).
+			/// </summary>
+			public static float Width = 1;
 		}
 
 	#endregion
@@ -159,16 +164,21 @@ namespace ZedGraph
 			set { _color = value; }
 		}
 		/// <summary>
-		/// The style of the <see cref="Line"/>, defined as a <see cref="DashStyle"/> enum.
-		/// This allows the line to be solid, dashed, or dotted.
+		/// The "Dash Off" mode for drawing the line.
 		/// </summary>
-		/// <seealso cref="Default.Style"/>
-		/// <seealso cref="DashOn" />
-		/// <seealso cref="DashOff" />
-		public DashStyle Style
+		/// <remarks>
+		/// This is the distance, in points (1/72 inch), of the spaces between the dash
+		/// segments that make up the dashed grid lines.  This setting is only valid if 
+		/// <see cref="Style" /> is set to <see cref="DashStyle.Custom" />.
+		/// </remarks>
+		/// <value>The dash off length is defined in points (1/72 inch)</value>
+		/// <seealso cref="DashOn"/>
+		/// <seealso cref="IsVisible"/>
+		/// <seealso cref="Default.DashOff"/>.
+		public float DashOff
 		{
-			get { return _style; }
-			set { _style = value; }
+			get { return _dashOff; }
+			set { _dashOff = value; }
 		}
 
 		/// <summary>
@@ -188,58 +198,6 @@ namespace ZedGraph
 			get { return _dashOn; }
 			set { _dashOn = value; }
 		}
-		/// <summary>
-		/// The "Dash Off" mode for drawing the line.
-		/// </summary>
-		/// <remarks>
-		/// This is the distance, in points (1/72 inch), of the spaces between the dash
-		/// segments that make up the dashed grid lines.  This setting is only valid if 
-		/// <see cref="Style" /> is set to <see cref="DashStyle.Custom" />.
-		/// </remarks>
-		/// <value>The dash off length is defined in points (1/72 inch)</value>
-		/// <seealso cref="DashOn"/>
-		/// <seealso cref="IsVisible"/>
-		/// <seealso cref="Default.DashOff"/>.
-		public float DashOff
-		{
-			get { return _dashOff; }
-			set { _dashOff = value; }
-		}
-
-		/// <summary>
-		/// The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
-		/// </summary>
-		/// <seealso cref="Default.Width"/>
-		public float Width
-		{
-			get { return _width; }
-			set { _width = value; }
-		}
-		/// <summary>
-		/// Gets or sets a property that shows or hides the <see cref="Line"/>.
-		/// </summary>
-		/// <value>true to show the line, false to hide it</value>
-		/// <seealso cref="Default.IsVisible"/>
-		public bool IsVisible
-		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines if the lines are drawn using
-		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
-		/// </summary>
-		/// <remarks>
-		/// If this value is set to true, then the <see cref="Graphics.SmoothingMode" />
-		/// property will be set to <see cref="SmoothingMode.HighQuality" /> only while
-		/// this <see cref="Line" /> is drawn.  A value of false will leave the value of
-		/// <see cref="Graphics.SmoothingMode" /> unchanged.
-		/// </remarks>
-		public bool IsAntiAlias
-		{
-			get { return _isAntiAlias; }
-			set { _isAntiAlias = value; }
-		}
 
 		/// <summary>
 		/// Gets or sets a custom <see cref="Fill" /> class.
@@ -257,6 +215,54 @@ namespace ZedGraph
 			set { _gradientFill = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines if the lines are drawn using
+		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
+		/// </summary>
+		/// <remarks>
+		/// If this value is set to true, then the <see cref="Graphics.SmoothingMode" />
+		/// property will be set to <see cref="SmoothingMode.HighQuality" /> only while
+		/// this <see cref="Line" /> is drawn.  A value of false will leave the value of
+		/// <see cref="Graphics.SmoothingMode" /> unchanged.
+		/// </remarks>
+		public bool IsAntiAlias
+		{
+			get { return _isAntiAlias; }
+			set { _isAntiAlias = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a property that shows or hides the <see cref="Line"/>.
+		/// </summary>
+		/// <value>true to show the line, false to hide it</value>
+		/// <seealso cref="Default.IsVisible"/>
+		public bool IsVisible
+		{
+			get { return _isVisible; }
+			set { _isVisible = value; }
+		}
+
+		/// <summary>
+		/// The style of the <see cref="Line"/>, defined as a <see cref="DashStyle"/> enum.
+		/// This allows the line to be solid, dashed, or dotted.
+		/// </summary>
+		/// <seealso cref="Default.Style"/>
+		/// <seealso cref="DashOn" />
+		/// <seealso cref="DashOff" />
+		public DashStyle Style
+		{
+			get { return _style; }
+			set { _style = value; }
+		}
+		/// <summary>
+		/// The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
+		/// </summary>
+		/// <seealso cref="Default.Width"/>
+		public float Width
+		{
+			get { return _width; }
+			set { _width = value; }
+		}
 	#endregion
 
 	#region Constructors

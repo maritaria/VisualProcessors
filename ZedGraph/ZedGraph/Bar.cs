@@ -37,18 +37,19 @@ namespace ZedGraph
    public class Bar : ICloneable, ISerializable
    {
 	#region Fields
-		/// <summary>
+	   /// <summary>
+	   /// Private field that stores the <see cref="Border"/> class that defines the
+	   /// properties of the border around this <see cref="BarItem"/>. Use the public
+	   /// property <see cref="Border"/> to access this value.
+	   /// </summary>
+	   private Border _border;
+
+	   /// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Bar"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
 		private Fill  _fill;
-		/// <summary>
-		/// Private field that stores the <see cref="Border"/> class that defines the
-		/// properties of the border around this <see cref="BarItem"/>. Use the public
-		/// property <see cref="Border"/> to access this value.
-		/// </summary>
-		private Border _border;
 	#endregion
 
 	#region Defaults
@@ -58,12 +59,30 @@ namespace ZedGraph
 		/// </summary>
 		public struct Default
 		{
+			/// <summary>
+			/// The default color for drawing frames around bars
+			/// (<see cref="ZedGraph.LineBase.Color"/> property).
+			/// </summary>
+			public static Color BorderColor = Color.Black;
+
 			// Default Bar properties
 			/// <summary>
 			/// The default pen width to be used for drawing the border around the bars
 			/// (<see cref="ZedGraph.LineBase.Width"/> property).  Units are points.
 			/// </summary>
 			public static float BorderWidth = 1.0F;
+			/// <summary>
+			/// The default custom brush for filling in the bars
+			/// (<see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush FillBrush = null;
+
+			/// <summary>
+			/// The default color for filling in the bars
+			/// (<see cref="ZedGraph.Fill.Color"/> property).
+			/// </summary>
+			public static Color FillColor = Color.Red;
+
 			/// <summary>
 			/// The default fill mode for bars (<see cref="ZedGraph.Fill.Type"/> property).
 			/// </summary>
@@ -73,21 +92,7 @@ namespace ZedGraph
 			/// true to display frames around bars, false otherwise
 			/// </summary>
 			public static bool IsBorderVisible = true;
-			/// <summary>
-			/// The default color for drawing frames around bars
-			/// (<see cref="ZedGraph.LineBase.Color"/> property).
-			/// </summary>
-			public static Color BorderColor = Color.Black;
-			/// <summary>
-			/// The default color for filling in the bars
-			/// (<see cref="ZedGraph.Fill.Color"/> property).
-			/// </summary>
-			public static Color FillColor = Color.Red;
-			/// <summary>
-			/// The default custom brush for filling in the bars
-			/// (<see cref="ZedGraph.Fill.Brush"/> property).
-			/// </summary>
-			public static Brush FillBrush = null; //new LinearGradientBrush( new Rectangle(0,0,100,100),
+ //new LinearGradientBrush( new Rectangle(0,0,100,100),
 			// Color.White, Color.Red, 0F );
 		}
 	#endregion
@@ -132,6 +137,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Bar Clone()
+		{
+			return new Bar(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -140,16 +154,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public Bar Clone()
-		{
-			return new Bar( this );
-		}
-
 	#endregion
 
 	#region Serialization

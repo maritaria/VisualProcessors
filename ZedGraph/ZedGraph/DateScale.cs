@@ -81,12 +81,17 @@ namespace ZedGraph
 	#region properties
 
 		/// <summary>
-		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
-		/// <see cref="AxisType.Date" />.
+		/// Gets or sets the maximum value for this scale.
 		/// </summary>
-		public override AxisType Type
+		/// <remarks>
+		/// The set property is specifically adapted for <see cref="AxisType.Date" /> scales,
+		/// in that it automatically limits the value to the range of valid dates for the
+		/// <see cref="XDate" /> struct.
+		/// </remarks>
+		public override double Max
 		{
-			get { return AxisType.Date; }
+			get { return _max; }
+			set { _max = XDate.MakeValidDate(value); _maxAuto = false; }
 		}
 
 		/// <summary>
@@ -100,25 +105,484 @@ namespace ZedGraph
 		public override double Min
 		{
 			get { return _min; }
-			set { _min = XDate.MakeValidDate( value ); _minAuto = false; }
+			set { _min = XDate.MakeValidDate(value); _minAuto = false; }
 		}
 
 		/// <summary>
-		/// Gets or sets the maximum value for this scale.
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.Date" />.
 		/// </summary>
-		/// <remarks>
-		/// The set property is specifically adapted for <see cref="AxisType.Date" /> scales,
-		/// in that it automatically limits the value to the range of valid dates for the
-		/// <see cref="XDate" /> struct.
-		/// </remarks>
-		public override double Max
+		public override AxisType Type
 		{
-			get { return _max; }
-			set { _max = XDate.MakeValidDate( value ); _maxAuto = false; }
+			get { return AxisType.Date; }
 		}
 	#endregion
 
 	#region methods
+
+		/// <summary>
+		/// Gets the major unit multiplier for this scale type, if any.
+		/// </summary>
+		/// <remarks>The major unit multiplier will correct the units of
+		/// <see cref="Scale.MajorStep" /> to match the units of <see cref="Scale.Min" />
+		/// and <see cref="Scale.Max" />.  This reflects the setting of
+		/// <see cref="Scale.MajorUnit" />.
+		/// </remarks>
+		override internal double MajorUnitMultiplier
+		{
+			get { return GetUnitMultiple(_majorUnit); }
+		}
+
+		/// <summary>
+		/// Gets the minor unit multiplier for this scale type, if any.
+		/// </summary>
+		/// <remarks>The minor unit multiplier will correct the units of
+		/// <see cref="Scale.MinorStep" /> to match the units of <see cref="Scale.Min" />
+		/// and <see cref="Scale.Max" />.  This reflects the setting of
+		/// <see cref="Scale.MinorUnit" />.
+		/// </remarks>
+		override internal double MinorUnitMultiplier
+		{
+			get { return GetUnitMultiple(_minorUnit); }
+		}
+
+		/// <summary>
+		/// Select a reasonable date-time axis scale given a range of data values.
+		/// </summary>
+		/// <remarks>
+		/// This method only applies to <see cref="AxisType.Date"/> type axes, and it
+		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
+		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).
+		/// Note that the <see cref="Scale.MajorStep"/> property setting can have multiple unit
+		/// types (<see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit" />),
+		/// but the <see cref="Scale.Min"/> and
+		/// <see cref="Scale.Max"/> units are always days (<see cref="XDate"/>).  This
+		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
+		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
+		/// In the event that any of the autorange settings are false, the
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
+		/// setting is explicitly honored, and the remaining autorange settings (if any) will
+		/// be calculated to accomodate the non-autoranged values.  The basic default for
+		/// scale selection is defined with
+		/// <see cref="Scale.Default.TargetXSteps"/> and <see cref="Scale.Default.TargetYSteps"/>
+		/// from the <see cref="Scale.Default"/> default class.
+		/// <para>On Exit:</para>
+		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
+		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
+		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
+		/// </remarks>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
+		/// associated with this <see cref="Axis"/></param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <seealso cref="Scale.PickScale"/>
+		/// <seealso cref="AxisType.Date"/>
+		/// <seealso cref="Scale.MajorUnit"/>
+		/// <seealso cref="Scale.MinorUnit"/>
+		override public void PickScale(GraphPane pane, Graphics g, float scaleFactor)
+		{
+			// call the base class first
+			base.PickScale(pane, g, scaleFactor);
+
+			// Test for trivial condition of range = 0 and pick a suitable default
+			if (_max - _min < 1.0e-20)
+			{
+				if (_maxAuto)
+					_max = _max + 0.2 * (_max == 0 ? 1.0 : Math.Abs(_max));
+				if (_minAuto)
+					_min = _min - 0.2 * (_min == 0 ? 1.0 : Math.Abs(_min));
+			}
+
+			double targetSteps = (_ownerAxis is XAxis || _ownerAxis is X2Axis) ?
+						Default.TargetXSteps : Default.TargetYSteps;
+
+			// Calculate the step size based on target steps
+			double tempStep = CalcDateStepSize(_max - _min, targetSteps);
+
+			// Calculate the new step size
+			if (_majorStepAuto)
+			{
+				_majorStep = tempStep;
+
+				if (_isPreventLabelOverlap)
+				{
+					// Calculate the maximum number of labels
+					double maxLabels = (double)this.CalcMaxLabels(g, pane, scaleFactor);
+
+					if (maxLabels < this.CalcNumTics())
+						_majorStep = CalcDateStepSize(_max - _min, maxLabels);
+				}
+			}
+
+			// Calculate the scale minimum
+			if (_minAuto)
+				_min = CalcEvenStepDate(_min, -1);
+
+			// Calculate the scale maximum
+			if (_maxAuto)
+				_max = CalcEvenStepDate(_max, 1);
+
+			_mag = 0;		// Never use a magnitude shift for date scales
+			//this.numDec = 0;		// The number of decimal places to display is not used
+
+		}
+
+		/// <summary>
+		/// Calculate a step size for a <see cref="AxisType.Date"/> scale.
+		/// This method is used by <see cref="PickScale"/>.
+		/// </summary>
+		/// <param name="range">The range of data in units of days</param>
+		/// <param name="targetSteps">The desired "typical" number of steps
+		/// to divide the range into</param>
+		/// <param name="scale">
+		/// The <see cref="Scale" /> object on which to calculate the Date step size.</param>
+		/// <returns>The calculated step size for the specified data range.  Also
+		/// calculates and sets the values for <see cref="Scale.MajorUnit"/>,
+		/// <see cref="Scale.MinorUnit"/>, <see cref="Scale.MinorStep"/>, and
+		/// <see cref="Scale.Format"/></returns>
+		internal static double CalcDateStepSize(double range, double targetSteps, Scale scale)
+		{
+			// Calculate an initial guess at step size
+			double tempStep = range / targetSteps;
+
+			if (range > Default.RangeYearYear)
+			{
+				scale._majorUnit = DateUnit.Year;
+				if (scale._formatAuto)
+					scale._format = Default.FormatYearYear;
+
+				tempStep = Math.Ceiling(tempStep / 365.0);
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Year;
+					if (tempStep == 1.0)
+						scale._minorStep = 0.25;
+					else
+						scale._minorStep = Scale.CalcStepSize(tempStep, targetSteps);
+				}
+			}
+			else if (range > Default.RangeYearMonth)
+			{
+				scale._majorUnit = DateUnit.Year;
+				if (scale._formatAuto)
+					scale._format = Default.FormatYearMonth;
+				tempStep = Math.Ceiling(tempStep / 365.0);
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Month;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					scale._minorStep = Math.Ceiling(range / (targetSteps * 3) / 30.0);
+					// make sure the minorStep is 1, 2, 3, 6, or 12 months
+					if (scale._minorStep > 6)
+						scale._minorStep = 12;
+					else if (scale._minorStep > 3)
+						scale._minorStep = 6;
+				}
+			}
+			else if (range > Default.RangeMonthMonth)
+			{
+				scale._majorUnit = DateUnit.Month;
+				if (scale._formatAuto)
+					scale._format = Default.FormatMonthMonth;
+				tempStep = Math.Ceiling(tempStep / 30.0);
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Month;
+					scale._minorStep = tempStep * 0.25;
+				}
+			}
+			else if (range > Default.RangeDayDay)
+			{
+				scale._majorUnit = DateUnit.Day;
+				if (scale._formatAuto)
+					scale._format = Default.FormatDayDay;
+				tempStep = Math.Ceiling(tempStep);
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Day;
+					scale._minorStep = tempStep * 0.25;
+					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
+				}
+			}
+			else if (range > Default.RangeDayHour)
+			{
+				scale._majorUnit = DateUnit.Day;
+				if (scale._formatAuto)
+					scale._format = Default.FormatDayHour;
+				tempStep = Math.Ceiling(tempStep);
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Hour;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					scale._minorStep = Math.Ceiling(range / (targetSteps * 3) * XDate.HoursPerDay);
+					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
+					if (scale._minorStep > 6)
+						scale._minorStep = 12;
+					else if (scale._minorStep > 3)
+						scale._minorStep = 6;
+					else
+						scale._minorStep = 1;
+				}
+			}
+			else if (range > Default.RangeHourHour)
+			{
+				scale._majorUnit = DateUnit.Hour;
+				tempStep = Math.Ceiling(tempStep * XDate.HoursPerDay);
+				if (scale._formatAuto)
+					scale._format = Default.FormatHourHour;
+
+				if (tempStep > 12.0)
+					tempStep = 24.0;
+				else if (tempStep > 6.0)
+					tempStep = 12.0;
+				else if (tempStep > 2.0)
+					tempStep = 6.0;
+				else if (tempStep > 1.0)
+					tempStep = 2.0;
+				else
+					tempStep = 1.0;
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Hour;
+					if (tempStep <= 1.0)
+						scale._minorStep = 0.25;
+					else if (tempStep <= 6.0)
+						scale._minorStep = 1.0;
+					else if (tempStep <= 12.0)
+						scale._minorStep = 2.0;
+					else
+						scale._minorStep = 4.0;
+				}
+			}
+			else if (range > Default.RangeHourMinute)
+			{
+				scale._majorUnit = DateUnit.Hour;
+				tempStep = Math.Ceiling(tempStep * XDate.HoursPerDay);
+
+				if (scale._formatAuto)
+					scale._format = Default.FormatHourMinute;
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Minute;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					scale._minorStep = Math.Ceiling(range / (targetSteps * 3) * XDate.MinutesPerDay);
+					// make sure the minorStep is 1, 5, 15, or 30 minutes
+					if (scale._minorStep > 15.0)
+						scale._minorStep = 30.0;
+					else if (scale._minorStep > 5.0)
+						scale._minorStep = 15.0;
+					else if (scale._minorStep > 1.0)
+						scale._minorStep = 5.0;
+					else
+						scale._minorStep = 1.0;
+				}
+			}
+			else if (range > Default.RangeMinuteMinute)
+			{
+				scale._majorUnit = DateUnit.Minute;
+				if (scale._formatAuto)
+					scale._format = Default.FormatMinuteMinute;
+
+				tempStep = Math.Ceiling(tempStep * XDate.MinutesPerDay);
+				// make sure the minute step size is 1, 5, 15, or 30 minutes
+				if (tempStep > 15.0)
+					tempStep = 30.0;
+				else if (tempStep > 5.0)
+					tempStep = 15.0;
+				else if (tempStep > 1.0)
+					tempStep = 5.0;
+				else
+					tempStep = 1.0;
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Minute;
+					if (tempStep <= 1.0)
+						scale._minorStep = 0.25;
+					else if (tempStep <= 5.0)
+						scale._minorStep = 1.0;
+					else
+						scale._minorStep = 5.0;
+				}
+			}
+			else if (range > Default.RangeMinuteSecond)
+			{
+				scale._majorUnit = DateUnit.Minute;
+				tempStep = Math.Ceiling(tempStep * XDate.MinutesPerDay);
+
+				if (scale._formatAuto)
+					scale._format = Default.FormatMinuteSecond;
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Second;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					scale._minorStep = Math.Ceiling(range / (targetSteps * 3) * XDate.SecondsPerDay);
+					// make sure the minorStep is 1, 5, 15, or 30 seconds
+					if (scale._minorStep > 15.0)
+						scale._minorStep = 30.0;
+					else if (scale._minorStep > 5.0)
+						scale._minorStep = 15.0;
+					else if (scale._minorStep > 1.0)
+						scale._minorStep = 5.0;
+					else
+						scale._minorStep = 1.0;
+				}
+			}
+			else if (range > Default.RangeSecondSecond) // SecondSecond
+			{
+				scale._majorUnit = DateUnit.Second;
+				if (scale._formatAuto)
+					scale._format = Default.FormatSecondSecond;
+
+				tempStep = Math.Ceiling(tempStep * XDate.SecondsPerDay);
+				// make sure the second step size is 1, 5, 15, or 30 seconds
+				if (tempStep > 15.0)
+					tempStep = 30.0;
+				else if (tempStep > 5.0)
+					tempStep = 15.0;
+				else if (tempStep > 1.0)
+					tempStep = 5.0;
+				else
+					tempStep = 1.0;
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorUnit = DateUnit.Second;
+					if (tempStep <= 1.0)
+						scale._minorStep = 0.25;
+					else if (tempStep <= 5.0)
+						scale._minorStep = 1.0;
+					else
+						scale._minorStep = 5.0;
+				}
+			}
+			else // MilliSecond
+			{
+				scale._majorUnit = DateUnit.Millisecond;
+				if (scale._formatAuto)
+					scale._format = Default.FormatMillisecond;
+
+				tempStep = CalcStepSize(range * XDate.MillisecondsPerDay, Default.TargetXSteps);
+
+				if (scale._minorStepAuto)
+				{
+					scale._minorStep = CalcStepSize(tempStep,
+							(scale._ownerAxis is XAxis || scale._ownerAxis is X2Axis) ?
+							Default.TargetMinorXSteps : Default.TargetMinorYSteps);
+					scale._minorUnit = DateUnit.Millisecond;
+				}
+			}
+
+			return tempStep;
+		}
+
+		/// <summary>
+		/// Determine the value for the first major tic.
+		/// </summary>
+		/// <remarks>
+		/// This is done by finding the first possible value that is an integral multiple of
+		/// the step size, taking into account the date/time units if appropriate.
+		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
+		/// <returns>
+		/// First major tic value (floating point double).
+		/// </returns>
+		override internal double CalcBaseTic()
+		{
+			if (_baseTic != PointPair.Missing)
+				return _baseTic;
+			else
+			{
+				int year, month, day, hour, minute, second, millisecond;
+				XDate.XLDateToCalendarDate(_min, out year, out month, out day, out hour, out minute,
+											out second, out millisecond);
+				switch (_majorUnit)
+				{
+					case DateUnit.Year:
+					default:
+						month = 1; day = 1; hour = 0; minute = 0; second = 0; millisecond = 0;
+						break;
+					case DateUnit.Month:
+						day = 1; hour = 0; minute = 0; second = 0; millisecond = 0;
+						break;
+					case DateUnit.Day:
+						hour = 0; minute = 0; second = 0; millisecond = 0;
+						break;
+					case DateUnit.Hour:
+						minute = 0; second = 0; millisecond = 0;
+						break;
+					case DateUnit.Minute:
+						second = 0; millisecond = 0;
+						break;
+					case DateUnit.Second:
+						millisecond = 0;
+						break;
+					case DateUnit.Millisecond:
+						break;
+
+				}
+
+				double xlDate = XDate.CalendarDateToXLDate(year, month, day, hour, minute, second, millisecond);
+				if (xlDate < _min)
+				{
+					switch (_majorUnit)
+					{
+						case DateUnit.Year:
+						default:
+							year++;
+							break;
+						case DateUnit.Month:
+							month++;
+							break;
+						case DateUnit.Day:
+							day++;
+							break;
+						case DateUnit.Hour:
+							hour++;
+							break;
+						case DateUnit.Minute:
+							minute++;
+							break;
+						case DateUnit.Second:
+							second++;
+							break;
+						case DateUnit.Millisecond:
+							millisecond++;
+							break;
+
+					}
+
+					xlDate = XDate.CalendarDateToXLDate(year, month, day, hour, minute, second, millisecond);
+				}
+
+				return xlDate;
+			}
+		}
 
 		/// <summary>
 		/// Determine the value for any major tic.
@@ -170,6 +634,37 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Internal routine to determine the ordinals of the first minor tic mark
+		/// </summary>
+		/// <param name="baseVal">
+		/// The value of the first major tic for the axis.
+		/// </param>
+		/// <returns>
+		/// The ordinal position of the first minor tic, relative to the first major tic.
+		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
+		/// increments before the first major tic.
+		/// </returns>
+		override internal int CalcMinorStart(double baseVal)
+		{
+			switch (_minorUnit)
+			{
+				case DateUnit.Year:
+				default:
+					return (int)((_min - baseVal) / (365.0 * _minorStep));
+				case DateUnit.Month:
+					return (int)((_min - baseVal) / (28.0 * _minorStep));
+				case DateUnit.Day:
+					return (int)((_min - baseVal) / _minorStep);
+				case DateUnit.Hour:
+					return (int)((_min - baseVal) * XDate.HoursPerDay / _minorStep);
+				case DateUnit.Minute:
+					return (int)((_min - baseVal) * XDate.MinutesPerDay / _minorStep);
+				case DateUnit.Second:
+					return (int)((_min - baseVal) * XDate.SecondsPerDay / _minorStep);
+			}
+		}
+
+		/// <summary>
 		/// Determine the value for any minor tic.
 		/// </summary>
 		/// <remarks>
@@ -215,122 +710,6 @@ namespace ZedGraph
 
 			return xDate.XLDate;
 		}
-
-		/// <summary>
-		/// Internal routine to determine the ordinals of the first minor tic mark
-		/// </summary>
-		/// <param name="baseVal">
-		/// The value of the first major tic for the axis.
-		/// </param>
-		/// <returns>
-		/// The ordinal position of the first minor tic, relative to the first major tic.
-		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
-		/// increments before the first major tic.
-		/// </returns>
-		override internal int CalcMinorStart( double baseVal )
-		{
-			switch ( _minorUnit )
-			{
-				case DateUnit.Year:
-				default:
-					return (int) ( ( _min - baseVal ) / ( 365.0 * _minorStep ) );
-				case DateUnit.Month:
-					return (int) ( ( _min - baseVal ) / ( 28.0 * _minorStep ) );
-				case DateUnit.Day:
-					return (int) ( ( _min - baseVal ) / _minorStep );
-				case DateUnit.Hour:
-					return (int) ( ( _min - baseVal ) * XDate.HoursPerDay / _minorStep );
-				case DateUnit.Minute:
-					return (int) ( ( _min - baseVal ) * XDate.MinutesPerDay / _minorStep );
-				case DateUnit.Second:
-					return (int) ( ( _min - baseVal ) * XDate.SecondsPerDay / _minorStep );
-			}
-		}
-
-		/// <summary>
-		/// Determine the value for the first major tic.
-		/// </summary>
-		/// <remarks>
-		/// This is done by finding the first possible value that is an integral multiple of
-		/// the step size, taking into account the date/time units if appropriate.
-		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <returns>
-		/// First major tic value (floating point double).
-		/// </returns>
-		override internal double CalcBaseTic()
-		{
-			if ( _baseTic != PointPair.Missing )
-				return _baseTic;
-			else
-			{
-				int year, month, day, hour, minute, second, millisecond;
-				XDate.XLDateToCalendarDate( _min, out year, out month, out day, out hour, out minute,
-											out second, out millisecond );
-				switch ( _majorUnit )
-				{
-					case DateUnit.Year:
-					default:
-						month = 1; day = 1; hour = 0; minute = 0; second = 0; millisecond = 0;
-						break;
-					case DateUnit.Month:
-						day = 1; hour = 0; minute = 0; second = 0; millisecond = 0;
-						break;
-					case DateUnit.Day:
-						hour = 0; minute = 0; second = 0; millisecond = 0;
-						break;
-					case DateUnit.Hour:
-						minute = 0; second = 0; millisecond = 0;
-						break;
-					case DateUnit.Minute:
-						second = 0; millisecond = 0;
-						break;
-					case DateUnit.Second:
-						millisecond = 0;
-						break;
-					case DateUnit.Millisecond:
-						break;
-
-				}
-
-				double xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second, millisecond );
-				if ( xlDate < _min )
-				{
-					switch ( _majorUnit )
-					{
-						case DateUnit.Year:
-						default:
-							year++;
-							break;
-						case DateUnit.Month:
-							month++;
-							break;
-						case DateUnit.Day:
-							day++;
-							break;
-						case DateUnit.Hour:
-							hour++;
-							break;
-						case DateUnit.Minute:
-							minute++;
-							break;
-						case DateUnit.Second:
-							second++;
-							break;
-						case DateUnit.Millisecond:
-							millisecond++;
-							break;
-
-					}
-
-					xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second, millisecond );
-				}
-
-				return xlDate;
-			}
-		}
-		
 		/// <summary>
 		/// Internal routine to determine the ordinals of the first and last major axis label.
 		/// </summary>
@@ -382,98 +761,28 @@ namespace ZedGraph
 
 			return nTics;
 		}
-
 		/// <summary>
-		/// Select a reasonable date-time axis scale given a range of data values.
+		/// Make a value label for an <see cref="AxisType.Date" /> <see cref="Axis" />.
 		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.Date"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
-		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).
-		/// Note that the <see cref="Scale.MajorStep"/> property setting can have multiple unit
-		/// types (<see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit" />),
-		/// but the <see cref="Scale.Min"/> and
-		/// <see cref="Scale.Max"/> units are always days (<see cref="XDate"/>).  This
-		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
-		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.  The basic default for
-		/// scale selection is defined with
-		/// <see cref="Scale.Default.TargetXSteps"/> and <see cref="Scale.Default.TargetYSteps"/>
-		/// from the <see cref="Scale.Default"/> default class.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
-		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
 		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
+		/// <param name="index">
+		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
+		/// cause the third value label on the axis to be generated.
 		/// </param>
-		/// <seealso cref="Scale.PickScale"/>
-		/// <seealso cref="AxisType.Date"/>
-		/// <seealso cref="Scale.MajorUnit"/>
-		/// <seealso cref="Scale.MinorUnit"/>
-		override public void PickScale( GraphPane pane, Graphics g, float scaleFactor )
+		/// <param name="dVal">
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
+		/// </param>
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel(GraphPane pane, int index, double dVal)
 		{
-			// call the base class first
-			base.PickScale( pane, g, scaleFactor );
+			if (_format == null)
+				_format = Scale.Default.Format;
 
-			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( _max - _min < 1.0e-20 )
-			{
-				if ( _maxAuto )
-					_max = _max + 0.2 * ( _max == 0 ? 1.0 : Math.Abs( _max ) );
-				if ( _minAuto )
-					_min = _min - 0.2 * ( _min == 0 ? 1.0 : Math.Abs( _min ) );
-			}
-
-			double targetSteps = ( _ownerAxis is XAxis || _ownerAxis is X2Axis ) ?
-						Default.TargetXSteps : Default.TargetYSteps;
-
-			// Calculate the step size based on target steps
-			double tempStep = CalcDateStepSize( _max - _min, targetSteps );
-
-			// Calculate the new step size
-			if ( _majorStepAuto )
-			{
-				_majorStep = tempStep;
-
-				if ( _isPreventLabelOverlap )
-				{
-					// Calculate the maximum number of labels
-					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
-
-					if ( maxLabels < this.CalcNumTics() )
-						_majorStep = CalcDateStepSize( _max - _min, maxLabels );
-				}
-			}
-
-			// Calculate the scale minimum
-			if ( _minAuto )
-				_min = CalcEvenStepDate( _min, -1 );
-
-			// Calculate the scale maximum
-			if ( _maxAuto )
-				_max = CalcEvenStepDate( _max, 1 );
-
-			_mag = 0;		// Never use a magnitude shift for date scales
-			//this.numDec = 0;		// The number of decimal places to display is not used
-
+			return XDate.ToString(dVal, _format);
 		}
 
 		/// <summary>
@@ -491,268 +800,6 @@ namespace ZedGraph
 		{
 			return CalcDateStepSize( range, targetSteps, this );
 		}
-
-		/// <summary>
-		/// Calculate a step size for a <see cref="AxisType.Date"/> scale.
-		/// This method is used by <see cref="PickScale"/>.
-		/// </summary>
-		/// <param name="range">The range of data in units of days</param>
-		/// <param name="targetSteps">The desired "typical" number of steps
-		/// to divide the range into</param>
-		/// <param name="scale">
-		/// The <see cref="Scale" /> object on which to calculate the Date step size.</param>
-		/// <returns>The calculated step size for the specified data range.  Also
-		/// calculates and sets the values for <see cref="Scale.MajorUnit"/>,
-		/// <see cref="Scale.MinorUnit"/>, <see cref="Scale.MinorStep"/>, and
-		/// <see cref="Scale.Format"/></returns>
-		internal static double CalcDateStepSize( double range, double targetSteps, Scale scale )
-		{
-			// Calculate an initial guess at step size
-			double tempStep = range / targetSteps;
-
-			if ( range > Default.RangeYearYear )
-			{
-				scale._majorUnit = DateUnit.Year;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatYearYear;
-
-				tempStep = Math.Ceiling( tempStep / 365.0 );
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Year;
-					if ( tempStep == 1.0 )
-						scale._minorStep = 0.25;
-					else
-						scale._minorStep = Scale.CalcStepSize( tempStep, targetSteps );
-				}
-			}
-			else if ( range > Default.RangeYearMonth )
-			{
-				scale._majorUnit = DateUnit.Year;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatYearMonth;
-				tempStep = Math.Ceiling( tempStep / 365.0 );
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Month;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					scale._minorStep = Math.Ceiling( range / ( targetSteps * 3 ) / 30.0 );
-					// make sure the minorStep is 1, 2, 3, 6, or 12 months
-					if ( scale._minorStep > 6 )
-						scale._minorStep = 12;
-					else if ( scale._minorStep > 3 )
-						scale._minorStep = 6;
-				}
-			}
-			else if ( range > Default.RangeMonthMonth )
-			{
-				scale._majorUnit = DateUnit.Month;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatMonthMonth;
-				tempStep = Math.Ceiling( tempStep / 30.0 );
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Month;
-					scale._minorStep = tempStep * 0.25;
-				}
-			}
-			else if ( range > Default.RangeDayDay )
-			{
-				scale._majorUnit = DateUnit.Day;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatDayDay;
-				tempStep = Math.Ceiling( tempStep );
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Day;
-					scale._minorStep = tempStep * 0.25;
-					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
-				}
-			}
-			else if ( range > Default.RangeDayHour )
-			{
-				scale._majorUnit = DateUnit.Day;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatDayHour;
-				tempStep = Math.Ceiling( tempStep );
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Hour;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					scale._minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.HoursPerDay );
-					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
-					if ( scale._minorStep > 6 )
-						scale._minorStep = 12;
-					else if ( scale._minorStep > 3 )
-						scale._minorStep = 6;
-					else
-						scale._minorStep = 1;
-				}
-			}
-			else if ( range > Default.RangeHourHour )
-			{
-				scale._majorUnit = DateUnit.Hour;
-				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
-				if ( scale._formatAuto )
-					scale._format = Default.FormatHourHour;
-
-				if ( tempStep > 12.0 )
-					tempStep = 24.0;
-				else if ( tempStep > 6.0 )
-					tempStep = 12.0;
-				else if ( tempStep > 2.0 )
-					tempStep = 6.0;
-				else if ( tempStep > 1.0 )
-					tempStep = 2.0;
-				else
-					tempStep = 1.0;
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Hour;
-					if ( tempStep <= 1.0 )
-						scale._minorStep = 0.25;
-					else if ( tempStep <= 6.0 )
-						scale._minorStep = 1.0;
-					else if ( tempStep <= 12.0 )
-						scale._minorStep = 2.0;
-					else
-						scale._minorStep = 4.0;
-				}
-			}
-			else if ( range > Default.RangeHourMinute )
-			{
-				scale._majorUnit = DateUnit.Hour;
-				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
-
-				if ( scale._formatAuto )
-					scale._format = Default.FormatHourMinute;
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Minute;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					scale._minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.MinutesPerDay );
-					// make sure the minorStep is 1, 5, 15, or 30 minutes
-					if ( scale._minorStep > 15.0 )
-						scale._minorStep = 30.0;
-					else if ( scale._minorStep > 5.0 )
-						scale._minorStep = 15.0;
-					else if ( scale._minorStep > 1.0 )
-						scale._minorStep = 5.0;
-					else
-						scale._minorStep = 1.0;
-				}
-			}
-			else if ( range > Default.RangeMinuteMinute )
-			{
-				scale._majorUnit = DateUnit.Minute;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatMinuteMinute;
-
-				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
-				// make sure the minute step size is 1, 5, 15, or 30 minutes
-				if ( tempStep > 15.0 )
-					tempStep = 30.0;
-				else if ( tempStep > 5.0 )
-					tempStep = 15.0;
-				else if ( tempStep > 1.0 )
-					tempStep = 5.0;
-				else
-					tempStep = 1.0;
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Minute;
-					if ( tempStep <= 1.0 )
-						scale._minorStep = 0.25;
-					else if ( tempStep <= 5.0 )
-						scale._minorStep = 1.0;
-					else
-						scale._minorStep = 5.0;
-				}
-			}
-			else if ( range > Default.RangeMinuteSecond )
-			{
-				scale._majorUnit = DateUnit.Minute;
-				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
-
-				if ( scale._formatAuto )
-					scale._format = Default.FormatMinuteSecond;
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Second;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					scale._minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.SecondsPerDay );
-					// make sure the minorStep is 1, 5, 15, or 30 seconds
-					if ( scale._minorStep > 15.0 )
-						scale._minorStep = 30.0;
-					else if ( scale._minorStep > 5.0 )
-						scale._minorStep = 15.0;
-					else if ( scale._minorStep > 1.0 )
-						scale._minorStep = 5.0;
-					else
-						scale._minorStep = 1.0;
-				}
-			}
-			else  if ( range > Default.RangeSecondSecond ) // SecondSecond
-			{
-				scale._majorUnit = DateUnit.Second;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatSecondSecond;
-
-				tempStep = Math.Ceiling( tempStep * XDate.SecondsPerDay );
-				// make sure the second step size is 1, 5, 15, or 30 seconds
-				if ( tempStep > 15.0 )
-					tempStep = 30.0;
-				else if ( tempStep > 5.0 )
-					tempStep = 15.0;
-				else if ( tempStep > 1.0 )
-					tempStep = 5.0;
-				else
-					tempStep = 1.0;
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorUnit = DateUnit.Second;
-					if ( tempStep <= 1.0 )
-						scale._minorStep = 0.25;
-					else if ( tempStep <= 5.0 )
-						scale._minorStep = 1.0;
-					else
-						scale._minorStep = 5.0;
-				}
-			}
-			else // MilliSecond
-			{
-				scale._majorUnit = DateUnit.Millisecond;
-				if ( scale._formatAuto )
-					scale._format = Default.FormatMillisecond;
-
-				tempStep = CalcStepSize( range * XDate.MillisecondsPerDay, Default.TargetXSteps );
-
-				if ( scale._minorStepAuto )
-				{
-					scale._minorStep = CalcStepSize( tempStep,
-							( scale._ownerAxis is XAxis || scale._ownerAxis is X2Axis ) ?
-							Default.TargetMinorXSteps : Default.TargetMinorYSteps );
-					scale._minorUnit = DateUnit.Millisecond;
-				}
-			}
-
-			return tempStep;
-		}
-
 		/// <summary>
 		/// Calculate a date that is close to the specified date and an
 		/// even multiple of the selected
@@ -827,57 +874,6 @@ namespace ZedGraph
 
 			}
 		}
-
-		/// <summary>
-		/// Make a value label for an <see cref="AxisType.Date" /> <see cref="Axis" />.
-		/// </summary>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="index">
-		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
-		/// cause the third value label on the axis to be generated.
-		/// </param>
-		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
-		/// and text (<see cref="Scale.IsText"/>) type axes.
-		/// </param>
-		/// <returns>The resulting value label as a <see cref="string" /></returns>
-		override internal string MakeLabel( GraphPane pane, int index, double dVal )
-		{
-			if ( _format == null )
-				_format = Scale.Default.Format;
-
-			return XDate.ToString( dVal, _format );
-		}
-
-		/// <summary>
-		/// Gets the major unit multiplier for this scale type, if any.
-		/// </summary>
-		/// <remarks>The major unit multiplier will correct the units of
-		/// <see cref="Scale.MajorStep" /> to match the units of <see cref="Scale.Min" />
-		/// and <see cref="Scale.Max" />.  This reflects the setting of
-		/// <see cref="Scale.MajorUnit" />.
-		/// </remarks>
-		override internal double MajorUnitMultiplier
-		{
-			get { return GetUnitMultiple( _majorUnit ); }
-		}
-
-		/// <summary>
-		/// Gets the minor unit multiplier for this scale type, if any.
-		/// </summary>
-		/// <remarks>The minor unit multiplier will correct the units of
-		/// <see cref="Scale.MinorStep" /> to match the units of <see cref="Scale.Min" />
-		/// and <see cref="Scale.Max" />.  This reflects the setting of
-		/// <see cref="Scale.MinorUnit" />.
-		/// </remarks>
-		override internal double MinorUnitMultiplier
-		{
-			get { return GetUnitMultiple( _minorUnit ); }
-		}
-
 		/// <summary>
 		/// Internal routine to calculate a multiplier to the selected unit back to days.
 		/// </summary>

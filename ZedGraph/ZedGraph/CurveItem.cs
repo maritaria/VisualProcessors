@@ -46,12 +46,64 @@ namespace ZedGraph
 	#region Fields
 
 		/// <summary>
+		/// A tag object for use by the user.  This can be used to store additional
+		/// information associated with the <see cref="CurveItem"/>.  ZedGraph does
+		/// not use this value for any purpose.
+		/// </summary>
+		/// <remarks>
+		/// Note that, if you are going to Serialize ZedGraph data, then any type
+		/// that you store in <see cref="Tag"/> must be a serializable type (or
+		/// it will cause an exception).
+		/// </remarks>
+		public object Tag;
+
+		/// <summary>
 		/// protected field that stores a <see cref="Label" /> instance for this
 		/// <see cref="CurveItem"/>, which is used for the <see cref="Legend" />
 		/// label.  Use the public
 		/// property <see cref="Label"/> to access this value.
 		/// </summary>
 		internal Label _label;
+
+		/// <summary>
+		/// Protected field that stores the hyperlink information for this object.
+		/// </summary>
+		internal Link _link;
+
+		/// <summary>
+		/// protected field that stores a boolean value which allows you to override the normal
+		/// ordinal axis behavior.  Use the public property <see cref="IsOverrideOrdinal"/> to
+		/// access this value.
+		/// </summary>
+		protected bool _isOverrideOrdinal;
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Protected field that stores the boolean value that determines whether this
+		/// <see cref="CurveItem"/> can be selected in the graph.
+		/// </summary>
+		protected bool _isSelectable;
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Protected field that stores the boolean value that determines whether this
+		/// <see cref="CurveItem"/> is selected on the graph.
+		/// Use the public property <see cref="IsSelected"/> to access this value.
+		/// Note that this value changes the curve display color, but it does not
+		/// affect the display of the legend entry.  To hide the legend entry, you
+		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
+		/// </summary>
+		protected bool _isSelected;
+
+		/// <summary>
+		/// protected field that stores the boolean value that determines whether this
+		/// <see cref="CurveItem"/> is visible on the graph.
+		/// Use the public property <see cref="IsVisible"/> to access this value.
+		/// Note that this value turns the curve display on or off, but it does not
+		/// affect the display of the legend entry.  To hide the legend entry, you
+		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
+		/// </summary>
+		protected bool _isVisible;
 
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
@@ -67,48 +119,6 @@ namespace ZedGraph
 		protected bool _isY2Axis;
 
 		/// <summary>
-		/// protected field that stores the index number of the Y Axis to which this
-		/// <see cref="CurveItem" /> belongs.  Use the public property <see cref="YAxisIndex" />
-		/// to access this value.
-		/// </summary>
-		protected int		_yAxisIndex;
-
-		/// <summary>
-		/// protected field that stores the boolean value that determines whether this
-		/// <see cref="CurveItem"/> is visible on the graph.
-		/// Use the public property <see cref="IsVisible"/> to access this value.
-		/// Note that this value turns the curve display on or off, but it does not
-		/// affect the display of the legend entry.  To hide the legend entry, you
-		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
-		/// </summary>
-		protected bool		_isVisible;
-
-		// Revision: JCarpenter 10/06
-		/// <summary>
-		/// Protected field that stores the boolean value that determines whether this
-		/// <see cref="CurveItem"/> is selected on the graph.
-		/// Use the public property <see cref="IsSelected"/> to access this value.
-		/// Note that this value changes the curve display color, but it does not
-		/// affect the display of the legend entry.  To hide the legend entry, you
-		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
-		/// </summary>
-		protected bool _isSelected;
-
-		// Revision: JCarpenter 10/06
-		/// <summary>
-		/// Protected field that stores the boolean value that determines whether this
-		/// <see cref="CurveItem"/> can be selected in the graph.
-		/// </summary>
-		protected bool _isSelectable;
-
-		/// <summary>
-		/// protected field that stores a boolean value which allows you to override the normal
-		/// ordinal axis behavior.  Use the public property <see cref="IsOverrideOrdinal"/> to
-		/// access this value.
-		/// </summary>
-		protected bool		_isOverrideOrdinal;
-		
-		/// <summary>
 		/// The <see cref="IPointList"/> of value sets that
 		/// represent this <see cref="CurveItem"/>.
 		/// The size of this list determines the number of points that are
@@ -121,22 +131,11 @@ namespace ZedGraph
 		protected IPointList _points;
 
 		/// <summary>
-		/// A tag object for use by the user.  This can be used to store additional
-		/// information associated with the <see cref="CurveItem"/>.  ZedGraph does
-		/// not use this value for any purpose.
+		/// protected field that stores the index number of the Y Axis to which this
+		/// <see cref="CurveItem" /> belongs.  Use the public property <see cref="YAxisIndex" />
+		/// to access this value.
 		/// </summary>
-		/// <remarks>
-		/// Note that, if you are going to Serialize ZedGraph data, then any type
-		/// that you store in <see cref="Tag"/> must be a serializable type (or
-		/// it will cause an exception).
-		/// </remarks>
-		public object Tag;
-
-		/// <summary>
-		/// Protected field that stores the hyperlink information for this object.
-		/// </summary>
-		internal Link _link;
-
+		protected int		_yAxisIndex;
 	#endregion
 	
 	#region Constructors
@@ -181,44 +180,31 @@ namespace ZedGraph
 				//this.points = (IPointList) _points.Clone();
 				_points = points;
 		}
-		
-		/// <summary>
-		/// Internal initialization routine thats sets some initial values to defaults.
-		/// </summary>
-		/// <param name="label">A string label (legend entry) for this curve</param>
-		private void Init( string label )
-		{
-			_label = new Label( label, null );
-			_isY2Axis = false;
-			_isX2Axis = false;
-			_isVisible = true;
-			_isOverrideOrdinal = false;
-			this.Tag = null;
-			_yAxisIndex = 0;
-			_link = new Link();
-		}
-			
+
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor that specifies the label of the CurveItem.
 		/// This is the same as <c>CurveItem(label, null, null)</c>.
 		/// <seealso cref="CurveItem( string, double[], double[] )"/>
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
-		public CurveItem( string label ): this( label, null )
+		public CurveItem(string label)
+			: this(label, null)
 		{
 		}
-		 /// <summary>
-		 /// 
-		 /// </summary>
-		public CurveItem(  )
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public CurveItem()
 		{
-			Init( null );
+			Init(null);
 		}
+
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The CurveItem object from which to copy</param>
-		public CurveItem( CurveItem rhs )
+		public CurveItem(CurveItem rhs)
 		{
 			_label = rhs._label.Clone();
 			_isY2Axis = rhs.IsY2Axis;
@@ -227,12 +213,12 @@ namespace ZedGraph
 			_isOverrideOrdinal = rhs._isOverrideOrdinal;
 			_yAxisIndex = rhs._yAxisIndex;
 
-			if ( rhs.Tag is ICloneable )
-				this.Tag = ((ICloneable) rhs.Tag).Clone();
+			if (rhs.Tag is ICloneable)
+				this.Tag = ((ICloneable)rhs.Tag).Clone();
 			else
 				this.Tag = rhs.Tag;
-			
-			_points = (IPointList) rhs.Points.Clone();
+
+			_points = (IPointList)rhs.Points.Clone();
 
 			_link = rhs._link.Clone();
 		}
@@ -255,10 +241,25 @@ namespace ZedGraph
 		/// <returns>A deep copy of this object</returns>
 		object ICloneable.Clone()
 		{
-			throw new NotImplementedException( "Can't clone an abstract base type -- child types must implement ICloneable" );
+			throw new NotImplementedException("Can't clone an abstract base type -- child types must implement ICloneable");
 			//return new PaneBase( this );
 		}
 
+		/// <summary>
+		/// Internal initialization routine thats sets some initial values to defaults.
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		private void Init( string label )
+		{
+			_label = new Label( label, null );
+			_isY2Axis = false;
+			_isX2Axis = false;
+			_isVisible = true;
+			_isOverrideOrdinal = false;
+			this.Tag = null;
+			_yAxisIndex = 0;
+			_link = new Link();
+		}
 	#endregion
 
 	#region Serialization
@@ -335,16 +336,6 @@ namespace ZedGraph
 	
 	#region Properties
 		/// <summary>
-		/// A <see cref="Label" /> instance that represents the <see cref="ZedGraph.Legend"/>
-		/// entry for the this <see cref="CurveItem"/> object
-		/// </summary>
-		public Label Label
-		{
-			get { return _label; }
-			set { _label = value;}
-		}
-
-		/// <summary>
 		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
 		/// <see cref="ZedGraph.LineBase.Color">Line.Color</see>,
@@ -355,48 +346,95 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( this is BarItem )
-					return ((BarItem) this).Bar.Fill.Color;
-				else if ( this is LineItem && ((LineItem) this).Line.IsVisible )
-					return ((LineItem) this).Line.Color;
-				else if ( this is LineItem )
-					return ((LineItem) this).Symbol.Border.Color;
-				else if ( this is ErrorBarItem )
-					return ((ErrorBarItem) this).Bar.Color;
-				else if ( this is HiLowBarItem )
-					return ((HiLowBarItem) this).Bar.Fill.Color;
+				if (this is BarItem)
+					return ((BarItem)this).Bar.Fill.Color;
+				else if (this is LineItem && ((LineItem)this).Line.IsVisible)
+					return ((LineItem)this).Line.Color;
+				else if (this is LineItem)
+					return ((LineItem)this).Symbol.Border.Color;
+				else if (this is ErrorBarItem)
+					return ((ErrorBarItem)this).Bar.Color;
+				else if (this is HiLowBarItem)
+					return ((HiLowBarItem)this).Bar.Fill.Color;
 				else
 					return Color.Empty;
 			}
-			set 
+			set
 			{
-				if ( this is BarItem )
+				if (this is BarItem)
 				{
-					((BarItem) this).Bar.Fill.Color = value;
+					((BarItem)this).Bar.Fill.Color = value;
 				}
-				else if ( this is LineItem )
+				else if (this is LineItem)
 				{
-					((LineItem) this).Line.Color			= value;
-					((LineItem) this).Symbol.Border.Color	= value;
-					((LineItem) this).Symbol.Fill.Color		= value;
+					((LineItem)this).Line.Color = value;
+					((LineItem)this).Symbol.Border.Color = value;
+					((LineItem)this).Symbol.Fill.Color = value;
 				}
-				else if ( this is ErrorBarItem )
-					((ErrorBarItem) this).Bar.Color = value;
-				else if ( this is HiLowBarItem )
-					((HiLowBarItem) this).Bar.Fill.Color = value;
+				else if (this is ErrorBarItem)
+					((ErrorBarItem)this).Bar.Color = value;
+				else if (this is HiLowBarItem)
+					((HiLowBarItem)this).Bar.Fill.Color = value;
 			}
 		}
 
 		/// <summary>
-		/// Determines whether this <see cref="CurveItem"/> is visible on the graph.
-		/// Note that this value turns the curve display on or off, but it does not
-		/// affect the display of the legend entry.  To hide the legend entry, you
-		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
+		/// Determines whether this <see cref="CurveItem"/>
+		/// is a <see cref="BarItem"/>.
 		/// </summary>
-		public bool IsVisible
+		/// <value>true for a bar chart, or false for a line or pie graph</value>
+		public bool IsBar
 		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
+			get { return this is BarItem || this is HiLowBarItem || this is ErrorBarItem; }
+		}
+
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/>
+		/// is a <see cref="LineItem"/>.
+		/// </summary>
+		/// <value>true for a line chart, or false for a bar type</value>
+		public bool IsLine
+		{
+			get { return this is LineItem; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value which allows you to override the normal
+		/// ordinal axis behavior.
+		/// </summary>
+		/// <remarks>
+		/// Normally for an ordinal axis type, the actual data values corresponding to the ordinal
+		/// axis will be ignored (essentially they are replaced by ordinal values, e.g., 1, 2, 3, etc).
+		/// If IsOverrideOrdinal is true, then the user data values will be used (even if they don't
+		/// make sense).  Fractional values are allowed, such that a value of 1.5 is between the first and
+		/// second ordinal position, etc.
+		/// </remarks>
+		/// <seealso cref="AxisType.Ordinal"/>
+		/// <seealso cref="AxisType.Text"/>
+		public bool IsOverrideOrdinal
+		{
+			get { return _isOverrideOrdinal; }
+			set { _isOverrideOrdinal = value; }
+		}
+
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/>
+		/// is a <see cref="PieItem"/>.
+		/// </summary>
+		/// <value>true for a pie chart, or false for a line or bar graph</value>
+		public bool IsPie
+		{
+			get { return this is PieItem; }
+		}
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/> can be selected in the graph.
+		/// </summary>
+		public bool IsSelectable
+		{
+			get { return _isSelectable; }
+			set { _isSelectable = value; }
 		}
 
 		// Revision: JCarpenter 10/06
@@ -432,33 +470,16 @@ namespace ZedGraph
 			}
 		}
 
-		// Revision: JCarpenter 10/06
 		/// <summary>
-		/// Determines whether this <see cref="CurveItem"/> can be selected in the graph.
+		/// Determines whether this <see cref="CurveItem"/> is visible on the graph.
+		/// Note that this value turns the curve display on or off, but it does not
+		/// affect the display of the legend entry.  To hide the legend entry, you
+		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
 		/// </summary>
-		public bool IsSelectable
+		public bool IsVisible
 		{
-			get { return _isSelectable; }
-			set { _isSelectable = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value which allows you to override the normal
-		/// ordinal axis behavior.
-		/// </summary>
-		/// <remarks>
-		/// Normally for an ordinal axis type, the actual data values corresponding to the ordinal
-		/// axis will be ignored (essentially they are replaced by ordinal values, e.g., 1, 2, 3, etc).
-		/// If IsOverrideOrdinal is true, then the user data values will be used (even if they don't
-		/// make sense).  Fractional values are allowed, such that a value of 1.5 is between the first and
-		/// second ordinal position, etc.
-		/// </remarks>
-		/// <seealso cref="AxisType.Ordinal"/>
-		/// <seealso cref="AxisType.Text"/>
-		public bool IsOverrideOrdinal
-		{
-			get { return _isOverrideOrdinal; }
-			set { _isOverrideOrdinal = value; }
+			get { return _isVisible; }
+			set { _isVisible = value; }
 		}
 
 		/// <summary>
@@ -500,6 +521,51 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// A <see cref="Label" /> instance that represents the <see cref="ZedGraph.Legend"/>
+		/// entry for the this <see cref="CurveItem"/> object
+		/// </summary>
+		public Label Label
+		{
+			get { return _label; }
+			set { _label = value;}
+		}
+		/// <summary>
+		/// Gets or sets the hyperlink information for this <see cref="CurveItem" />.
+		/// </summary>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
+		public Link Link
+		{
+			get { return _link; }
+			set { _link = value; }
+		}
+
+		/// <summary>
+		/// Readonly property that gives the number of points that define this
+		/// <see cref="CurveItem"/> object, which is the number of points in the
+		/// <see cref="Points"/> data collection.
+		/// </summary>
+		public int NPts
+		{
+			get
+			{
+				if (_points == null)
+					return 0;
+				else
+					return _points.Count;
+			}
+		}
+
+		/// <summary>
+		/// The <see cref="IPointList"/> of X,Y point sets that represent this
+		/// <see cref="CurveItem"/>.
+		/// </summary>
+		public IPointList Points
+		{
+			get { return _points; }
+			set { _points = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets the index number of the Y Axis to which this
 		/// <see cref="CurveItem" /> belongs.
 		/// </summary>
@@ -513,79 +579,6 @@ namespace ZedGraph
 			get { return _yAxisIndex; }
 			set { _yAxisIndex = value; }
 		}
-
-		/// <summary>
-		/// Determines whether this <see cref="CurveItem"/>
-		/// is a <see cref="BarItem"/>.
-		/// </summary>
-		/// <value>true for a bar chart, or false for a line or pie graph</value>
-		public bool IsBar
-		{
-			get { return this is BarItem || this is HiLowBarItem || this is ErrorBarItem; }
-		}
-		
-		/// <summary>
-		/// Determines whether this <see cref="CurveItem"/>
-		/// is a <see cref="PieItem"/>.
-		/// </summary>
-		/// <value>true for a pie chart, or false for a line or bar graph</value>
-		public bool IsPie
-		{
-			get { return this is PieItem; }
-		}
-		
-		/// <summary>
-		/// Determines whether this <see cref="CurveItem"/>
-		/// is a <see cref="LineItem"/>.
-		/// </summary>
-		/// <value>true for a line chart, or false for a bar type</value>
-		public bool IsLine
-		{
-			get { return this is LineItem; }
-		}
-
-		/// <summary>
-		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
-		/// </summary>
-		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
-		/// </param>
-		/// <value>true if the Z data are included, false otherwise</value>
-		abstract internal bool IsZIncluded( GraphPane pane );
-		
-		/// <summary>
-		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
-		/// </summary>
-		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
-		/// </param>
-		/// <value>true if the X axis is independent, false otherwise</value>
-		abstract internal bool IsXIndependent( GraphPane pane );
-		
-		/// <summary>
-		/// Readonly property that gives the number of points that define this
-		/// <see cref="CurveItem"/> object, which is the number of points in the
-		/// <see cref="Points"/> data collection.
-		/// </summary>
-		public int NPts
-		{
-			get 
-			{
-				if ( _points == null )
-					return 0;
-				else
-					return _points.Count;
-			}
-		}
-		
-		/// <summary>
-		/// The <see cref="IPointList"/> of X,Y point sets that represent this
-		/// <see cref="CurveItem"/>.
-		/// </summary>
-		public IPointList Points
-		{
-			get { return _points; }
-			set { _points = value; }
-		}
-
 		/// <summary>
 		/// An accessor for the <see cref="PointPair"/> datum for this <see cref="CurveItem"/>.
 		/// Index is the ordinal reference (zero based) of the point.
@@ -594,23 +587,28 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( _points == null )
-					return new PointPair( PointPair.Missing, PointPair.Missing );
+				if (_points == null)
+					return new PointPair(PointPair.Missing, PointPair.Missing);
 				else
-					return ( _points )[index];
+					return (_points)[index];
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the hyperlink information for this <see cref="CurveItem" />.
+		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
 		/// </summary>
-		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
-		public Link Link
-		{
-			get { return _link; }
-			set { _link = value; }
-		}
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the X axis is independent, false otherwise</value>
+		abstract internal bool IsXIndependent(GraphPane pane);
 
+		/// <summary>
+		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the Z data are included, false otherwise</value>
+		abstract internal bool IsZIncluded( GraphPane pane );
 	#endregion
 	
 	#region Rendering Methods
@@ -696,6 +694,39 @@ namespace ZedGraph
 				throw new NotImplementedException();
 		}
 
+		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
+		/// (independent axis) from which the values are drawn. </summary>
+		/// <remarks>
+		/// This property is determined by the value of <see cref="BarSettings.Base"/> for
+		/// <see cref="BarItem"/>, <see cref="ErrorBarItem"/>, and <see cref="HiLowBarItem"/>
+		/// types.  It is always the X axis for regular <see cref="LineItem"/> types.
+		/// Note that the <see cref="BarSettings.Base" /> setting can override the
+		/// <see cref="IsY2Axis" /> and <see cref="YAxisIndex" /> settings for bar types
+		/// (this is because all the bars that are clustered together must share the
+		/// same base axis).
+		/// </remarks>
+		/// <seealso cref="BarBase"/>
+		/// <seealso cref="ValueAxis"/>
+		public virtual Axis BaseAxis(GraphPane pane)
+		{
+			BarBase barBase;
+
+			if (this is BarItem || this is ErrorBarItem || this is HiLowBarItem)
+				barBase = pane._barSettings.Base;
+			else
+				barBase = _isX2Axis ? BarBase.X2 : BarBase.X;
+
+			if (barBase == BarBase.X)
+				return pane.XAxis;
+			else if (barBase == BarBase.X2)
+				return pane.X2Axis;
+			else if (barBase == BarBase.Y)
+				return pane.YAxis;
+			else
+				return pane.Y2Axis;
+
+		}
+
 		/// <summary>
 		/// Clears the points from this <see cref="CurveItem"/>.  This is the same
 		/// as <c>CurveItem.Points.Clear()</c>.
@@ -714,120 +745,64 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Removes a single point from this <see cref="CurveItem" />.
+		/// Calculate the width of each bar, depending on the actual bar type
 		/// </summary>
-		/// <remarks>
-		/// This method will only work if the <see cref="IPointList" /> instance reference
-		/// at <see cref="Points" /> supports the <see cref="IPointListEdit" /> interface.
-		/// Otherwise, it does nothing.
-		/// </remarks>
-		/// <param name="index">The ordinal position of the point to be removed.</param>
-		public void RemovePoint( int index )
+		/// <returns>The width for an individual bar, in pixel units</returns>
+		public float GetBarWidth(GraphPane pane)
 		{
-			if ( _points is IPointListEdit )
-				(_points as IPointListEdit).RemoveAt( index );
-			else
-				throw new NotImplementedException();
-		}
+			// Total axis width = 
+			// npts * ( nbars * ( bar + bargap ) - bargap + clustgap )
+			// cg * bar = cluster gap
+			// npts = max number of points in any curve
+			// nbars = total number of curves that are of type IsBar
+			// bar = bar width
+			// bg * bar = bar gap
+			// therefore:
+			// totwidth = npts * ( nbars * (bar + bg*bar) - bg*bar + cg*bar )
+			// totwidth = bar * ( npts * ( nbars * ( 1 + bg ) - bg + cg ) )
+			// solve for bar
 
-		/// <summary>
-		/// Get the X Axis instance (either <see cref="XAxis" /> or <see cref="X2Axis" />) to
-		/// which this <see cref="CurveItem" /> belongs.
-		/// </summary>
-		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
-		/// <returns>Either a <see cref="XAxis" /> or <see cref="X2Axis" /> to which this
-		/// <see cref="CurveItem" /> belongs.
-		/// </returns>
-		public Axis GetXAxis( GraphPane pane )
-		{
-			if ( _isX2Axis )
-				return pane.X2Axis;
-			else
-				return pane.XAxis;
-		}
+			float barWidth;
 
-		/// <summary>
-		/// Get the Y Axis instance (either <see cref="YAxis" /> or <see cref="Y2Axis" />) to
-		/// which this <see cref="CurveItem" /> belongs.
-		/// </summary>
-		/// <remarks>
-		/// This method safely retrieves a Y Axis instance from either the <see cref="GraphPane.YAxisList" />
-		/// or the <see cref="GraphPane.Y2AxisList" /> using the values of <see cref="YAxisIndex" /> and
-		/// <see cref="IsY2Axis" />.  If the value of <see cref="YAxisIndex" /> is out of bounds, the
-		/// default <see cref="YAxis" /> or <see cref="Y2Axis" /> is used.
-		/// </remarks>
-		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
-		/// <returns>Either a <see cref="YAxis" /> or <see cref="Y2Axis" /> to which this
-		/// <see cref="CurveItem" /> belongs.
-		/// </returns>
-		public Axis GetYAxis( GraphPane pane )
-		{
-			if ( _isY2Axis )
+			if (this is ErrorBarItem)
+				barWidth = (float)(((ErrorBarItem)this).Bar.Symbol.Size *
+						pane.CalcScaleFactor());
+			//			else if ( this is HiLowBarItem && pane._barSettings.Type != BarType.ClusterHiLow )
+			//				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
+			//						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
+			//				barWidth = (float) ( ((HiLowBarItem)this).Bar.Size *
+			//						pane.CalcScaleFactor() );
+			else // BarItem or LineItem
 			{
-				if ( _yAxisIndex < pane.Y2AxisList.Count )
-					return pane.Y2AxisList[_yAxisIndex];
-				else
-					return pane.Y2AxisList[0];
+				// For stacked bar types, the bar width will be based on a single bar
+				float numBars = 1.0F;
+				if (pane._barSettings.Type == BarType.Cluster)
+					numBars = pane.CurveList.NumClusterableBars;
+
+				float denom = numBars * (1.0F + pane._barSettings.MinBarGap) -
+							pane._barSettings.MinBarGap + pane._barSettings.MinClusterGap;
+				if (denom <= 0)
+					denom = 1;
+				barWidth = pane.BarSettings.GetClusterWidth() / denom;
 			}
-			else
-			{
-				if ( _yAxisIndex < pane.YAxisList.Count )
-					return pane.YAxisList[_yAxisIndex];
-				else
-					return pane.YAxisList[0];
-			}
+
+			if (barWidth <= 0)
+				return 1;
+
+			return barWidth;
 		}
 
 		/// <summary>
-		/// Get the index of the Y Axis in the <see cref="YAxis" /> or <see cref="Y2Axis" /> list to
-		/// which this <see cref="CurveItem" /> belongs.
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
 		/// </summary>
-		/// <remarks>
-		/// This method safely retrieves a Y Axis index into either the <see cref="GraphPane.YAxisList" />
-		/// or the <see cref="GraphPane.Y2AxisList" /> using the values of <see cref="YAxisIndex" /> and
-		/// <see cref="IsY2Axis" />.  If the value of <see cref="YAxisIndex" /> is out of bounds, the
-		/// default <see cref="YAxis" /> or <see cref="Y2Axis" /> is used, which is index zero.
-		/// </remarks>
-		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
-		/// <returns>An integer value indicating which index position in the list applies to this
-		/// <see cref="CurveItem" />
-		/// </returns>
-		public int GetYAxisIndex( GraphPane pane )
-		{
-			if ( _yAxisIndex >= 0 &&
-					_yAxisIndex < ( _isY2Axis ? pane.Y2AxisList.Count : pane.YAxisList.Count ) )
-				return _yAxisIndex;
-			else
-				return 0;
-		}
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		abstract public bool GetCoords(GraphPane pane, int i, out string coords);
 
-		/// <summary>
-		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
-		/// is the same as <c>MakeUnique(ColorSymbolRotator.StaticInstance)</c>.
-		/// <seealso cref="ColorSymbolRotator.StaticInstance"/>
-		/// <seealso cref="ColorSymbolRotator"/>
-		/// <seealso cref="MakeUnique(ColorSymbolRotator)"/>
-		/// </summary>
-		public void MakeUnique()
-		{
-			this.MakeUnique( ColorSymbolRotator.StaticInstance );
-		}
-
-		/// <summary>
-		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
-		/// is mainly useful for differentiating a set of new CurveItems without
-		/// having to pick your own colors/symbols.
-		/// <seealso cref="MakeUnique(ColorSymbolRotator)"/>
-		/// </summary>
-		/// <param name="rotator">
-		/// The <see cref="ColorSymbolRotator"/> that is used to pick the color
-		///  and symbol for this method call.
-		/// </param>
-		virtual public void MakeUnique( ColorSymbolRotator rotator )
-		{
-			this.Color = rotator.NextColor;
-		}
-	
 		/// <summary>
 		/// Go through the list of <see cref="PointPair"/> data values for this <see cref="CurveItem"/>
 		/// and determine the minimum and maximum values in the data.
@@ -853,11 +828,11 @@ namespace ZedGraph
 		/// owner of this object.
 		/// </param>
 		/// <seealso cref="GraphPane.IsBoundedRanges"/>
-		virtual public void GetRange( 	out double xMin, out double xMax,
+		virtual public void GetRange(out double xMin, out double xMax,
 										out double yMin, out double yMax,
 										bool ignoreInitial,
 										bool isBoundedRanges,
-										GraphPane pane )
+										GraphPane pane)
 		{
 			// The lower and upper bounds of allowable data for the X values.  These
 			// values allow you to subset the data values.  If the X range is bounded, then
@@ -872,12 +847,12 @@ namespace ZedGraph
 			xMin = yMin = Double.MaxValue;
 			xMax = yMax = Double.MinValue;
 
-			Axis yAxis = this.GetYAxis( pane );
-			Axis xAxis = this.GetXAxis( pane );
-			if ( yAxis == null || xAxis == null )
+			Axis yAxis = this.GetYAxis(pane);
+			Axis xAxis = this.GetXAxis(pane);
+			if (yAxis == null || xAxis == null)
 				return;
 
-			if ( isBoundedRanges )
+			if (isBoundedRanges)
 			{
 				xLBound = xAxis._scale._lBound;
 				xUBound = xAxis._scale._uBound;
@@ -886,17 +861,17 @@ namespace ZedGraph
 			}
 
 
-			bool isZIncluded = this.IsZIncluded( pane );
-			bool isXIndependent = this.IsXIndependent( pane );
+			bool isZIncluded = this.IsZIncluded(pane);
+			bool isXIndependent = this.IsXIndependent(pane);
 			bool isXLog = xAxis.Scale.IsLog;
 			bool isYLog = yAxis.Scale.IsLog;
 			bool isXOrdinal = xAxis.Scale.IsAnyOrdinal;
 			bool isYOrdinal = yAxis.Scale.IsAnyOrdinal;
-			bool isZOrdinal = ( isXIndependent ? yAxis : xAxis ).Scale.IsAnyOrdinal;
+			bool isZOrdinal = (isXIndependent ? yAxis : xAxis).Scale.IsAnyOrdinal;
 
 			// Loop over each point in the arrays
 			//foreach ( PointPair point in this.Points )
-			for ( int i=0; i<this.Points.Count; i++ )
+			for (int i = 0; i < this.Points.Count; i++)
 			{
 				PointPair point = this.Points[i];
 
@@ -906,79 +881,161 @@ namespace ZedGraph
 
 				bool outOfBounds = curX < xLBound || curX > xUBound ||
 					curY < yLBound || curY > yUBound ||
-					( isZIncluded && isXIndependent && ( curZ < yLBound || curZ > yUBound ) ) ||
-					( isZIncluded && !isXIndependent && ( curZ < xLBound || curZ > xUBound ) ) ||
-					( curX <= 0 && isXLog ) || ( curY <= 0 && isYLog );
-			
+					(isZIncluded && isXIndependent && (curZ < yLBound || curZ > yUBound)) ||
+					(isZIncluded && !isXIndependent && (curZ < xLBound || curZ > xUBound)) ||
+					(curX <= 0 && isXLog) || (curY <= 0 && isYLog);
+
 				// ignoreInitial becomes false at the first non-zero
 				// Y value
-				if (	ignoreInitial && curY != 0 &&
-						curY != PointPair.Missing )
+				if (ignoreInitial && curY != 0 &&
+						curY != PointPair.Missing)
 					ignoreInitial = false;
-			
-				if ( 	!ignoreInitial &&
+
+				if (!ignoreInitial &&
 						!outOfBounds &&
 						curX != PointPair.Missing &&
-						curY != PointPair.Missing )
+						curY != PointPair.Missing)
 				{
-					if ( curX < xMin )
+					if (curX < xMin)
 						xMin = curX;
-					if ( curX > xMax )
+					if (curX > xMax)
 						xMax = curX;
-					if ( curY < yMin )
+					if (curY < yMin)
 						yMin = curY;
-					if ( curY > yMax )
+					if (curY > yMax)
 						yMax = curY;
 
-					if ( isZIncluded && isXIndependent && curZ != PointPair.Missing )
+					if (isZIncluded && isXIndependent && curZ != PointPair.Missing)
 					{
-						if ( curZ < yMin )
+						if (curZ < yMin)
 							yMin = curZ;
-						if ( curZ > yMax )
+						if (curZ > yMax)
 							yMax = curZ;
 					}
-					else if ( isZIncluded && curZ != PointPair.Missing )
+					else if (isZIncluded && curZ != PointPair.Missing)
 					{
-						if ( curZ < xMin )
+						if (curZ < xMin)
 							xMin = curZ;
-						if ( curZ > xMax )
+						if (curZ > xMax)
 							xMax = curZ;
 					}
 				}
-			}	
+			}
 		}
 
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
-		/// (independent axis) from which the values are drawn. </summary>
-		/// <remarks>
-		/// This property is determined by the value of <see cref="BarSettings.Base"/> for
-		/// <see cref="BarItem"/>, <see cref="ErrorBarItem"/>, and <see cref="HiLowBarItem"/>
-		/// types.  It is always the X axis for regular <see cref="LineItem"/> types.
-		/// Note that the <see cref="BarSettings.Base" /> setting can override the
-		/// <see cref="IsY2Axis" /> and <see cref="YAxisIndex" /> settings for bar types
-		/// (this is because all the bars that are clustered together must share the
-		/// same base axis).
-		/// </remarks>
-		/// <seealso cref="BarBase"/>
-		/// <seealso cref="ValueAxis"/>
-		public virtual Axis BaseAxis( GraphPane pane )
+		/// <summary>
+		/// Get the X Axis instance (either <see cref="XAxis" /> or <see cref="X2Axis" />) to
+		/// which this <see cref="CurveItem" /> belongs.
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
+		/// <returns>Either a <see cref="XAxis" /> or <see cref="X2Axis" /> to which this
+		/// <see cref="CurveItem" /> belongs.
+		/// </returns>
+		public Axis GetXAxis(GraphPane pane)
 		{
-			BarBase barBase;
-
-			if ( this is BarItem || this is ErrorBarItem || this is HiLowBarItem )
-				barBase = pane._barSettings.Base;
-			else
-				barBase = _isX2Axis ? BarBase.X2 : BarBase.X;
-
-			if ( barBase == BarBase.X )
-				return pane.XAxis;
-			else if ( barBase == BarBase.X2 )
+			if (_isX2Axis)
 				return pane.X2Axis;
-			else if ( barBase == BarBase.Y )
-				return pane.YAxis;
 			else
-				return pane.Y2Axis;
+				return pane.XAxis;
+		}
 
+		/// <summary>
+		/// Get the Y Axis instance (either <see cref="YAxis" /> or <see cref="Y2Axis" />) to
+		/// which this <see cref="CurveItem" /> belongs.
+		/// </summary>
+		/// <remarks>
+		/// This method safely retrieves a Y Axis instance from either the <see cref="GraphPane.YAxisList" />
+		/// or the <see cref="GraphPane.Y2AxisList" /> using the values of <see cref="YAxisIndex" /> and
+		/// <see cref="IsY2Axis" />.  If the value of <see cref="YAxisIndex" /> is out of bounds, the
+		/// default <see cref="YAxis" /> or <see cref="Y2Axis" /> is used.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
+		/// <returns>Either a <see cref="YAxis" /> or <see cref="Y2Axis" /> to which this
+		/// <see cref="CurveItem" /> belongs.
+		/// </returns>
+		public Axis GetYAxis(GraphPane pane)
+		{
+			if (_isY2Axis)
+			{
+				if (_yAxisIndex < pane.Y2AxisList.Count)
+					return pane.Y2AxisList[_yAxisIndex];
+				else
+					return pane.Y2AxisList[0];
+			}
+			else
+			{
+				if (_yAxisIndex < pane.YAxisList.Count)
+					return pane.YAxisList[_yAxisIndex];
+				else
+					return pane.YAxisList[0];
+			}
+		}
+
+		/// <summary>
+		/// Get the index of the Y Axis in the <see cref="YAxis" /> or <see cref="Y2Axis" /> list to
+		/// which this <see cref="CurveItem" /> belongs.
+		/// </summary>
+		/// <remarks>
+		/// This method safely retrieves a Y Axis index into either the <see cref="GraphPane.YAxisList" />
+		/// or the <see cref="GraphPane.Y2AxisList" /> using the values of <see cref="YAxisIndex" /> and
+		/// <see cref="IsY2Axis" />.  If the value of <see cref="YAxisIndex" /> is out of bounds, the
+		/// default <see cref="YAxis" /> or <see cref="Y2Axis" /> is used, which is index zero.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
+		/// <returns>An integer value indicating which index position in the list applies to this
+		/// <see cref="CurveItem" />
+		/// </returns>
+		public int GetYAxisIndex(GraphPane pane)
+		{
+			if (_yAxisIndex >= 0 &&
+					_yAxisIndex < (_isY2Axis ? pane.Y2AxisList.Count : pane.YAxisList.Count))
+				return _yAxisIndex;
+			else
+				return 0;
+		}
+
+		/// <summary>
+		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
+		/// is the same as <c>MakeUnique(ColorSymbolRotator.StaticInstance)</c>.
+		/// <seealso cref="ColorSymbolRotator.StaticInstance"/>
+		/// <seealso cref="ColorSymbolRotator"/>
+		/// <seealso cref="MakeUnique(ColorSymbolRotator)"/>
+		/// </summary>
+		public void MakeUnique()
+		{
+			this.MakeUnique(ColorSymbolRotator.StaticInstance);
+		}
+
+		/// <summary>
+		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
+		/// is mainly useful for differentiating a set of new CurveItems without
+		/// having to pick your own colors/symbols.
+		/// <seealso cref="MakeUnique(ColorSymbolRotator)"/>
+		/// </summary>
+		/// <param name="rotator">
+		/// The <see cref="ColorSymbolRotator"/> that is used to pick the color
+		///  and symbol for this method call.
+		/// </param>
+		virtual public void MakeUnique(ColorSymbolRotator rotator)
+		{
+			this.Color = rotator.NextColor;
+		}
+
+		/// <summary>
+		/// Removes a single point from this <see cref="CurveItem" />.
+		/// </summary>
+		/// <remarks>
+		/// This method will only work if the <see cref="IPointList" /> instance reference
+		/// at <see cref="Points" /> supports the <see cref="IPointListEdit" /> interface.
+		/// Otherwise, it does nothing.
+		/// </remarks>
+		/// <param name="index">The ordinal position of the point to be removed.</param>
+		public void RemovePoint( int index )
+		{
+			if ( _points is IPointListEdit )
+				(_points as IPointListEdit).RemoveAt( index );
+			else
+				throw new NotImplementedException();
 		}
 		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
 		/// (dependent axis) from which the points are drawn. </summary>
@@ -1005,66 +1062,6 @@ namespace ZedGraph
 			else
 				return GetXAxis( pane );
 		}
-
-		/// <summary>
-		/// Calculate the width of each bar, depending on the actual bar type
-		/// </summary>
-		/// <returns>The width for an individual bar, in pixel units</returns>
-		public float GetBarWidth( GraphPane pane )
-		{
-			// Total axis width = 
-			// npts * ( nbars * ( bar + bargap ) - bargap + clustgap )
-			// cg * bar = cluster gap
-			// npts = max number of points in any curve
-			// nbars = total number of curves that are of type IsBar
-			// bar = bar width
-			// bg * bar = bar gap
-			// therefore:
-			// totwidth = npts * ( nbars * (bar + bg*bar) - bg*bar + cg*bar )
-			// totwidth = bar * ( npts * ( nbars * ( 1 + bg ) - bg + cg ) )
-			// solve for bar
-
-			float barWidth;
-
-			if ( this is ErrorBarItem )
-				barWidth = (float) ( ((ErrorBarItem)this).Bar.Symbol.Size *
-						pane.CalcScaleFactor() );
-//			else if ( this is HiLowBarItem && pane._barSettings.Type != BarType.ClusterHiLow )
-//				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
-//						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
-//				barWidth = (float) ( ((HiLowBarItem)this).Bar.Size *
-//						pane.CalcScaleFactor() );
-			else // BarItem or LineItem
-			{
-				// For stacked bar types, the bar width will be based on a single bar
-				float numBars = 1.0F;
-				if ( pane._barSettings.Type == BarType.Cluster )
-					numBars = pane.CurveList.NumClusterableBars;
-
-				float denom = numBars * ( 1.0F + pane._barSettings.MinBarGap ) -
-							pane._barSettings.MinBarGap + pane._barSettings.MinClusterGap;
-				if ( denom <= 0 )
-					denom = 1;
-				barWidth = pane.BarSettings.GetClusterWidth() / denom;
-			}
-
-			if ( barWidth <= 0 )
-				return 1;
-
-			return barWidth;
-		}
-
-		/// <summary>
-		/// Determine the coords for the rectangle associated with a specified point for 
-		/// this <see cref="CurveItem" />
-		/// </summary>
-		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
-		/// <param name="i">The index of the point of interest</param>
-		/// <param name="coords">A list of coordinates that represents the "rect" for
-		/// this point (used in an html AREA tag)</param>
-		/// <returns>true if it's a valid point, false otherwise</returns>
-		abstract public bool GetCoords( GraphPane pane, int i, out string coords );
-
 	#endregion
 
 	#region Inner classes

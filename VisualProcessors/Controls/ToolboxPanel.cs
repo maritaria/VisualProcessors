@@ -17,19 +17,17 @@ namespace VisualProcessors.Controls
 	{
 		#region Properties
 
-		private PipelineForm m_Pipeline;
-
+		private PipelineForm m_PipelineForm;
 		private List<Type> m_Types = new List<Type>();
-
-		public PipelineForm Pipeline
+		public PipelineForm PipelineForm
 		{
 			get
 			{
-				return m_Pipeline;
+				return m_PipelineForm;
 			}
 			set
 			{
-				m_Pipeline = value;
+				SetPipelineForm(value);
 			}
 		}
 
@@ -48,15 +46,49 @@ namespace VisualProcessors.Controls
 		public ToolboxPanel()
 		{
 			InitializeComponent();
-			ButtonPanel.Controls.Clear();
-			AddAssembly(Assembly.GetAssembly(typeof(Processor)));
+			ClearButtonList();
 		}
 
 		#endregion Constructor
 
 		#region Methods
+		public void SetPipelineForm(PipelineForm pipeline)
+		{
+			ClearButtonList();
+			if (PipelineForm!=null)
+			{
+				PipelineForm.PipelineChanged -= PipelineForm_PipelineChanged;
+			}
+			m_PipelineForm = pipeline;
+			if (PipelineForm != null)
+			{
+				PipelineForm.PipelineChanged += PipelineForm_PipelineChanged;
+				PipelineForm_PipelineChanged(null, PipelineForm.CurrentPipeline);
+			}
+		}
+		
+		public void PopulateButtonList()
+		{
+			ClearButtonList();
+			if (PipelineForm.CurrentPipeline != null)
+			{
+				foreach (Assembly asm in PipelineForm.CurrentPipeline.Assemblies)
+				{
+					AddAssembly(asm);
+				}
+			}
+		}
+		public void ClearButtonList()
+		{
 
-		public void AddAssembly(Assembly assembly)
+			foreach (Button b in ButtonPanel.Controls)
+			{
+				b.Dispose();
+			}
+			ButtonPanel.Controls.Clear();
+		}
+
+		private void AddAssembly(Assembly assembly)
 		{
 			Type[] processorTypes = assembly.GetTypes();
 			foreach (Type processorType in processorTypes.Reverse())
@@ -88,17 +120,17 @@ namespace VisualProcessors.Controls
 
 		public void SpawnProcessor(Type t)
 		{
-			if (Pipeline == null)
+			if (PipelineForm == null)
 			{
 				return;
 			}
-			Point center = Pipeline.MdiClient.Bounds.GetCenter();
+			Point center = PipelineForm.MdiClient.Bounds.GetCenter();
 			SpawnProcessor(t, center);
 		}
 
 		public void SpawnProcessor(Type t, Point pos)
 		{
-			if (Pipeline == null)
+			if (PipelineForm == null)
 			{
 				return;
 			}
@@ -106,18 +138,39 @@ namespace VisualProcessors.Controls
 			string basename = t.Name;
 			while (true)
 			{
-				if (Pipeline.GetProcessorForm(basename + counter) == null)
+				if (PipelineForm.GetProcessorForm(basename + counter) == null)
 					break;
 				counter++;
 			}
 			Processor p = (Processor)Activator.CreateInstance(t, t.Name + counter);
 
-			ProcessorForm pf = Pipeline.AddProcessor(p);
+			ProcessorForm pf = PipelineForm.AddProcessor(p);
 			Point pfcenter = pf.GetCenter();
 			Point offset = new Point(pfcenter.X - pf.Location.X, pfcenter.Y - pf.Location.Y);
 			pf.Location = new Point(pos.X - offset.X, pos.Y - offset.Y);
 		}
 
 		#endregion Methods
+
+		#region Event Handlers
+
+		void PipelineForm_PipelineChanged(Pipeline oldPipeline, Pipeline newPipeline)
+		{
+			if (oldPipeline != null)
+			{
+				oldPipeline.AssemblyAdded -= PipelineAssemblyAdded;
+			}
+			if (newPipeline != null)
+			{
+				newPipeline.AssemblyAdded += PipelineAssemblyAdded;
+			}
+			PopulateButtonList();
+		}
+
+		private void PipelineAssemblyAdded(Pipeline p, Assembly asm)
+		{
+			AddAssembly(asm);
+		}
+		#endregion
 	}
 }

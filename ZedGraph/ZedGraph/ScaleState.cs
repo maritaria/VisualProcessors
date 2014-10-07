@@ -22,52 +22,55 @@
 using System;
 using System.Text;
 
-#endregion
+#endregion Using directives
 
 namespace ZedGraph
 {
 	/// <summary>
-	/// A class that captures an <see cref="Axis"/> scale range.
+	///  A class that captures an <see cref="Axis" /> scale range.
 	/// </summary>
-	/// <remarks>This structure is used by the <see cref="ZoomState"/> class to store
-	/// <see cref="Axis"/> scale range settings in a collection for later retrieval.
-	/// The class stores the <see cref="Scale.Min"/>, <see cref="Scale.Max"/>,
-	/// <see cref="Scale.MinorStep"/>, and <see cref="Scale.MajorStep"/> properties, along with
-	/// the corresponding auto-scale settings: <see cref="Scale.MinAuto"/>,
-	/// <see cref="Scale.MaxAuto"/>, <see cref="Scale.MinorStepAuto"/>,
-	/// and <see cref="Scale.MajorStepAuto"/>.</remarks>
-	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-02-19 08:05:24 $ </version>
+	/// <remarks>
+	///  This structure is used by the <see cref="ZoomState" /> class to store <see cref="Axis" />
+	///  scale range settings in a collection for later retrieval. The class stores the <see
+	///  cref="Scale.Min" />, <see cref="Scale.Max" />, <see cref="Scale.MinorStep" />, and <see
+	///  cref="Scale.MajorStep" /> properties, along with the corresponding auto-scale settings:
+	///  <see cref="Scale.MinAuto" />, <see cref="Scale.MaxAuto" />, <see cref="Scale.MinorStepAuto"
+	///  />, and <see cref="Scale.MajorStepAuto" />.
+	/// </remarks>
+	/// <author>John Champion</author>
+	/// <version>$Revision: 3.2 $ $Date: 2007-02-19 08:05:24 $</version>
 	public class ScaleState : ICloneable
 	{
+		private string _format;
+
+		private int _mag;
+
 		/// <summary>
-		/// The axis range data for <see cref="Scale.Min"/>, <see cref="Scale.Max"/>,
-		/// <see cref="Scale.MinorStep"/>, and <see cref="Scale.MajorStep"/>
-		/// </summary>
-		private double _min, _minorStep, _majorStep, _max;
-		/// <summary>
-		/// The status of <see cref="Scale.MinAuto"/>,
-		/// <see cref="Scale.MaxAuto"/>, <see cref="Scale.MinorStepAuto"/>,
-		/// and <see cref="Scale.MajorStepAuto"/>
+		///  The status of <see cref="Scale.MinAuto" />, <see cref="Scale.MaxAuto" />, <see
+		///  cref="Scale.MinorStepAuto" />, and <see cref="Scale.MajorStepAuto" />
 		/// </summary>
 		private bool _minAuto, _minorStepAuto,
 							_majorStepAuto, _maxAuto,
 							_formatAuto, _magAuto;
 
 		/// <summary>
-		/// The status of <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		///  The axis range data for <see cref="Scale.Min" />, <see cref="Scale.Max" />, <see
+		///  cref="Scale.MinorStep" />, and <see cref="Scale.MajorStep" />
+		/// </summary>
+		private double _min, _minorStep, _majorStep, _max;
+
+		/// <summary>
+		///  The status of <see cref="Scale.MajorUnit" /> and <see cref="Scale.MinorUnit" />
 		/// </summary>
 		private DateUnit _minorUnit, _majorUnit;
 
-		private string _format;
-		private int _mag;
-
 		/// <summary>
-		/// Construct a <see cref="ScaleState"/> from the specified <see cref="Axis"/>
+		///  Construct a <see cref="ScaleState" /> from the specified <see cref="Axis" />
 		/// </summary>
-		/// <param name="axis">The <see cref="Axis"/> from which to collect the scale
-		/// range settings.</param>
-		public ScaleState( Axis axis )
+		/// <param name="axis">
+		///  The <see cref="Axis" /> from which to collect the scale range settings.
+		/// </param>
+		public ScaleState(Axis axis)
 		{
 			_min = axis._scale._min;
 			_minorStep = axis._scale._minorStep;
@@ -78,6 +81,7 @@ namespace ZedGraph
 
 			_format = axis._scale._format;
 			_mag = axis._scale._mag;
+
 			//this.numDec = axis.NumDec;
 
 			_minAuto = axis._scale._minAuto;
@@ -90,10 +94,10 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// The Copy Constructor
+		///  The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="ScaleState"/> object from which to copy</param>
-		public ScaleState( ScaleState rhs )
+		/// <param name="rhs">The <see cref="ScaleState" /> object from which to copy</param>
+		public ScaleState(ScaleState rhs)
 		{
 			_min = rhs._min;
 			_majorStep = rhs._majorStep;
@@ -115,30 +119,13 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		///  Copy the properties from this <see cref="ScaleState" /> out to the specified <see
+		///  cref="Axis" />.
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
-		{
-			return this.Clone();
-		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public ScaleState Clone()
-		{
-			return new ScaleState( this );
-		}
-
-		/// <summary>
-		/// Copy the properties from this <see cref="ScaleState"/> out to the specified <see cref="Axis"/>.
-		/// </summary>
-		/// <param name="axis">The <see cref="Axis"/> reference to which the properties should be
-		/// copied</param>
-		public void ApplyScale( Axis axis )
+		/// <param name="axis">
+		///  The <see cref="Axis" /> reference to which the properties should be copied
+		/// </param>
+		public void ApplyScale(Axis axis)
 		{
 			axis._scale._min = _min;
 			axis._scale._majorStep = _majorStep;
@@ -159,16 +146,34 @@ namespace ZedGraph
 
 			axis._scale._formatAuto = _formatAuto;
 			axis._scale._magAuto = _magAuto;
-
 		}
 
 		/// <summary>
-		/// Determine if the state contained in this <see cref="ScaleState"/> object is different from
-		/// the state of the specified <see cref="Axis"/>.
+		///  Typesafe, deep-copy clone method.
 		/// </summary>
-		/// <param name="axis">The <see cref="Axis"/> object with which to compare states.</param>
+		/// <returns>A new, independent copy of this class</returns>
+		public ScaleState Clone()
+		{
+			return new ScaleState(this);
+		}
+
+		/// <summary>
+		///  Implement the <see cref="ICloneable" /> interface in a typesafe manner by just calling
+		///  the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		///  Determine if the state contained in this <see cref="ScaleState" /> object is different
+		///  from the state of the specified <see cref="Axis" />.
+		/// </summary>
+		/// <param name="axis">The <see cref="Axis" /> object with which to compare states.</param>
 		/// <returns>true if the states are different, false otherwise</returns>
-		public bool IsChanged( Axis axis )
+		public bool IsChanged(Axis axis)
 		{
 			return axis._scale._min != _min ||
 					axis._scale._majorStep != _majorStep ||
@@ -181,6 +186,5 @@ namespace ZedGraph
 					axis._scale._majorStepAuto != _majorStepAuto ||
 					axis._scale._maxAuto != _maxAuto;
 		}
-
 	}
 }

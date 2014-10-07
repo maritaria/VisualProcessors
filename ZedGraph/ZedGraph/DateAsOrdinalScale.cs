@@ -83,12 +83,17 @@ namespace ZedGraph
 	#region properties
 
 		/// <summary>
-		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
-		/// <see cref="AxisType.DateAsOrdinal" />.
+		/// Gets or sets the maximum value for this scale.
 		/// </summary>
-		public override AxisType Type
+		/// <remarks>
+		/// The set property is specifically adapted for <see cref="AxisType.DateAsOrdinal" /> scales,
+		/// in that it automatically limits the value to the range of valid dates for the
+		/// <see cref="XDate" /> struct.
+		/// </remarks>
+		public override double Max
 		{
-			get { return AxisType.DateAsOrdinal; }
+			get { return _max; }
+			set { _max = XDate.MakeValidDate(value); _maxAuto = false; }
 		}
 
 		/// <summary>
@@ -102,23 +107,17 @@ namespace ZedGraph
 		public override double Min
 		{
 			get { return _min; }
-			set { _min = XDate.MakeValidDate( value ); _minAuto = false; }
+			set { _min = XDate.MakeValidDate(value); _minAuto = false; }
 		}
 
 		/// <summary>
-		/// Gets or sets the maximum value for this scale.
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.DateAsOrdinal" />.
 		/// </summary>
-		/// <remarks>
-		/// The set property is specifically adapted for <see cref="AxisType.DateAsOrdinal" /> scales,
-		/// in that it automatically limits the value to the range of valid dates for the
-		/// <see cref="XDate" /> struct.
-		/// </remarks>
-		public override double Max
+		public override AxisType Type
 		{
-			get { return _max; }
-			set { _max = XDate.MakeValidDate( value ); _maxAuto = false; }
+			get { return AxisType.DateAsOrdinal; }
 		}
-
 	#endregion
 
 	#region methods
@@ -190,7 +189,45 @@ namespace ZedGraph
 			OrdinalScale.PickScale( pane, g, scaleFactor, this );
 		}
 
-		internal void SetDateFormat( GraphPane pane )
+		/// <summary>
+		/// Make a value label for an <see cref="AxisType.DateAsOrdinal" /> <see cref="Axis" />.
+		/// </summary>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="index">
+		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
+		/// cause the third value label on the axis to be generated.
+		/// </param>
+		/// <param name="dVal">
+		/// The numeric value associated with the label.  This value is ignored for log
+		/// (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
+		/// </param>
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel(GraphPane pane, int index, double dVal)
+		{
+			if (_format == null)
+				_format = Scale.Default.Format;
+
+			double val;
+
+			int tmpIndex = (int)dVal - 1;
+
+			if (pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex)
+			{
+				if (_ownerAxis is XAxis || _ownerAxis is X2Axis)
+					val = pane.CurveList[0].Points[tmpIndex].X;
+				else
+					val = pane.CurveList[0].Points[tmpIndex].Y;
+				return XDate.ToString(val, _format);
+			}
+			else
+				return string.Empty;
+		}
+
+		internal void SetDateFormat(GraphPane pane)
 		{
 			if ( _formatAuto )
 			{
@@ -261,45 +298,6 @@ namespace ZedGraph
 					_format = Default.FormatMillisecond;
 			}
 		}
-
-		/// <summary>
-		/// Make a value label for an <see cref="AxisType.DateAsOrdinal" /> <see cref="Axis" />.
-		/// </summary>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="index">
-		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
-		/// cause the third value label on the axis to be generated.
-		/// </param>
-		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log
-		/// (<see cref="Scale.IsLog"/>)
-		/// and text (<see cref="Scale.IsText"/>) type axes.
-		/// </param>
-		/// <returns>The resulting value label as a <see cref="string" /></returns>
-		override internal string MakeLabel( GraphPane pane, int index, double dVal )
-		{
-			if ( _format == null )
-				_format = Scale.Default.Format;
-
-			double val;
-
-			int tmpIndex = (int) dVal - 1;
-
-			if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
-			{
-				if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
-				val = pane.CurveList[0].Points[tmpIndex].X;
-				else
-					val = pane.CurveList[0].Points[tmpIndex].Y;
-				return XDate.ToString( val, _format );
-			}
-			else
-				return string.Empty;
-		}
-
 	#endregion
 
 	#region Serialization

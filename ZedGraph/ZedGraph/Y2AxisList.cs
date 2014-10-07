@@ -61,6 +61,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Y2AxisList Clone()
+		{
+			return new Y2AxisList(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -69,16 +78,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public Y2AxisList Clone()
-		{
-			return new Y2AxisList( this );
-		}
-
 		#endregion
 
 		#region List Methods
@@ -112,6 +111,23 @@ namespace ZedGraph
 				else
 					return null;
 			}
+		}
+
+		/// <summary>
+		/// Create a new <see cref="Y2Axis" /> and add it to this list.
+		/// </summary>
+		/// <param name="title">The title string for the new axis</param>
+		/// <returns>An integer representing the ordinal position of the new <see cref="Y2Axis" /> in
+		/// this <see cref="Y2AxisList" />.  This is the value that you would set the
+		/// <see cref="CurveItem.YAxisIndex" /> property of a given <see cref="CurveItem" /> to 
+		/// assign it to this new <see cref="Y2Axis" />.  Note that, for a <see cref="Y2Axis" />,
+		/// you would also need to set the <see cref="CurveItem.IsY2Axis" /> property to true.</returns>
+		public int Add(string title)
+		{
+			Y2Axis axis = new Y2Axis(title);
+			Add(axis);
+
+			return Count - 1;
 		}
 
 		/// <summary>
@@ -164,24 +180,6 @@ namespace ZedGraph
 
 			return -1;
 		}
-
-		/// <summary>
-		/// Create a new <see cref="Y2Axis" /> and add it to this list.
-		/// </summary>
-		/// <param name="title">The title string for the new axis</param>
-		/// <returns>An integer representing the ordinal position of the new <see cref="Y2Axis" /> in
-		/// this <see cref="Y2AxisList" />.  This is the value that you would set the
-		/// <see cref="CurveItem.YAxisIndex" /> property of a given <see cref="CurveItem" /> to 
-		/// assign it to this new <see cref="Y2Axis" />.  Note that, for a <see cref="Y2Axis" />,
-		/// you would also need to set the <see cref="CurveItem.IsY2Axis" /> property to true.</returns>
-		public int Add( string title )
-		{
-			Y2Axis axis = new Y2Axis( title );
-			Add( axis );
-
-			return Count - 1;
-		}
-
 		#endregion
 
 	}

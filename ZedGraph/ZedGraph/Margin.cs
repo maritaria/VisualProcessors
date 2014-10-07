@@ -71,6 +71,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Margin Clone()
+		{
+			return new Margin(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -79,19 +88,47 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public Margin Clone()
-		{
-			return new Margin( this );
-		}
-
 	#endregion
 
 	#region Properties
+
+		/// <summary>
+		/// Concurrently sets all outer margin values to a single value.
+		/// </summary>
+		/// <value>This value is in units of points (1/72 inch), and is scaled
+		/// linearly with the graph size.</value>
+		/// <seealso cref="PaneBase.IsFontsScaled"/>
+		/// <seealso cref="Bottom"/>
+		/// <seealso cref="Left"/>
+		/// <seealso cref="Right"/>
+		/// <seealso cref="Top"/>
+		public float All
+		{
+			set
+			{
+				_bottom = value;
+				_top = value;
+				_left = value;
+				_right = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a float value that determines the margin area between the bottom edge of the
+		/// <see cref="PaneBase.Rect"/> rectangle and the features of the graph.
+		/// </summary>
+		/// <value>This value is in units of points (1/72 inch), and is scaled
+		/// linearly with the graph size.</value>
+		/// <seealso cref="Default.Bottom"/>
+		/// <seealso cref="PaneBase.IsFontsScaled"/>
+		/// <seealso cref="Left"/>
+		/// <seealso cref="Right"/>
+		/// <seealso cref="Top"/>
+		public float Bottom
+		{
+			get { return _bottom; }
+			set { _bottom = value; }
+		}
 
 		/// <summary>
 		/// Gets or sets a float value that determines the margin area between the left edge of the
@@ -141,44 +178,6 @@ namespace ZedGraph
 			get { return _top; }
 			set { _top = value; }
 		}
-		/// <summary>
-		/// Gets or sets a float value that determines the margin area between the bottom edge of the
-		/// <see cref="PaneBase.Rect"/> rectangle and the features of the graph.
-		/// </summary>
-		/// <value>This value is in units of points (1/72 inch), and is scaled
-		/// linearly with the graph size.</value>
-		/// <seealso cref="Default.Bottom"/>
-		/// <seealso cref="PaneBase.IsFontsScaled"/>
-		/// <seealso cref="Left"/>
-		/// <seealso cref="Right"/>
-		/// <seealso cref="Top"/>
-		public float Bottom
-		{
-			get { return _bottom; }
-			set { _bottom = value; }
-		}
-
-		/// <summary>
-		/// Concurrently sets all outer margin values to a single value.
-		/// </summary>
-		/// <value>This value is in units of points (1/72 inch), and is scaled
-		/// linearly with the graph size.</value>
-		/// <seealso cref="PaneBase.IsFontsScaled"/>
-		/// <seealso cref="Bottom"/>
-		/// <seealso cref="Left"/>
-		/// <seealso cref="Right"/>
-		/// <seealso cref="Top"/>
-		public float All
-		{
-			set
-			{
-				_bottom = value;
-				_top = value;
-				_left = value;
-				_right = value;
-			}
-		}
-
 	#endregion
 
 	#region Serialization
@@ -232,6 +231,13 @@ namespace ZedGraph
 		public class Default
 		{
 			/// <summary>
+			/// The default value for the <see cref="Margin.Bottom"/> property, which is
+			/// the size of the space on the bottom side of the <see cref="PaneBase.Rect"/>.
+			/// </summary>
+			/// <value>Units are points (1/72 inch)</value>
+			public static float Bottom = 10.0F;
+
+			/// <summary>
 			/// The default value for the <see cref="Margin.Left"/> property, which is
 			/// the size of the space on the left side of the <see cref="PaneBase.Rect"/>.
 			/// </summary>
@@ -249,13 +255,6 @@ namespace ZedGraph
 			/// </summary>
 			/// <value>Units are points (1/72 inch)</value>
 			public static float Top = 10.0F;
-			/// <summary>
-			/// The default value for the <see cref="Margin.Bottom"/> property, which is
-			/// the size of the space on the bottom side of the <see cref="PaneBase.Rect"/>.
-			/// </summary>
-			/// <value>Units are points (1/72 inch)</value>
-			public static float Bottom = 10.0F;
-
 		}
 
 	#endregion

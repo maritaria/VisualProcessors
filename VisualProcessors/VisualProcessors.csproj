@@ -99,6 +99,7 @@
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Processing\AssemblyDetails.cs" />
     <Compile Include="Processing\GraphPlotter.cs" />
     <Compile Include="Processing\AverageProcessor.cs" />
     <Compile Include="Processing\AddProcessor.cs" />

@@ -47,17 +47,18 @@ namespace ZedGraph
 	{
 	#region Fields
 		/// <summary>
+		/// Private field that stores the error bar color.  Use the public
+		/// property <see cref="Color"/> to access this value.
+		/// </summary>
+		private Color _color;
+
+		/// <summary>
 		/// Private field that stores the visibility of this
 		/// <see cref="ErrorBar"/>.  Use the public
 		/// property <see cref="IsVisible"/> to access this value.  If this value is
 		/// false, the symbols will not be shown.
 		/// </summary>
 		private bool		_isVisible;
-		/// <summary>
-		/// Private field that stores the error bar color.  Use the public
-		/// property <see cref="Color"/> to access this value.
-		/// </summary>
-		private Color		_color;
 		/// <summary>
 		/// Private field that stores the pen width for this error bar.  Use the public
 		/// property <see cref="PenWidth"/> to access this value.
@@ -78,6 +79,23 @@ namespace ZedGraph
 		/// </summary>
 		public struct Default
 		{
+			/// <summary>
+			/// The default color for drawing error bars (<see cref="ErrorBar.Color"/> property).
+			/// </summary>
+			public static Color Color = Color.Red;
+
+			/// <summary>
+			/// The default display mode for symbols (<see cref="ErrorBar.IsVisible"/> property).
+			/// true to display symbols, false to hide them.
+			/// </summary>
+			public static bool IsVisible = true;
+
+			/// <summary>
+			/// The default pen width to be used for drawing error bars
+			/// (<see cref="ErrorBar.PenWidth"/> property).  Units are points.
+			/// </summary>
+			public static float PenWidth = 1.0F;
+
 			// Default Symbol properties
 			/// <summary>
 			/// The default size for curve symbols
@@ -85,20 +103,6 @@ namespace ZedGraph
 			/// in units of points.
 			/// </summary>
 			public static float Size = 7;
-			/// <summary>
-			/// The default pen width to be used for drawing error bars
-			/// (<see cref="ErrorBar.PenWidth"/> property).  Units are points.
-			/// </summary>
-			public static float PenWidth = 1.0F;
-			/// <summary>
-			/// The default display mode for symbols (<see cref="ErrorBar.IsVisible"/> property).
-			/// true to display symbols, false to hide them.
-			/// </summary>
-			public static bool IsVisible = true;
-			/// <summary>
-			/// The default color for drawing error bars (<see cref="ErrorBar.Color"/> property).
-			/// </summary>
-			public static Color Color = Color.Red;
 			/// <summary>
 			/// The default symbol for drawing at the top and bottom of the
 			/// error bar (see <see cref="ErrorBar.Symbol"/>).
@@ -108,17 +112,6 @@ namespace ZedGraph
 	#endregion
 
 	#region Properties
-		/// <summary>
-		/// Gets or sets a property that shows or hides the <see cref="ErrorBar"/>.
-		/// </summary>
-		/// <value>true to show the error bar, false to hide it</value>
-		/// <seealso cref="Default.IsVisible"/>
-		public bool IsVisible
-		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
-		}
-		
 		/// <summary>
 		/// Gets or sets the <see cref="System.Drawing.Color"/> data for this
 		/// <see cref="ErrorBar"/>.
@@ -131,6 +124,17 @@ namespace ZedGraph
 		{
 			get { return _color; }
 			set { _color = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a property that shows or hides the <see cref="ErrorBar"/>.
+		/// </summary>
+		/// <value>true to show the error bar, false to hide it</value>
+		/// <seealso cref="Default.IsVisible"/>
+		public bool IsVisible
+		{
+			get { return _isVisible; }
+			set { _isVisible = value; }
 		}
 		/// <summary>
 		/// The pen width to be used for drawing error bars
@@ -197,6 +201,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ErrorBar Clone()
+		{
+			return new ErrorBar(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -205,16 +218,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public ErrorBar Clone()
-		{
-			return new ErrorBar( this );
-		}
-
 	#endregion
 
 	#region Serialization

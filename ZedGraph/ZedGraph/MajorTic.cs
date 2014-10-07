@@ -67,6 +67,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public new MajorTic Clone()
+		{
+			return new MajorTic(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -75,16 +84,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public new MajorTic Clone()
-		{
-			return new MajorTic( this );
-		}
-
 	#endregion
 
 	#region Properties
@@ -160,60 +159,11 @@ namespace ZedGraph
 		/// </summary>
 		public new struct Default
 		{
-			// Default Axis Properties
 			/// <summary>
-			/// The default size for the <see cref="Axis"/> tic marks.
-			/// (<see cref="MinorTic.Size"/> property). Units are in points (1/72 inch).
+			/// The default color for major tics (<see cref="MinorTic.Color"/> property).
 			/// </summary>
-			public static float Size = 5;
-			/// <summary>
-			/// The default pen width for drawing the <see cref="Axis"/> tic marks.
-			/// (<see cref="MinorTic.PenWidth"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float PenWidth = 1.0F;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> major outside tic marks
-			/// (<see cref="MinorTic.IsOutside"/> property).
-			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
-			/// </summary>
-			/// <value>true to show the major tic marks (outside the axis),
-			/// false otherwise</value>
-			public static bool IsOutside = true;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> major inside tic marks
-			/// (<see cref="MinorTic.IsInside"/> property).
-			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
-			/// </summary>
-			/// <value>true to show the major tic marks (inside the axis),
-			/// false otherwise</value>
-			public static bool IsInside = true;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> major opposite tic marks
-			/// (<see cref="MinorTic.IsOpposite"/> property).
-			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
-			/// </summary>
-			/// <value>true to show the major tic marks
-			/// (inside the axis on the opposite side),
-			/// false otherwise</value>
-			public static bool IsOpposite = true;
+			public static Color Color = Color.Black;
 
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> major outside 
-			/// "cross" tic marks (<see cref="MinorTic.IsCrossOutside"/> property).
-			/// </summary>
-			/// <remarks>
-			/// The "cross" tics are a special, additional set of tic marks that
-			/// always appear on the actual axis, even if it has been shifted due
-			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-			/// fixed to the edges of the <see cref="Chart.Rect"/>.  The cross tics
-			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-			/// they will exactly overlay the "normal" and "inside" tics.  If
-			/// <see cref="Axis.CrossAuto"/> is false, then you will most likely want to
-			/// enable the cross tics.
-			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
-			/// </remarks>
-			/// <value>true to show the major cross tic marks, false otherwise</value>
-			public static bool IsCrossOutside = false;
 			/// <summary>
 			/// The default display mode for the <see cref="Axis"/> major inside 
 			/// "cross" tic marks (<see cref="MinorTic.IsCrossInside"/> property).
@@ -233,9 +183,63 @@ namespace ZedGraph
 			public static bool IsCrossInside = false;
 
 			/// <summary>
-			/// The default color for major tics (<see cref="MinorTic.Color"/> property).
+			/// The default display mode for the <see cref="Axis"/> major outside 
+			/// "cross" tic marks (<see cref="MinorTic.IsCrossOutside"/> property).
 			/// </summary>
-			public static Color Color = Color.Black;
+			/// <remarks>
+			/// The "cross" tics are a special, additional set of tic marks that
+			/// always appear on the actual axis, even if it has been shifted due
+			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+			/// fixed to the edges of the <see cref="Chart.Rect"/>.  The cross tics
+			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+			/// they will exactly overlay the "normal" and "inside" tics.  If
+			/// <see cref="Axis.CrossAuto"/> is false, then you will most likely want to
+			/// enable the cross tics.
+			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
+			/// </remarks>
+			/// <value>true to show the major cross tic marks, false otherwise</value>
+			public static bool IsCrossOutside = false;
+
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> major inside tic marks
+			/// (<see cref="MinorTic.IsInside"/> property).
+			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
+			/// </summary>
+			/// <value>true to show the major tic marks (inside the axis),
+			/// false otherwise</value>
+			public static bool IsInside = true;
+
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> major opposite tic marks
+			/// (<see cref="MinorTic.IsOpposite"/> property).
+			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
+			/// </summary>
+			/// <value>true to show the major tic marks
+			/// (inside the axis on the opposite side),
+			/// false otherwise</value>
+			public static bool IsOpposite = true;
+
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> major outside tic marks
+			/// (<see cref="MinorTic.IsOutside"/> property).
+			/// The major tic spacing is controlled by <see cref="Scale.MajorStep"/>.
+			/// </summary>
+			/// <value>true to show the major tic marks (outside the axis),
+			/// false otherwise</value>
+			public static bool IsOutside = true;
+
+			/// <summary>
+			/// The default pen width for drawing the <see cref="Axis"/> tic marks.
+			/// (<see cref="MinorTic.PenWidth"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float PenWidth = 1.0F;
+
+			// Default Axis Properties
+			/// <summary>
+			/// The default size for the <see cref="Axis"/> tic marks.
+			/// (<see cref="MinorTic.Size"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float Size = 5;
 		}
 
 	#endregion

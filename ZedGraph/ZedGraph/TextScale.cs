@@ -86,68 +86,6 @@ namespace ZedGraph
 	#region methods
 
 		/// <summary>
-		/// Internal routine to determine the ordinals of the first minor tic mark
-		/// </summary>
-		/// <param name="baseVal">
-		/// The value of the first major tic for the axis.
-		/// </param>
-		/// <returns>
-		/// The ordinal position of the first minor tic, relative to the first major tic.
-		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
-		/// increments before the first major tic.
-		/// </returns>
-		override internal int CalcMinorStart( double baseVal )
-		{
-			// This should never happen (no minor tics for text labels)
-			return 0;
-		}
-
-		/// <summary>
-		/// Determine the value for the first major tic.
-		/// </summary>
-		/// <remarks>
-		/// This is done by finding the first possible value that is an integral multiple of
-		/// the step size, taking into account the date/time units if appropriate.
-		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <returns>
-		/// First major tic value (floating point double).
-		/// </returns>
-		override internal double CalcBaseTic()
-		{
-			if ( _baseTic != PointPair.Missing )
-				return _baseTic;
-			else
-				return 1.0;
-
-		}
-		
-		/// <summary>
-		/// Internal routine to determine the ordinals of the first and last major axis label.
-		/// </summary>
-		/// <returns>
-		/// This is the total number of major tics for this axis.
-		/// </returns>
-		override internal int CalcNumTics()
-		{
-			int nTics = 1;
-
-			// If no array of labels is available, just assume 10 labels so we don't blow up.
-			if ( _textLabels == null )
-				nTics = 10;
-			else
-				nTics = _textLabels.Length;
-
-			if ( nTics < 1 )
-				nTics = 1;
-			else if ( nTics > 1000 )
-				nTics = 1000;
-
-			return nTics;
-		}
-
-		/// <summary>
 		/// Select a reasonable text axis scale given a range of data values.
 		/// </summary>
 		/// <remarks>
@@ -190,76 +128,136 @@ namespace ZedGraph
 		/// </param>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Text"/>
-		override public void PickScale( GraphPane pane, Graphics g, float scaleFactor )
+		override public void PickScale(GraphPane pane, Graphics g, float scaleFactor)
 		{
 			// call the base class first
-			base.PickScale( pane, g, scaleFactor );
+			base.PickScale(pane, g, scaleFactor);
 
 			// if text labels are provided, then autorange to the number of labels
-			if ( _textLabels != null )
+			if (_textLabels != null)
 			{
-				if ( _minAuto )
+				if (_minAuto)
 					_min = 0.5;
-				if ( _maxAuto )
+				if (_maxAuto)
 					_max = _textLabels.Length + 0.5;
 			}
 			else
 			{
-				if ( _minAuto )
+				if (_minAuto)
 					_min -= 0.5;
-				if ( _maxAuto )
+				if (_maxAuto)
 					_max += 0.5;
 			}
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( _max - _min < .1 )
+			if (_max - _min < .1)
 			{
-				if ( _maxAuto )
+				if (_maxAuto)
 					_max = _min + 10.0;
 				else
 					_min = _max - 10.0;
 			}
 
-			if ( _majorStepAuto )
+			if (_majorStepAuto)
 			{
-				if ( !_isPreventLabelOverlap )
+				if (!_isPreventLabelOverlap)
 				{
 					_majorStep = 1;
 				}
-				else if ( _textLabels != null )
+				else if (_textLabels != null)
 				{
 					// Calculate the maximum number of labels
-					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
+					double maxLabels = (double)this.CalcMaxLabels(g, pane, scaleFactor);
 
 					// Calculate a step size based on the width of the labels
-					double tmpStep = Math.Ceiling( ( _max - _min ) / maxLabels );
+					double tmpStep = Math.Ceiling((_max - _min) / maxLabels);
 
 					// Use the lesser of the two step sizes
 					//if ( tmpStep < this.majorStep )
 					_majorStep = tmpStep;
 				}
 				else
-					_majorStep = (int) ( ( _max - _min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
+					_majorStep = (int)((_max - _min - 1.0) / Default.MaxTextLabels) + 1.0;
 
 			}
 			else
 			{
-				_majorStep = (int) _majorStep;
-				if ( _majorStep <= 0 )
+				_majorStep = (int)_majorStep;
+				if (_majorStep <= 0)
 					_majorStep = 1.0;
 			}
 
-			if ( _minorStepAuto )
+			if (_minorStepAuto)
 			{
 				_minorStep = _majorStep / 10;
 
 				//_minorStep = CalcStepSize( _majorStep, 10 );
-				if ( _minorStep < 1 )
+				if (_minorStep < 1)
 					_minorStep = 1;
 			}
 
 			_mag = 0;
 		}
 
+		/// <summary>
+		/// Determine the value for the first major tic.
+		/// </summary>
+		/// <remarks>
+		/// This is done by finding the first possible value that is an integral multiple of
+		/// the step size, taking into account the date/time units if appropriate.
+		/// This method properly accounts for <see cref="Scale.IsLog"/>, <see cref="Scale.IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
+		/// <returns>
+		/// First major tic value (floating point double).
+		/// </returns>
+		override internal double CalcBaseTic()
+		{
+			if (_baseTic != PointPair.Missing)
+				return _baseTic;
+			else
+				return 1.0;
+
+		}
+
+		/// <summary>
+		/// Internal routine to determine the ordinals of the first minor tic mark
+		/// </summary>
+		/// <param name="baseVal">
+		/// The value of the first major tic for the axis.
+		/// </param>
+		/// <returns>
+		/// The ordinal position of the first minor tic, relative to the first major tic.
+		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
+		/// increments before the first major tic.
+		/// </returns>
+		override internal int CalcMinorStart( double baseVal )
+		{
+			// This should never happen (no minor tics for text labels)
+			return 0;
+		}
+		/// <summary>
+		/// Internal routine to determine the ordinals of the first and last major axis label.
+		/// </summary>
+		/// <returns>
+		/// This is the total number of major tics for this axis.
+		/// </returns>
+		override internal int CalcNumTics()
+		{
+			int nTics = 1;
+
+			// If no array of labels is available, just assume 10 labels so we don't blow up.
+			if ( _textLabels == null )
+				nTics = 10;
+			else
+				nTics = _textLabels.Length;
+
+			if ( nTics < 1 )
+				nTics = 1;
+			else if ( nTics > 1000 )
+				nTics = 1000;
+
+			return nTics;
+		}
 		/// <summary>
 		/// Make a value label for an <see cref="AxisType.Text" /> <see cref="Axis" />.
 		/// </summary>

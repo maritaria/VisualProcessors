@@ -36,30 +36,6 @@ namespace ZedGraph
 	{
 	#region Fields
 
-		/// <summary>Private field that determines the size of the gap between bar clusters
-		/// for bar charts.  This gap is expressed as a fraction of the bar size (1.0 means
-		/// leave a 1-barwidth gap between clusters).
-		/// Use the public property <see cref="MinClusterGap"/> to access this value. </summary>
-		private float _minClusterGap;
-		/// <summary>Private field that determines the size of the gap between individual bars
-		/// within a bar cluster for bar charts.  This gap is expressed as a fraction of the
-		/// bar size (1.0 means leave a 1-barwidth gap between each bar).
-		/// Use the public property <see cref="MinBarGap"/> to access this value. </summary>
-		private float _minBarGap;
-		/// <summary>Private field that determines the base axis from which <see cref="Bar"/>
-		/// graphs will be displayed.  The base axis is the axis from which the bars grow with
-		/// increasing value. The value is of the enumeration type <see cref="ZedGraph.BarBase"/>.
-		/// To access this value, use the public property <see cref="Base"/>.
-		/// </summary>
-		/// <seealso cref="Default.Base"/>
-		private BarBase _base;
-		/// <summary>Private field that determines how the <see cref="BarItem"/>
-		/// graphs will be displayed. See the <see cref="ZedGraph.BarType"/> enum
-		/// for the individual types available.
-		/// To access this value, use the public property <see cref="Type"/>.
-		/// </summary>
-		/// <seealso cref="Default.Type"/>
-		private BarType _type;
 		/// <summary>Private field that determines the width of a bar cluster (for bar charts)
 		/// in user scale units.  Normally, this value is 1.0 because bar charts are typically
 		/// <see cref="AxisType.Ordinal"/> or <see cref="AxisType.Text"/>, and the bars are
@@ -81,6 +57,32 @@ namespace ZedGraph
 		/// </summary>
 		internal GraphPane _ownerPane;
 
+		/// <summary>Private field that determines the base axis from which <see cref="Bar"/>
+		/// graphs will be displayed.  The base axis is the axis from which the bars grow with
+		/// increasing value. The value is of the enumeration type <see cref="ZedGraph.BarBase"/>.
+		/// To access this value, use the public property <see cref="Base"/>.
+		/// </summary>
+		/// <seealso cref="Default.Base"/>
+		private BarBase _base;
+
+		/// <summary>Private field that determines the size of the gap between individual bars
+		/// within a bar cluster for bar charts.  This gap is expressed as a fraction of the
+		/// bar size (1.0 means leave a 1-barwidth gap between each bar).
+		/// Use the public property <see cref="MinBarGap"/> to access this value. </summary>
+		private float _minBarGap;
+
+		/// <summary>Private field that determines the size of the gap between bar clusters
+		/// for bar charts.  This gap is expressed as a fraction of the bar size (1.0 means
+		/// leave a 1-barwidth gap between clusters).
+		/// Use the public property <see cref="MinClusterGap"/> to access this value. </summary>
+		private float _minClusterGap;
+		/// <summary>Private field that determines how the <see cref="BarItem"/>
+		/// graphs will be displayed. See the <see cref="ZedGraph.BarType"/> enum
+		/// for the individual types available.
+		/// To access this value, use the public property <see cref="Type"/>.
+		/// </summary>
+		/// <seealso cref="Default.Type"/>
+		private BarType _type;
 	#endregion
 
 	#region Constructors
@@ -122,31 +124,6 @@ namespace ZedGraph
 
 	#region Bar Properties
 
-		/// <summary>
-		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
-		/// fraction of the bar size.
-		/// </summary>
-		/// <seealso cref="Default.MinClusterGap"/>
-		/// <seealso cref="MinBarGap"/>
-		/// <seealso cref="ClusterScaleWidth"/>
-		public float MinClusterGap
-		{
-			get { return _minClusterGap; }
-			set { _minClusterGap = value; }
-		}
-		/// <summary>
-		/// The minimum space between individual <see cref="Bar">Bars</see>
-		/// within a cluster, expressed as a
-		/// fraction of the bar size.
-		/// </summary>
-		/// <seealso cref="Default.MinBarGap"/>
-		/// <seealso cref="MinClusterGap"/>
-		/// <seealso cref="ClusterScaleWidth"/>
-		public float MinBarGap
-		{
-			get { return _minBarGap; }
-			set { _minBarGap = value; }
-		}
 		/// <summary>Determines the base axis from which <see cref="Bar"/>
 		/// graphs will be displayed.
 		/// </summary>
@@ -159,16 +136,7 @@ namespace ZedGraph
 			get { return _base; }
 			set { _base = value; }
 		}
-		/// <summary>Determines how the <see cref="BarItem"/>
-		/// graphs will be displayed. See the <see cref="ZedGraph.BarType"/> enum
-		/// for the individual types available.
-		/// </summary>
-		/// <seealso cref="Default.Type"/>
-		public BarType Type
-		{
-			get { return _type; }
-			set { _type = value; }
-		}
+
 		/// <summary>
 		/// The width of an individual bar cluster on a <see cref="Bar"/> graph.
 		/// This value only applies to bar graphs plotted on non-ordinal X axis
@@ -213,6 +181,42 @@ namespace ZedGraph
 			set { _clusterScaleWidthAuto = value; }
 		}
 
+		/// <summary>
+		/// The minimum space between individual <see cref="Bar">Bars</see>
+		/// within a cluster, expressed as a
+		/// fraction of the bar size.
+		/// </summary>
+		/// <seealso cref="Default.MinBarGap"/>
+		/// <seealso cref="MinClusterGap"/>
+		/// <seealso cref="ClusterScaleWidth"/>
+		public float MinBarGap
+		{
+			get { return _minBarGap; }
+			set { _minBarGap = value; }
+		}
+
+		/// <summary>
+		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
+		/// fraction of the bar size.
+		/// </summary>
+		/// <seealso cref="Default.MinClusterGap"/>
+		/// <seealso cref="MinBarGap"/>
+		/// <seealso cref="ClusterScaleWidth"/>
+		public float MinClusterGap
+		{
+			get { return _minClusterGap; }
+			set { _minClusterGap = value; }
+		}
+		/// <summary>Determines how the <see cref="BarItem"/>
+		/// graphs will be displayed. See the <see cref="ZedGraph.BarType"/> enum
+		/// for the individual types available.
+		/// </summary>
+		/// <seealso cref="Default.Type"/>
+		public BarType Type
+		{
+			get { return _type; }
+			set { _type = value; }
+		}
 	#endregion
 
 	#region Serialization
@@ -268,6 +272,29 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
+
+		/// <summary>
+		/// Determine the <see cref="Axis"/> from which the <see cref="Bar"/> charts are based.
+		/// </summary>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="BarSettings"/>
+		/// <seealso cref="ZedGraph.BarSettings.Base"/>
+		/// <seealso cref="Scale.GetClusterWidth(GraphPane)"/>
+		/// <returns>The <see cref="Axis"/> class for the axis from which the bars are based</returns>
+		public Axis BarBaseAxis()
+		{
+			Axis barAxis;
+			if (_base == BarBase.Y)
+				barAxis = _ownerPane.YAxis;
+			else if (_base == BarBase.Y2)
+				barAxis = _ownerPane.Y2Axis;
+			else if (_base == BarBase.X2)
+				barAxis = _ownerPane.X2Axis;
+			else
+				barAxis = _ownerPane.XAxis;
+
+			return barAxis;
+		}
 
 		/// <summary>
 		/// Calculate the width of an individual bar cluster on a <see cref="BarItem"/> graph.
@@ -337,6 +364,25 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Determine the width, in screen pixel units, of each bar cluster including
+		/// the cluster gaps and bar gaps.
+		/// </summary>
+		/// <remarks>This method calls the <see cref="Scale.GetClusterWidth(GraphPane)"/>
+		/// method for the base <see cref="Axis"/> for <see cref="Bar"/> graphs
+		/// (the base <see cref="Axis"/> is assigned by the <see cref="ZedGraph.BarSettings.Base"/>
+		/// property).
+		/// </remarks>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="ZedGraph.BarSettings"/>
+		/// <seealso cref="Scale.GetClusterWidth(GraphPane)"/>
+		/// <seealso cref="ZedGraph.BarSettings.Type"/>
+		/// <returns>The width of each bar cluster, in pixel units</returns>
+		public float GetClusterWidth()
+		{
+			return BarBaseAxis()._scale.GetClusterWidth(_ownerPane);
+		}
+
+		/// <summary>
 		/// Determine the minimum increment between individual points to be used for
 		/// calculating a bar size that fits without overlapping
 		/// </summary>
@@ -379,49 +425,6 @@ namespace ZedGraph
 
 			return minStep;
 		}
-
-		/// <summary>
-		/// Determine the width, in screen pixel units, of each bar cluster including
-		/// the cluster gaps and bar gaps.
-		/// </summary>
-		/// <remarks>This method calls the <see cref="Scale.GetClusterWidth(GraphPane)"/>
-		/// method for the base <see cref="Axis"/> for <see cref="Bar"/> graphs
-		/// (the base <see cref="Axis"/> is assigned by the <see cref="ZedGraph.BarSettings.Base"/>
-		/// property).
-		/// </remarks>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="ZedGraph.BarSettings"/>
-		/// <seealso cref="Scale.GetClusterWidth(GraphPane)"/>
-		/// <seealso cref="ZedGraph.BarSettings.Type"/>
-		/// <returns>The width of each bar cluster, in pixel units</returns>
-		public float GetClusterWidth()
-		{
-			return BarBaseAxis()._scale.GetClusterWidth( _ownerPane );
-		}
-
-		/// <summary>
-		/// Determine the <see cref="Axis"/> from which the <see cref="Bar"/> charts are based.
-		/// </summary>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="BarSettings"/>
-		/// <seealso cref="ZedGraph.BarSettings.Base"/>
-		/// <seealso cref="Scale.GetClusterWidth(GraphPane)"/>
-		/// <returns>The <see cref="Axis"/> class for the axis from which the bars are based</returns>
-		public Axis BarBaseAxis()
-		{
-			Axis barAxis;
-			if ( _base == BarBase.Y )
-				barAxis = _ownerPane.YAxis;
-			else if ( _base == BarBase.Y2 )
-				barAxis = _ownerPane.Y2Axis;
-			else if ( _base == BarBase.X2 )
-				barAxis = _ownerPane.X2Axis;
-			else
-				barAxis = _ownerPane.XAxis;
-
-			return barAxis;
-		}
-
 	#endregion
 
 	#region Defaults
@@ -432,34 +435,11 @@ namespace ZedGraph
 		/// </summary>
 		public struct Default
 		{
-			/// <summary>
-			/// The default dimension gap between clusters of bars on a
-			/// <see cref="Bar"/> graph.
-			/// This dimension is expressed in terms of the normal bar width.
-			/// </summary>
-			/// <seealso cref="Default.MinBarGap"/>
-			/// <seealso cref="BarSettings.MinClusterGap"/>
-			public static float MinClusterGap = 1.0F;
-			/// <summary>
-			/// The default dimension gap between each individual bar within a bar cluster
-			/// on a <see cref="Bar"/> graph.
-			/// This dimension is expressed in terms of the normal bar width.
-			/// </summary>
-			/// <seealso cref="Default.MinClusterGap"/>
-			/// <seealso cref="BarSettings.MinBarGap"/>
-			public static float MinBarGap = 0.2F;
 			/// <summary>The default value for the <see cref="BarSettings.Base"/>, which determines the base
 			/// <see cref="Axis"/> from which the <see cref="Bar"/> graphs will be displayed.
 			/// </summary>
 			/// <seealso cref="BarSettings.Base"/>
 			public static BarBase Base = BarBase.X;
-			/// <summary>The default value for the <see cref="BarSettings.Type"/> property, which
-			/// determines if the bars are drawn overlapping eachother in a "stacked" format,
-			/// or side-by-side in a "cluster" format.  See the <see cref="ZedGraph.BarType"/>
-			/// for more information.
-			/// </summary>
-			/// <seealso cref="BarSettings.Type"/>
-			public static BarType Type = BarType.Cluster;
 
 			/// <summary>
 			/// The default width of a bar cluster 
@@ -477,6 +457,31 @@ namespace ZedGraph
 			/// The default value for <see cref="BarSettings.ClusterScaleWidthAuto" />.
 			/// </summary>
 			public static bool ClusterScaleWidthAuto = true;
+
+			/// <summary>
+			/// The default dimension gap between each individual bar within a bar cluster
+			/// on a <see cref="Bar"/> graph.
+			/// This dimension is expressed in terms of the normal bar width.
+			/// </summary>
+			/// <seealso cref="Default.MinClusterGap"/>
+			/// <seealso cref="BarSettings.MinBarGap"/>
+			public static float MinBarGap = 0.2F;
+
+			/// <summary>
+			/// The default dimension gap between clusters of bars on a
+			/// <see cref="Bar"/> graph.
+			/// This dimension is expressed in terms of the normal bar width.
+			/// </summary>
+			/// <seealso cref="Default.MinBarGap"/>
+			/// <seealso cref="BarSettings.MinClusterGap"/>
+			public static float MinClusterGap = 1.0F;
+			/// <summary>The default value for the <see cref="BarSettings.Type"/> property, which
+			/// determines if the bars are drawn overlapping eachother in a "stacked" format,
+			/// or side-by-side in a "cluster" format.  See the <see cref="ZedGraph.BarType"/>
+			/// for more information.
+			/// </summary>
+			/// <seealso cref="BarSettings.Type"/>
+			public static BarType Type = BarType.Cluster;
 		}
 	#endregion
 

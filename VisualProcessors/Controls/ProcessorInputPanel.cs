@@ -21,7 +21,7 @@ namespace VisualProcessors.Controls
 		private InputChannel m_InputChannel;
 		private Processor m_Processor;
 
-		public PipelineForm Pipeline		{			get;			set;		}
+		public PipelineForm Pipeline { get; set; }
 
 		public Processor Processor
 		{

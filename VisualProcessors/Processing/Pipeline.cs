@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Reflection;
 
 namespace VisualProcessors.Processing
 {
@@ -16,8 +17,8 @@ namespace VisualProcessors.Processing
 
 		private bool m_BreakOnModification = true;
 		private List<Processor> m_Processors = new List<Processor>();
+		private List<Assembly> m_Assemblies = new List<Assembly>();
 		private bool m_Running = false;
-
 		public bool BreakOnModification
 		{
 			get
@@ -30,6 +31,14 @@ namespace VisualProcessors.Processing
 				{
 					m_BreakOnModification = value;
 				}
+			}
+		}
+
+		public Assembly[] Assemblies
+		{
+			get
+			{
+				return m_Assemblies.ToArray();
 			}
 		}
 
@@ -47,6 +56,7 @@ namespace VisualProcessors.Processing
 
 		public Pipeline()
 		{
+			AddAssembly(this.GetType().Assembly);
 		}
 
 		#endregion Constructor
@@ -87,6 +97,16 @@ namespace VisualProcessors.Processing
 				{
 					m_Processors.Add(p);
 				}
+			}
+		}
+
+
+		public void AddAssembly(Assembly asm)
+		{
+			if (!m_Assemblies.Contains(asm))
+			{
+				m_Assemblies.Add(asm);
+				OnAssemblyAdded(asm);
 			}
 		}
 
@@ -213,6 +233,16 @@ namespace VisualProcessors.Processing
 
 		public event EventHandler Stopped;
 
+		public event Action<Pipeline, Assembly> AssemblyAdded;
+
+		private void OnAssemblyAdded(Assembly asm)
+		{
+			if (AssemblyAdded!=null)
+			{
+				AssemblyAdded(this, asm);
+			}
+		}
+
 		private void OnStarted()
 		{
 			if (Started != null)
@@ -250,6 +280,7 @@ namespace VisualProcessors.Processing
 
 		#region IXmlSerializable Members
 
+
 		public XmlSchema GetSchema()
 		{
 			return (null);
@@ -257,38 +288,55 @@ namespace VisualProcessors.Processing
 
 		public void ReadXml(XmlReader reader)
 		{
-			XmlSerializer serializer = new XmlSerializer(typeof(List<XmlAnything<Processor>>), GetOverrides());
-			reader.Read();
-			List<XmlAnything<Processor>> plist = (List<XmlAnything<Processor>>)serializer.Deserialize(reader);
-			reader.ReadEndElement();
+			reader.Read();//Consume <pipeline...>
+			List<AssemblyDetails> assemblies = new List<AssemblyDetails>();
+			XmlSerializer s1 = new XmlSerializer(assemblies.GetType(), GetOverrides(assemblies.GetType(), "Assemblies"));
+			assemblies = (List<AssemblyDetails>)s1.Deserialize(reader);
+			foreach (AssemblyDetails asmd in assemblies)
+			{
+				m_Assemblies.Add(asmd.GetAssembly());
+			}
+
+			List<XmlAnything<Processor>> plist = new List<XmlAnything<Processor>>();
+			XmlSerializer s2 = new XmlSerializer(plist.GetType(), GetOverrides(plist.GetType(), "Processors"));
+			plist = (List<XmlAnything<Processor>>)s2.Deserialize(reader);
 			foreach (XmlAnything<Processor> element in plist)
 			{
 				m_Processors.Add(element.Value);
 			}
+			reader.ReadEndElement();//Consume </pipeline>
 			Build();
 		}
 
 		public void WriteXml(XmlWriter writer)
 		{
-			XmlSerializer serializer = new XmlSerializer(typeof(List<XmlAnything<Processor>>), GetOverrides());
 			XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
 			ns.Add("", "");
 
+			List<AssemblyDetails> assemblies = new List<AssemblyDetails>();
+			XmlSerializer s1 = new XmlSerializer(assemblies.GetType(), GetOverrides(assemblies.GetType(), "Assemblies"));
+			foreach (Assembly asm in m_Assemblies)
+			{
+				assemblies.Add(new AssemblyDetails(asm));
+			}
+			s1.Serialize(writer, assemblies, ns);
+
 			List<XmlAnything<Processor>> plist = new List<XmlAnything<Processor>>();
+			XmlSerializer s2 = new XmlSerializer(plist.GetType(), GetOverrides(plist.GetType(),"Processors"));
 			foreach (Processor p in m_Processors)
 			{
 				plist.Add(new XmlAnything<Processor>(p));
 			}
-			serializer.Serialize(writer, plist, ns);
+			s2.Serialize(writer, plist, ns);
 		}
 
-		private XmlAttributeOverrides GetOverrides()
+		private XmlAttributeOverrides GetOverrides(Type t, string name)
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
 			XmlAttributes attributes = new XmlAttributes();
-			attributes.XmlRoot = new XmlRootAttribute("Processors");
+			attributes.XmlRoot = new XmlRootAttribute(name);
 			attributes.Xmlns = false;
-			overrides.Add(typeof(List<XmlAnything<Processor>>), attributes);
+			overrides.Add(t, attributes);
 			return overrides;
 		}
 

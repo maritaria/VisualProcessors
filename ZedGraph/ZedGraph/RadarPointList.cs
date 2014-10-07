@@ -54,6 +54,32 @@ namespace ZedGraph
 	#region Properties
 
 		/// <summary>
+		/// Indicates if points should be added in clockwise or counter-clockwise order
+		/// </summary>
+		public bool Clockwise
+		{
+			get { return _clockwise; }
+			set { _clockwise = value; }
+		}
+
+		/// <summary>
+		/// gets the number of points available in the list
+		/// </summary>
+		public new int Count
+		{
+			get { return base.Count + 1; }
+		}
+
+		/// <summary>
+		/// Sets the angular rotation (starting angle) for the initial axis
+		/// </summary>
+		public double Rotation
+		{
+			get { return _rotation; }
+			set { _rotation = value; }
+		}
+
+		/// <summary>
 		/// Indexer to access the specified <see cref="PointPair"/> object by
 		/// its ordinal position in the list.  This method does the calculations
 		/// to convert the data from polar to rectangular coordinates.
@@ -96,25 +122,6 @@ namespace ZedGraph
 				pt.Y = Math.Sqrt( value.X * value.X + value.Y * value.Y );
 			}
 		}
-
-		/// <summary>
-		/// Indicates if points should be added in clockwise or counter-clockwise order
-		/// </summary>
-		public bool Clockwise
-		{
-			get { return _clockwise; }
-			set { _clockwise = value; }
-		}
-
-		/// <summary>
-		/// Sets the angular rotation (starting angle) for the initial axis
-		/// </summary>
-		public double Rotation
-		{
-			get { return _rotation; }
-			set { _rotation = value; }
-		}
-
 		/// <summary>
 		/// Get the raw data
 		/// </summary>
@@ -124,15 +131,6 @@ namespace ZedGraph
 		{
 			return base[index];
 		}
-
-		/// <summary>
-		/// gets the number of points available in the list
-		/// </summary>
-		public new int Count
-		{
-			get { return base.Count + 1; }
-		}
-
 	#endregion
 
 	#region Constructors
@@ -153,6 +151,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public RadarPointList Clone()
+		{
+			return new RadarPointList(this);
+		}
+
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
@@ -161,17 +168,6 @@ namespace ZedGraph
 		{
 			return this.Clone();
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public RadarPointList Clone()
-		{
-			return new RadarPointList( this );
-		}
-
-
 	#endregion
 
 	#region Methods

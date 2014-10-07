@@ -32,98 +32,110 @@ namespace ZedGraph
 	/// </remarks>
 	/// <seealso cref="PointPairList" />
 	/// <seealso cref="IPointList" />
-	/// 
+	///
 	/// <author> John Champion</author>
 	/// <version> $Revision: 3.4 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class BasicArrayPointList : IPointList
 	{
-	#region Fields
+		#region Fields
 
 		/// <summary>
-		/// Instance of an array of x values
+		///  Instance of an array of x values
 		/// </summary>
 		public double[] x;
+
 		/// <summary>
-		/// Instance of an array of x values
+		///  Instance of an array of x values
 		/// </summary>
 		public double[] y;
 
-	#endregion
+		#endregion Fields
 
-	#region Properties
-		/// <summary>
-		/// Indexer to access the specified <see cref="PointPair"/> object by
-		/// its ordinal position in the list.
-		/// </summary>
-		/// <remarks>
-		/// Returns <see cref="PointPairBase.Missing" /> for any value of <see paramref="index" />
-		/// that is outside of its corresponding array bounds.
-		/// </remarks>
-		/// <param name="index">The ordinal position (zero-based) of the
-		/// <see cref="PointPair"/> object to be accessed.</param>
-		/// <value>A <see cref="PointPair"/> object reference.</value>
-		public PointPair this[ int index ]  
-		{
-			get
-			{
-				double xVal, yVal;
-				if ( index >= 0 && index < x.Length )
-					xVal = x[index];
-				else
-					xVal = PointPair.Missing;
-
-				if ( index >= 0 && index < y.Length )
-					yVal = y[index];
-				else
-					yVal = PointPair.Missing;
-				return new PointPair( xVal, yVal, PointPair.Missing, null );
-			}
-			set
-			{
-				if ( index >= 0 && index < x.Length )
-					x[index] = value.X;
-				if ( index >= 0 && index < y.Length )
-					y[index] = value.Y;
-			}
-		}
+		#region Properties
 
 		/// <summary>
-		/// Returns the number of points available in the arrays.  Count will be the greater
-		/// of the lengths of the X and Y arrays.
+		///  Returns the number of points available in the arrays. Count will be the greater of the
+		///  lengths of the X and Y arrays.
 		/// </summary>
 		public int Count
 		{
 			get { return x.Length > y.Length ? x.Length : y.Length; }
 		}
 
-	#endregion
+		/// <summary>
+		///  Indexer to access the specified <see cref="PointPair" /> object by its ordinal position
+		///  in the list.
+		/// </summary>
+		/// <remarks>
+		///  Returns <see cref="PointPairBase.Missing" /> for any value of <see paramref="index" />
+		///  that is outside of its corresponding array bounds.
+		/// </remarks>
+		/// <param name="index">
+		///  The ordinal position (zero-based) of the <see cref="PointPair" /> object to be
+		///  accessed.
+		/// </param>
+		/// <value>A <see cref="PointPair" /> object reference.</value>
+		public PointPair this[int index]
+		{
+			get
+			{
+				double xVal, yVal;
+				if (index >= 0 && index < x.Length)
+					xVal = x[index];
+				else
+					xVal = PointPair.Missing;
 
-	#region Constructors
+				if (index >= 0 && index < y.Length)
+					yVal = y[index];
+				else
+					yVal = PointPair.Missing;
+				return new PointPair(xVal, yVal, PointPair.Missing, null);
+			}
+			set
+			{
+				if (index >= 0 && index < x.Length)
+					x[index] = value.X;
+				if (index >= 0 && index < y.Length)
+					y[index] = value.Y;
+			}
+		}
+
+		#endregion Properties
+
+		#region Constructors
 
 		/// <summary>
-		/// Constructor to initialize the PointPairList from two arrays of
-		/// type double.
+		///  Constructor to initialize the PointPairList from two arrays of type double.
 		/// </summary>
-		public BasicArrayPointList( double[] x, double[] y )
+		public BasicArrayPointList(double[] x, double[] y)
 		{
 			this.x = x;
 			this.y = y;
 		}
 
 		/// <summary>
-		/// The Copy Constructor
+		///  The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The PointPairList from which to copy</param>
-		public BasicArrayPointList( BasicArrayPointList rhs )
+		public BasicArrayPointList(BasicArrayPointList rhs)
 		{
-			x = (double[]) rhs.x.Clone();
-			y = (double[]) rhs.y.Clone();
+			x = (double[])rhs.x.Clone();
+			y = (double[])rhs.y.Clone();
 		}
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		///  Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public BasicArrayPointList Clone()
+		{
+			return new BasicArrayPointList(this);
+		}
+
+		/// <summary>
+		///  Implement the <see cref="ICloneable" /> interface in a typesafe manner by just calling
+		///  the typed version of <see cref="Clone" />
 		/// </summary>
 		/// <returns>A deep copy of this object</returns>
 		object ICloneable.Clone()
@@ -131,17 +143,6 @@ namespace ZedGraph
 			return this.Clone();
 		}
 
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public BasicArrayPointList Clone()
-		{
-			return new BasicArrayPointList( this );
-		}
-
-		
-	#endregion
-
+		#endregion Constructors
 	}
 }

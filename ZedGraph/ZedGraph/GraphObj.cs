@@ -39,26 +39,6 @@ namespace ZedGraph
 	{
 	#region Fields
 		/// <summary>
-		/// Protected field that stores the location of this <see cref="GraphObj"/>.
-		/// Use the public property <see cref="Location"/> to access this value.
-		/// </summary>
-		protected Location _location;
-
-		/// <summary>
-		/// Protected field that determines whether or not this <see cref="GraphObj"/>
-		/// is visible in the graph.  Use the public property <see cref="IsVisible"/> to
-		/// access this value.
-		/// </summary>
-		protected bool _isVisible;
-		
-		/// <summary>
-		/// Protected field that determines whether or not the rendering of this <see cref="GraphObj"/>
-		/// will be clipped to the ChartRect.  Use the public property <see cref="IsClippedToChartRect"/> to
-		/// access this value.
-		/// </summary>
-		protected bool _isClippedToChartRect;
-		
-		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional
 		/// information associated with the <see cref="GraphObj"/>.  ZedGraph does
 		/// not use this value for any purpose.
@@ -71,6 +51,11 @@ namespace ZedGraph
 		public object Tag;
 
 		/// <summary>
+		/// Internal field that stores the hyperlink information for this object.
+		/// </summary>
+		internal Link _link;
+
+		/// <summary>
 		/// Internal field that determines the z-order "depth" of this
 		/// item relative to other graphic objects.  Use the public property
 		/// <see cref="ZOrder"/> to access this value.
@@ -78,10 +63,24 @@ namespace ZedGraph
 		internal ZOrder _zOrder;
 
 		/// <summary>
-		/// Internal field that stores the hyperlink information for this object.
+		/// Protected field that determines whether or not the rendering of this <see cref="GraphObj"/>
+		/// will be clipped to the ChartRect.  Use the public property <see cref="IsClippedToChartRect"/> to
+		/// access this value.
 		/// </summary>
-		internal Link _link;
+		protected bool _isClippedToChartRect;
 
+		/// <summary>
+		/// Protected field that determines whether or not this <see cref="GraphObj"/>
+		/// is visible in the graph.  Use the public property <see cref="IsVisible"/> to
+		/// access this value.
+		/// </summary>
+		protected bool _isVisible;
+
+		/// <summary>
+		/// Protected field that stores the location of this <see cref="GraphObj"/>.
+		/// Use the public property <see cref="Location"/> to access this value.
+		/// </summary>
+		protected Location _location;
 	#endregion
 
 	#region Defaults
@@ -91,6 +90,14 @@ namespace ZedGraph
 		/// </summary>
 		public struct Default
 		{
+			/// <summary>
+			/// Default value for the horizontal <see cref="GraphObj"/>
+			/// text alignment (<see cref="GraphObj.Location"/> property).
+			/// This is specified
+			/// using the <see cref="AlignH"/> enum type.
+			/// </summary>
+			public static AlignH AlignH = AlignH.Center;
+
 			// Default text item properties
 			/// <summary>
 			/// Default value for the vertical <see cref="GraphObj"/>
@@ -99,13 +106,6 @@ namespace ZedGraph
 			/// using the <see cref="AlignV"/> enum type.
 			/// </summary>
 			public static AlignV AlignV = AlignV.Center;
-			/// <summary>
-			/// Default value for the horizontal <see cref="GraphObj"/>
-			/// text alignment (<see cref="GraphObj.Location"/> property).
-			/// This is specified
-			/// using the <see cref="AlignH"/> enum type.
-			/// </summary>
-			public static AlignH AlignH = AlignH.Center;
 			/// <summary>
 			/// The default coordinate system to be used for defining the
 			/// <see cref="GraphObj"/> location coordinates
@@ -122,6 +122,52 @@ namespace ZedGraph
 	#endregion
 
 	#region Properties
+		/// <summary>
+		/// Gets or sets a value that determines whether or not the rendering of this <see cref="GraphObj"/>
+		/// will be clipped to the <see cref="Chart.Rect"/>.
+		/// </summary>
+		/// <value>true to clip the <see cref="GraphObj"/> to the <see cref="Chart.Rect"/> bounds,
+		/// false to leave it unclipped.</value>
+		public bool IsClippedToChartRect
+		{
+			get { return _isClippedToChartRect; }
+			set { _isClippedToChartRect = value; }
+		}
+
+		/// <summary>
+		/// true if the <see cref="ZOrder" /> of this object is set to put it in front
+		/// of the <see cref="CurveItem" /> data points.
+		/// </summary>
+		public bool IsInFrontOfData
+		{
+			get
+			{
+				return _zOrder == ZOrder.A_InFront ||
+							_zOrder == ZOrder.B_BehindLegend ||
+							_zOrder == ZOrder.C_BehindChartBorder;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines if this <see cref="GraphObj"/> will be
+		/// visible in the graph.  true displays the item, false hides it.
+		/// </summary>
+		public bool IsVisible
+		{
+			get { return _isVisible; }
+			set { _isVisible = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the hyperlink information for this <see cref="GraphObj" />.
+		/// </summary>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
+		public Link Link
+		{
+			get { return _link; }
+			set { _link = value; }
+		}
+
 		/// <summary>
 		/// The <see cref="ZedGraph.Location"/> struct that describes the location
 		/// for this <see cref="GraphObj"/>.
@@ -148,53 +194,6 @@ namespace ZedGraph
 			get { return _zOrder; }
 			set { _zOrder = value; }
 		}
-		
-		/// <summary>
-		/// Gets or sets a value that determines if this <see cref="GraphObj"/> will be
-		/// visible in the graph.  true displays the item, false hides it.
-		/// </summary>
-		public bool IsVisible
-		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that determines whether or not the rendering of this <see cref="GraphObj"/>
-		/// will be clipped to the <see cref="Chart.Rect"/>.
-		/// </summary>
-		/// <value>true to clip the <see cref="GraphObj"/> to the <see cref="Chart.Rect"/> bounds,
-		/// false to leave it unclipped.</value>
-		public bool IsClippedToChartRect
-		{
-			get { return _isClippedToChartRect; }
-			set { _isClippedToChartRect = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets the hyperlink information for this <see cref="GraphObj" />.
-		/// </summary>
-		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
-		public Link Link
-		{
-			get { return _link; }
-			set { _link = value; }
-		}
-
-		/// <summary>
-		/// true if the <see cref="ZOrder" /> of this object is set to put it in front
-		/// of the <see cref="CurveItem" /> data points.
-		/// </summary>
-		public bool IsInFrontOfData
-		{
-			get
-			{
-				return	_zOrder == ZOrder.A_InFront ||
-							_zOrder == ZOrder.B_BehindLegend ||
-							_zOrder == ZOrder.C_BehindChartBorder;
-			}
-		}
-
 	#endregion
 	
 	#region Constructors
@@ -462,7 +461,13 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		abstract public void Draw( Graphics g, PaneBase pane, float scaleFactor );
-		
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		abstract public void GetCoords(PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords);
+
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
 		/// <see cref="GraphObj"/>.
@@ -492,13 +497,6 @@ namespace ZedGraph
 
 			return true;
 		}
-
-		/// <summary>
-		/// Determines the shape type and Coords values for this GraphObj
-		/// </summary>
-		abstract public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
-				out string shape, out string coords );
-
 	#endregion
 	
 	}

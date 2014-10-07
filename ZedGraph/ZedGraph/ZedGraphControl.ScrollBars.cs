@@ -27,184 +27,117 @@ namespace ZedGraph
 {
 	partial class ZedGraphControl
 	{
+		#region ScrollBars
 
-	#region ScrollBars
-
-		private void vScrollBar1_Scroll( object sender, ScrollEventArgs e )
-		{
-			if ( this.GraphPane != null )
-			{
-				if ( ( e.Type != ScrollEventType.ThumbPosition &&
-						 e.Type != ScrollEventType.ThumbTrack ) ||
-					  ( e.Type == ScrollEventType.ThumbTrack &&
-						 _zoomState == null ) )
-				{
-					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
-				}
-				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
-				{
-					ScrollRange scroll = _yScrollRangeList[i];
-					if ( scroll.IsScrollable )
-					{
-						Axis axis = this.GraphPane.YAxisList[i];
-						HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, vScrollBar1.LargeChange,
-										!axis.Scale.IsReverse );
-					}
-				}
-
-				for ( int i = 0; i < this.GraphPane.Y2AxisList.Count; i++ )
-				{
-					ScrollRange scroll = _y2ScrollRangeList[i];
-					if ( scroll.IsScrollable )
-					{
-						Axis axis = this.GraphPane.Y2AxisList[i];
-						HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, vScrollBar1.LargeChange,
-										!axis.Scale.IsReverse );
-					}
-				}
-
-				ApplyToAllPanes( this.GraphPane );
-
-				ProcessEventStuff( vScrollBar1, e );
-			}
-		}
-
-		private void ApplyToAllPanes( GraphPane primaryPane )
-		{
-			foreach ( GraphPane pane in _masterPane._paneList )
-			{
-				if ( pane != primaryPane )
-				{
-					if ( _isSynchronizeXAxes )
-						Synchronize( primaryPane.XAxis, pane.XAxis );
-					if ( _isSynchronizeYAxes )
-						Synchronize( primaryPane.YAxis, pane.YAxis );
-				}
-			}
-		}
-
-		private void Synchronize( Axis source, Axis dest )
-		{
-			dest._scale._min = source._scale._min;
-			dest._scale._max = source._scale._max;
-			dest._scale._majorStep = source._scale._majorStep;
-			dest._scale._minorStep = source._scale._minorStep;
-			dest._scale._minAuto = source._scale._minAuto;
-			dest._scale._maxAuto = source._scale._maxAuto;
-			dest._scale._majorStepAuto = source._scale._majorStepAuto;
-			dest._scale._minorStepAuto = source._scale._minorStepAuto;
-		}
-
-		private void hScrollBar1_Scroll( object sender, ScrollEventArgs e )
-		{
-			if ( this.GraphPane != null )
-			{
-				if ( ( e.Type != ScrollEventType.ThumbPosition &&
-						 e.Type != ScrollEventType.ThumbTrack ) ||
-					  ( e.Type == ScrollEventType.ThumbTrack &&
-						 _zoomState == null ) )
-					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
-
-				HandleScroll( this.GraphPane.XAxis, e.NewValue, _xScrollRange.Min, _xScrollRange.Max,
-								hScrollBar1.LargeChange, this.GraphPane.XAxis.Scale.IsReverse );
-
-				ApplyToAllPanes( this.GraphPane );
-
-				ProcessEventStuff( hScrollBar1, e );
-			}
-		}
-
-		private void ProcessEventStuff( ScrollBar scrollBar, ScrollEventArgs e )
-		{
-			if ( e.Type == ScrollEventType.ThumbTrack )
-			{
-				if ( this.ScrollProgressEvent != null )
-					this.ScrollProgressEvent( this, hScrollBar1, _zoomState,
-								new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
-			}
-			else // if ( e.Type == ScrollEventType.ThumbPosition )
-			{
-				if ( _zoomState != null && _zoomState.IsChanged( this.GraphPane ) )
-				{
-					//this.GraphPane.ZoomStack.Push( _zoomState );
-					ZoomStatePush( this.GraphPane );
-
-					// Provide Callback to notify the user of pan events
-					if ( this.ScrollDoneEvent != null )
-						this.ScrollDoneEvent( this, hScrollBar1, _zoomState,
-									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
-
-					_zoomState = null;
-				}
-			}
-
-			if ( this.ScrollEvent != null )
-				this.ScrollEvent( scrollBar, e );
-		}
-/*
 		/// <summary>
-		/// Use the MouseCaptureChanged as an indicator for the start and end of a scrolling operation
+		///  Sets the value of the scroll range properties (see <see cref="ScrollMinX" />, <see
+		///  cref="ScrollMaxX" />, <see cref="YScrollRangeList" />, and <see
+		///  cref="Y2ScrollRangeList" /> based on the actual range of the data for each
+		///  corresponding <see cref="Axis" />.
 		/// </summary>
-		private void ScrollBarMouseCaptureChanged( object sender, EventArgs e )
+		/// <remarks>
+		///  This method is called automatically by <see cref="AxisChange" /> if <see
+		///  cref="IsAutoScrollRange" /> is true. Note that this will not be called if you call
+		///  AxisChange directly from the <see cref="GraphPane" />. For example,
+		///  zedGraphControl1.AxisChange() works properly, but
+		///  zedGraphControl1.GraphPane.AxisChange() does not.
+		/// </remarks>
+		public void SetScrollRangeFromData()
 		{
-			return;
-
-			ScrollBar scrollBar = sender as ScrollBar;
-			if ( scrollBar != null )
+			if (this.GraphPane != null)
 			{
-				// If this is the start of a new scroll, then Capture will be true
-				if ( scrollBar.Capture )
+				double grace = CalcScrollGrace(this.GraphPane.XAxis.Scale._rangeMin,
+							this.GraphPane.XAxis.Scale._rangeMax);
+
+				_xScrollRange.Min = this.GraphPane.XAxis.Scale._rangeMin - grace;
+				_xScrollRange.Max = this.GraphPane.XAxis.Scale._rangeMax + grace;
+				_xScrollRange.IsScrollable = true;
+
+				for (int i = 0; i < this.GraphPane.YAxisList.Count; i++)
 				{
-					// save the original zoomstate
-					//_zoomState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
-					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
+					Axis axis = this.GraphPane.YAxisList[i];
+					grace = CalcScrollGrace(axis.Scale._rangeMin, axis.Scale._rangeMax);
+					ScrollRange range = new ScrollRange(axis.Scale._rangeMin - grace,
+						axis.Scale._rangeMax + grace, _yScrollRangeList[i].IsScrollable);
+
+					if (i >= _yScrollRangeList.Count)
+						_yScrollRangeList.Add(range);
+					else
+						_yScrollRangeList[i] = range;
 				}
-				else
+
+				for (int i = 0; i < this.GraphPane.Y2AxisList.Count; i++)
 				{
-					// push the prior saved zoomstate, since the scale ranges have already been changed on
-					// the fly during the scrolling operation
-					if ( _zoomState != null && _zoomState.IsChanged( this.GraphPane ) )
-					{
-						//this.GraphPane.ZoomStack.Push( _zoomState );
-						ZoomStatePush( this.GraphPane );
+					Axis axis = this.GraphPane.Y2AxisList[i];
+					grace = CalcScrollGrace(axis.Scale._rangeMin, axis.Scale._rangeMax);
+					ScrollRange range = new ScrollRange(axis.Scale._rangeMin - grace,
+							axis.Scale._rangeMax + grace, _y2ScrollRangeList[i].IsScrollable);
 
-						// Provide Callback to notify the user of pan events
-						if ( this.ScrollDoneEvent != null )
-							this.ScrollDoneEvent( this, scrollBar, _zoomState,
-										new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+					if (i >= _y2ScrollRangeList.Count)
+						_y2ScrollRangeList.Add(range);
+					else
+						_y2ScrollRangeList[i] = range;
+				}
 
-						_zoomState = null;
-					}
+				//this.GraphPane.CurveList.GetRange( out scrollMinX, out scrollMaxX,
+				//		out scrollMinY, out scrollMaxY, out scrollMinY2, out scrollMaxY2, false, false,
+				//		this.GraphPane );
+			}
+		}
+
+		private void ApplyToAllPanes(GraphPane primaryPane)
+		{
+			foreach (GraphPane pane in _masterPane._paneList)
+			{
+				if (pane != primaryPane)
+				{
+					if (_isSynchronizeXAxes)
+						Synchronize(primaryPane.XAxis, pane.XAxis);
+					if (_isSynchronizeYAxes)
+						Synchronize(primaryPane.YAxis, pane.YAxis);
 				}
 			}
 		}
-*/
 
-		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax,
-									int largeChange, bool reverse )
+		private double CalcScrollGrace(double min, double max)
 		{
-			if ( axis != null )
+			if (Math.Abs(max - min) < 1e-30)
 			{
-				if ( scrollMin > axis._scale._min )
+				if (Math.Abs(max) < 1e-30)
+					return _scrollGrace;
+				else
+					return max * _scrollGrace;
+			}
+			else
+				return (max - min) * _scrollGrace;
+		}
+
+		private void HandleScroll(Axis axis, int newValue, double scrollMin, double scrollMax,
+									int largeChange, bool reverse)
+		{
+			if (axis != null)
+			{
+				if (scrollMin > axis._scale._min)
 					scrollMin = axis._scale._min;
-				if ( scrollMax < axis._scale._max )
+				if (scrollMax < axis._scale._max)
 					scrollMax = axis._scale._max;
 
 				int span = _ScrollControlSpan - largeChange;
-				if ( span <= 0 )
+				if (span <= 0)
 					return;
 
-				if ( reverse )
+				if (reverse)
 					newValue = span - newValue;
 
 				Scale scale = axis._scale;
 
 				double delta = scale._maxLinearized - scale._minLinearized;
-				double scrollMin2 = scale.Linearize( scrollMax ) - delta;
-				scrollMin = scale.Linearize( scrollMin );
+				double scrollMin2 = scale.Linearize(scrollMax) - delta;
+				scrollMin = scale.Linearize(scrollMin);
+
 				//scrollMax = scale.Linearize( scrollMax );
 				double val = scrollMin + (double)newValue / (double)span *
-						( scrollMin2 - scrollMin );
+						(scrollMin2 - scrollMin);
 				scale._minLinearized = val;
 				scale._maxLinearized = val + delta;
 				/*
@@ -233,84 +166,63 @@ namespace ZedGraph
 			}
 		}
 
-		/// <summary>
-		/// Sets the value of the scroll range properties (see <see cref="ScrollMinX" />,
-		/// <see cref="ScrollMaxX" />, <see cref="YScrollRangeList" />, and 
-		/// <see cref="Y2ScrollRangeList" /> based on the actual range of the data for
-		/// each corresponding <see cref="Axis" />.
-		/// </summary>
-		/// <remarks>
-		/// This method is called automatically by <see cref="AxisChange" /> if
-		/// <see cref="IsAutoScrollRange" />
-		/// is true.  Note that this will not be called if you call AxisChange directly from the
-		/// <see cref="GraphPane" />.  For example, zedGraphControl1.AxisChange() works properly, but
-		/// zedGraphControl1.GraphPane.AxisChange() does not.</remarks>
-		public void SetScrollRangeFromData()
+		private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
-			if ( this.GraphPane != null )
+			if (this.GraphPane != null)
 			{
-				double grace = CalcScrollGrace( this.GraphPane.XAxis.Scale._rangeMin,
-							this.GraphPane.XAxis.Scale._rangeMax );
+				if ((e.Type != ScrollEventType.ThumbPosition &&
+						 e.Type != ScrollEventType.ThumbTrack) ||
+					  (e.Type == ScrollEventType.ThumbTrack &&
+						 _zoomState == null))
+					ZoomStateSave(this.GraphPane, ZoomState.StateType.Scroll);
 
-				_xScrollRange.Min = this.GraphPane.XAxis.Scale._rangeMin - grace;
-				_xScrollRange.Max = this.GraphPane.XAxis.Scale._rangeMax + grace;
-				_xScrollRange.IsScrollable = true;
+				HandleScroll(this.GraphPane.XAxis, e.NewValue, _xScrollRange.Min, _xScrollRange.Max,
+								hScrollBar1.LargeChange, this.GraphPane.XAxis.Scale.IsReverse);
 
-				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
-				{
-					Axis axis = this.GraphPane.YAxisList[i];
-					grace = CalcScrollGrace( axis.Scale._rangeMin, axis.Scale._rangeMax );
-					ScrollRange range = new ScrollRange( axis.Scale._rangeMin - grace,
-						axis.Scale._rangeMax + grace, _yScrollRangeList[i].IsScrollable );
+				ApplyToAllPanes(this.GraphPane);
 
-					if ( i >= _yScrollRangeList.Count )
-						_yScrollRangeList.Add( range );
-					else
-						_yScrollRangeList[i] = range;
-				}
-
-				for ( int i = 0; i < this.GraphPane.Y2AxisList.Count; i++ )
-				{
-					Axis axis = this.GraphPane.Y2AxisList[i];
-					grace = CalcScrollGrace( axis.Scale._rangeMin, axis.Scale._rangeMax );
-					ScrollRange range = new ScrollRange( axis.Scale._rangeMin - grace,
-							axis.Scale._rangeMax + grace, _y2ScrollRangeList[i].IsScrollable );
-
-					if ( i >= _y2ScrollRangeList.Count )
-						_y2ScrollRangeList.Add( range );
-					else
-						_y2ScrollRangeList[i] = range;
-				}
-
-				//this.GraphPane.CurveList.GetRange( out scrollMinX, out scrollMaxX,
-				//		out scrollMinY, out scrollMaxY, out scrollMinY2, out scrollMaxY2, false, false,
-				//		this.GraphPane );
+				ProcessEventStuff(hScrollBar1, e);
 			}
 		}
 
-		private double CalcScrollGrace( double min, double max )
+		private void ProcessEventStuff(ScrollBar scrollBar, ScrollEventArgs e)
 		{
-			if ( Math.Abs( max - min ) < 1e-30 )
+			if (e.Type == ScrollEventType.ThumbTrack)
 			{
-				if ( Math.Abs( max ) < 1e-30 )
-					return _scrollGrace;
-				else
-					return max * _scrollGrace;
+				if (this.ScrollProgressEvent != null)
+					this.ScrollProgressEvent(this, hScrollBar1, _zoomState,
+								new ZoomState(this.GraphPane, ZoomState.StateType.Scroll));
 			}
-			else
-				return ( max - min ) * _scrollGrace;
+			else // if ( e.Type == ScrollEventType.ThumbPosition )
+			{
+				if (_zoomState != null && _zoomState.IsChanged(this.GraphPane))
+				{
+					//this.GraphPane.ZoomStack.Push( _zoomState );
+					ZoomStatePush(this.GraphPane);
+
+					// Provide Callback to notify the user of pan events
+					if (this.ScrollDoneEvent != null)
+						this.ScrollDoneEvent(this, hScrollBar1, _zoomState,
+									new ZoomState(this.GraphPane, ZoomState.StateType.Scroll));
+
+					_zoomState = null;
+				}
+			}
+
+			if (this.ScrollEvent != null)
+				this.ScrollEvent(scrollBar, e);
 		}
 
-		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )
+		private void SetScroll(ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax)
 		{
-			if ( scrollBar != null && axis != null )
+			if (scrollBar != null && axis != null)
 			{
 				scrollBar.Minimum = 0;
 				scrollBar.Maximum = _ScrollControlSpan - 1;
 
-				if ( scrollMin > axis._scale._min )
+				if (scrollMin > axis._scale._min)
 					scrollMin = axis._scale._min;
-				if ( scrollMax < axis._scale._max )
+				if (scrollMax < axis._scale._max)
 					scrollMax = axis._scale._max;
 
 				int val = 0;
@@ -318,17 +230,17 @@ namespace ZedGraph
 				Scale scale = axis._scale;
 				double minLinearized = scale._minLinearized;
 				double maxLinearized = scale._maxLinearized;
-				scrollMin = scale.Linearize( scrollMin );
-				scrollMax = scale.Linearize( scrollMax );
+				scrollMin = scale.Linearize(scrollMin);
+				scrollMax = scale.Linearize(scrollMax);
 
-				double scrollMin2 = scrollMax - ( maxLinearized - minLinearized );
+				double scrollMin2 = scrollMax - (maxLinearized - minLinearized);
 				/*
 				if ( axis.Scale.IsLog )
 					scrollMin2 = scrollMax / ( axis._scale._max / axis._scale._min );
 				else
 					scrollMin2 = scrollMax - ( axis._scale._max - axis._scale._min );
 				*/
-				if ( scrollMin >= scrollMin2 )
+				if (scrollMin >= scrollMin2)
 				{
 					//scrollBar.Visible = false;
 					scrollBar.Enabled = false;
@@ -336,7 +248,7 @@ namespace ZedGraph
 				}
 				else
 				{
-					double ratio = ( maxLinearized - minLinearized ) / ( scrollMax - scrollMin );
+					double ratio = (maxLinearized - minLinearized) / (scrollMax - scrollMin);
 
 					/*
 					if ( axis.Scale.IsLog )
@@ -346,20 +258,20 @@ namespace ZedGraph
 						ratio = ( axis._scale._max - axis._scale._min ) / ( scrollMax - scrollMin );
 					*/
 
-					int largeChange = (int)( ratio * _ScrollControlSpan + 0.5 );
-					if ( largeChange < 1 )
+					int largeChange = (int)(ratio * _ScrollControlSpan + 0.5);
+					if (largeChange < 1)
 						largeChange = 1;
 					scrollBar.LargeChange = largeChange;
 
 					int smallChange = largeChange / _ScrollSmallRatio;
-					if ( smallChange < 1 )
+					if (smallChange < 1)
 						smallChange = 1;
 					scrollBar.SmallChange = smallChange;
 
 					int span = _ScrollControlSpan - largeChange;
 
-					val = (int)( ( minLinearized - scrollMin ) / ( scrollMin2 - scrollMin ) *
-									span + 0.5 );
+					val = (int)((minLinearized - scrollMin) / (scrollMin2 - scrollMin) *
+									span + 0.5);
 					/*
 					if ( axis.Scale.IsLog )
 						val = (int)( ( Math.Log( axis._scale._min ) - Math.Log( scrollMin ) ) /
@@ -368,28 +280,120 @@ namespace ZedGraph
 						val = (int)( ( axis._scale._min - scrollMin ) / ( scrollMin2 - scrollMin ) *
 								span + 0.5 );
 					*/
-					if ( val < 0 )
+					if (val < 0)
 						val = 0;
-					else if ( val > span )
+					else if (val > span)
 						val = span;
 
 					//if ( ( axis is XAxis && axis.IsReverse ) || ( ( ! axis is XAxis ) && ! axis.IsReverse ) )
-					if ( ( axis is XAxis ) == axis.Scale.IsReverse )
+					if ((axis is XAxis) == axis.Scale.IsReverse)
 						val = span - val;
 
-					if ( val < scrollBar.Minimum )
+					if (val < scrollBar.Minimum)
 						val = scrollBar.Minimum;
-					if ( val > scrollBar.Maximum )
+					if (val > scrollBar.Maximum)
 						val = scrollBar.Maximum;
 
 					scrollBar.Value = val;
 					scrollBar.Enabled = true;
+
 					//scrollBar.Visible = true;
 				}
 			}
 		}
 
-	#endregion
+		private void Synchronize(Axis source, Axis dest)
+		{
+			dest._scale._min = source._scale._min;
+			dest._scale._max = source._scale._max;
+			dest._scale._majorStep = source._scale._majorStep;
+			dest._scale._minorStep = source._scale._minorStep;
+			dest._scale._minAuto = source._scale._minAuto;
+			dest._scale._maxAuto = source._scale._maxAuto;
+			dest._scale._majorStepAuto = source._scale._majorStepAuto;
+			dest._scale._minorStepAuto = source._scale._minorStepAuto;
+		}
 
+		private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+		{
+			if (this.GraphPane != null)
+			{
+				if ((e.Type != ScrollEventType.ThumbPosition &&
+						 e.Type != ScrollEventType.ThumbTrack) ||
+					  (e.Type == ScrollEventType.ThumbTrack &&
+						 _zoomState == null))
+				{
+					ZoomStateSave(this.GraphPane, ZoomState.StateType.Scroll);
+				}
+				for (int i = 0; i < this.GraphPane.YAxisList.Count; i++)
+				{
+					ScrollRange scroll = _yScrollRangeList[i];
+					if (scroll.IsScrollable)
+					{
+						Axis axis = this.GraphPane.YAxisList[i];
+						HandleScroll(axis, e.NewValue, scroll.Min, scroll.Max, vScrollBar1.LargeChange,
+										!axis.Scale.IsReverse);
+					}
+				}
+
+				for (int i = 0; i < this.GraphPane.Y2AxisList.Count; i++)
+				{
+					ScrollRange scroll = _y2ScrollRangeList[i];
+					if (scroll.IsScrollable)
+					{
+						Axis axis = this.GraphPane.Y2AxisList[i];
+						HandleScroll(axis, e.NewValue, scroll.Min, scroll.Max, vScrollBar1.LargeChange,
+										!axis.Scale.IsReverse);
+					}
+				}
+
+				ApplyToAllPanes(this.GraphPane);
+
+				ProcessEventStuff(vScrollBar1, e);
+			}
+		}
+
+		/*
+
+				/// <summary>
+				///  Use the MouseCaptureChanged as an indicator for the start and end of a
+				///  scrolling operation
+				/// </summary>
+				private void ScrollBarMouseCaptureChanged( object sender, EventArgs e )
+				{
+					return;
+
+					ScrollBar scrollBar = sender as ScrollBar;
+					if ( scrollBar != null )
+					{
+						// If this is the start of a new scroll, then Capture will be true
+						if ( scrollBar.Capture )
+						{
+							// save the original zoomstate
+							//_zoomState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
+							ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
+						}
+						else
+						{
+							// push the prior saved zoomstate, since the scale ranges have already
+							// been changed on the fly during the scrolling operation
+							if ( _zoomState != null && _zoomState.IsChanged( this.GraphPane ) )
+							{
+								//this.GraphPane.ZoomStack.Push( _zoomState );
+								ZoomStatePush( this.GraphPane );
+
+								// Provide Callback to notify the user of pan events
+								if ( this.ScrollDoneEvent != null )
+									this.ScrollDoneEvent( this, scrollBar, _zoomState,
+												new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+
+								_zoomState = null;
+							}
+						}
+					}
+				}
+		*/
+
+		#endregion ScrollBars
 	}
 }
