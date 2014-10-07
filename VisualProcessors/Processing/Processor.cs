@@ -371,55 +371,10 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public event EventHandler OutputChannelRemoved;
 
+		/// <summary>
+		///  Invoked by the processor when the processor wants the pipeline to halt execution
+		/// </summary>
 		public event EventHandler RequestExecutionHalt;
-
-		protected void OnInputChannelAdded()
-		{
-			if (InputChannelAdded != null)
-			{
-				InputChannelAdded(this, EventArgs.Empty);
-			}
-		}
-
-		protected void OnInputChannelRemoved()
-		{
-			if (InputChannelRemoved != null)
-			{
-				InputChannelRemoved(this, EventArgs.Empty);
-			}
-		}
-
-		protected void OnLinkAdded()
-		{
-			if (LinkAdded != null)
-			{
-				LinkAdded(this, EventArgs.Empty);
-			}
-		}
-
-		protected void OnLinkRemoved()
-		{
-			if (LinkRemoved != null)
-			{
-				LinkRemoved(this, EventArgs.Empty);
-			}
-		}
-
-		protected void OnOutputChannelAdded()
-		{
-			if (OutputChannelAdded != null)
-			{
-				OutputChannelAdded(this, EventArgs.Empty);
-			}
-		}
-
-		protected void OnOutputChannelRemoved()
-		{
-			if (OutputChannelRemoved != null)
-			{
-				OutputChannelRemoved(this, EventArgs.Empty);
-			}
-		}
 
 		protected void OnRequestExecutionHalt()
 		{
@@ -429,11 +384,59 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		private void OnInputChannelAdded()
+		{
+			if (InputChannelAdded != null)
+			{
+				InputChannelAdded(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnInputChannelRemoved()
+		{
+			if (InputChannelRemoved != null)
+			{
+				InputChannelRemoved(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnLinkAdded()
+		{
+			if (LinkAdded != null)
+			{
+				LinkAdded(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnLinkRemoved()
+		{
+			if (LinkRemoved != null)
+			{
+				LinkRemoved(this, EventArgs.Empty);
+			}
+		}
+
 		private void OnNameChanged(string oldname, string newname)
 		{
 			if (NameChanged != null)
 			{
 				NameChanged(this, oldname, newname);
+			}
+		}
+
+		private void OnOutputChannelAdded()
+		{
+			if (OutputChannelAdded != null)
+			{
+				OutputChannelAdded(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnOutputChannelRemoved()
+		{
+			if (OutputChannelRemoved != null)
+			{
+				OutputChannelRemoved(this, EventArgs.Empty);
 			}
 		}
 

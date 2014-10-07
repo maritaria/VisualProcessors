@@ -19,14 +19,9 @@ namespace VisualProcessors.Controls
 		private bool m_Changing = false;
 		private bool m_ConstantInputValid = true;
 		private InputChannel m_InputChannel;
-		private PipelineForm m_PipelineForm;
 		private Processor m_Processor;
 
-		public PipelineForm Pipeline
-		{
-			get;
-			set;
-		}
+		public PipelineForm Pipeline		{			get;			set;		}
 
 		public Processor Processor
 		{

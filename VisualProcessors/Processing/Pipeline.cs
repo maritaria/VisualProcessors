@@ -14,8 +14,24 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
+		private bool m_BreakOnModification = true;
 		private List<Processor> m_Processors = new List<Processor>();
 		private bool m_Running = false;
+
+		public bool BreakOnModification
+		{
+			get
+			{
+				return m_BreakOnModification;
+			}
+			set
+			{
+				if (!IsRunning)
+				{
+					m_BreakOnModification = value;
+				}
+			}
+		}
 
 		public bool IsRunning
 		{
@@ -60,6 +76,13 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
+				p.RequestExecutionHalt += p_RequestExecutionHalt;
+				p.InputChannelAdded += ProcessorModified;
+				p.InputChannelRemoved += ProcessorModified;
+				p.OutputChannelAdded += ProcessorModified;
+				p.OutputChannelRemoved += ProcessorModified;
+				p.LinkAdded += ProcessorModified;
+				p.LinkRemoved += ProcessorModified;
 				if (GetByName(p.Name) == null)
 				{
 					m_Processors.Add(p);
@@ -111,6 +134,13 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
+				p.RequestExecutionHalt -= p_RequestExecutionHalt;
+				p.InputChannelAdded -= ProcessorModified;
+				p.InputChannelRemoved -= ProcessorModified;
+				p.OutputChannelAdded -= ProcessorModified;
+				p.OutputChannelRemoved -= ProcessorModified;
+				p.LinkAdded -= ProcessorModified;
+				p.LinkRemoved -= ProcessorModified;
 				if (GetByName(p.Name) == p)
 				{
 					p.Dispose();
@@ -200,6 +230,23 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion Events
+
+		#region Event Handlers
+
+		private void p_RequestExecutionHalt(object sender, EventArgs e)
+		{
+			Stop();
+		}
+
+		private void ProcessorModified(object sender, EventArgs e)
+		{
+			if (IsRunning && BreakOnModification)
+			{
+				Stop();
+			}
+		}
+
+		#endregion Event Handlers
 
 		#region IXmlSerializable Members
 

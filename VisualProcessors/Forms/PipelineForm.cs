@@ -46,11 +46,11 @@ namespace VisualProcessors.Forms
 			m_Pipeline.Stopped += PipelineStopped;
 			if (m_Pipeline.IsRunning)
 			{
-				SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Running");
+				//Update GUI to set running state
 			}
 			else
 			{
-				SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
+				//Update GUI to set paused state
 			}
 			foreach (Control c in Controls)
 			{
@@ -440,50 +440,23 @@ namespace VisualProcessors.Forms
 			myBuffer.Dispose();
 		}
 
-		private void PipelineFormShown(object sender, EventArgs e)
-		{
-			System.Threading.Thread.Sleep(100);
-			int row = 2;
-			for (int i = 0; i < m_ProcessorForms.Count; i++)
-			{
-				var pf = m_ProcessorForms[i];
-
-				//pf.ToggleMinimalView();
-				pf.Location = new Point(10 + (i % row) * 550, 10 + 270 * (i / row));
-			}
-		}
 
 		private void PipelineStarted(object sender, EventArgs e)
 		{
 			m_PipelineStatusChanging = true;
-			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Running");
+			//Update GUI to set running state
 			m_PipelineStatusChanging = false;
 		}
 
 		private void PipelineStopped(object sender, EventArgs e)
 		{
 			m_PipelineStatusChanging = true;
-			SimulationComboBox.SelectedIndex = SimulationComboBox.Items.IndexOf("Paused");
+			//Update GUI to set paused state
 			m_PipelineStatusChanging = false;
 		}
-
-		private void SimulationComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (m_PipelineStatusChanging)
-			{
-				return;
-			}
-			if (SimulationComboBox.Text == "Paused")
-			{
-				m_Pipeline.Stop();
-			}
-			else
-			{
-				m_Pipeline.Start();
-			}
-		}
-
+		
 		#endregion EventHandlers
+
 
 		#region Interop
 
