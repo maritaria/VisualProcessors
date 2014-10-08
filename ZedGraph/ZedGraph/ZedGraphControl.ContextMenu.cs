@@ -335,9 +335,9 @@ namespace ZedGraph
 		/// <remarks>
 		///  Triggers a <see cref="ZoomEvent" /> for any type of undo (including pan, scroll, zoom,
 		///  and
-		///  wheelzoom) . This method will affect all the
-		///  <see cref="GraphPane" /> objects in the <see cref="MasterPane" /> if <see
-		///  cref="IsSynchronizeXAxes" /> or <see cref="IsSynchronizeYAxes" /> is true.
+		///  wheelzoom) . This method will affect all the <see cref="GraphPane" /> objects in the
+		///             <see cref="MasterPane" /> if <see cref="IsSynchronizeXAxes" /> or <see
+		///             cref="IsSynchronizeYAxes" /> is true.
 		/// </remarks>
 		/// <param name="primaryPane">
 		///  The primary <see cref="GraphPane" /> object which is to be zoomed out

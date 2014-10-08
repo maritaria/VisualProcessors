@@ -4,10 +4,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Reflection;
 using VisualProcessors.Processing;
 
 namespace VisualProcessors.Forms
@@ -22,12 +22,12 @@ namespace VisualProcessors.Forms
 		private void AssemblyForm_Load(object sender, EventArgs e)
 		{
 			Type processorType = typeof(Processor);
-			foreach(Assembly asm in Program.ProcessorAssemblies)
+			foreach (Assembly asm in Program.ProcessorAssemblies)
 			{
 				AssemblyName asmname = asm.GetName();
 				TreeNode tnode = ProcessorTree.Nodes.Add(asmname.FullName);
 				tnode.Tag = asm;
-				foreach(Type t in asm.GetTypes())
+				foreach (Type t in asm.GetTypes())
 				{
 					if (t.IsSubclassOf(processorType))
 					{
@@ -62,7 +62,7 @@ namespace VisualProcessors.Forms
 					InformationList.Items.Clear();
 					InformationList.Items.Add("Type: " + t.FullName);
 
-					foreach(Attribute attr in Attribute.GetCustomAttributes(t))
+					foreach (Attribute attr in Attribute.GetCustomAttributes(t))
 					{
 						if (attr is ProcessorAttribute)
 						{

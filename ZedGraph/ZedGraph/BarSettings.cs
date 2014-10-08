@@ -19,22 +19,22 @@
 
 using System;
 using System.Drawing;
-using System.Text;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Text;
 
 namespace ZedGraph
 {
 	/// <summary>
 	/// Class that handles the global settings for bar charts
 	/// </summary>
-	/// 
+	///
 	/// <author> John Champion </author>
 	/// <version> $Revision: 3.6 $ $Date: 2007-12-30 23:27:39 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
-	#region Fields
+		#region Fields
 
 		/// <summary>Private field that determines the width of a bar cluster (for bar charts)
 		/// in user scale units.  Normally, this value is 1.0 because bar charts are typically
@@ -83,14 +83,15 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="Default.Type"/>
 		private BarType _type;
-	#endregion
 
-	#region Constructors
+		#endregion
+
+		#region Constructors
 
 		/// <summary>
 		/// Constructor to build a <see cref="BarSettings" /> instance from the defaults.
 		/// </summary>
-		public BarSettings( GraphPane parentPane )
+		public BarSettings(GraphPane parentPane)
 		{
 			_minClusterGap = Default.MinClusterGap;
 			_minBarGap = Default.MinBarGap;
@@ -108,7 +109,7 @@ namespace ZedGraph
 		/// <param name="rhs">the <see cref="BarSettings" /> instance to be copied.</param>
 		/// <param name="parentPane">The <see cref="GraphPane" /> that will be the
 		/// parent of this new BarSettings object.</param>
-		public BarSettings( BarSettings rhs, GraphPane parentPane )
+		public BarSettings(BarSettings rhs, GraphPane parentPane)
 		{
 			_minClusterGap = rhs._minClusterGap;
 			_minBarGap = rhs._minBarGap;
@@ -120,9 +121,9 @@ namespace ZedGraph
 			_ownerPane = parentPane;
 		}
 
-	#endregion
+		#endregion
 
-	#region Bar Properties
+		#region Bar Properties
 
 		/// <summary>Determines the base axis from which <see cref="Bar"/>
 		/// graphs will be displayed.
@@ -217,9 +218,10 @@ namespace ZedGraph
 			get { return _type; }
 			set { _type = value; }
 		}
-	#endregion
 
-	#region Serialization
+		#endregion
+
+		#region Serialization
 
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
@@ -238,40 +240,40 @@ namespace ZedGraph
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains
 		/// the serialized data
 		/// </param>
-		internal BarSettings( SerializationInfo info, StreamingContext context )
+		internal BarSettings(SerializationInfo info, StreamingContext context)
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
-			int sch = info.GetInt32( "schema" );
+			int sch = info.GetInt32("schema");
 
-			_minClusterGap = info.GetSingle( "minClusterGap" );
-			_minBarGap = info.GetSingle( "minBarGap" );
-			_clusterScaleWidth = info.GetDouble( "clusterScaleWidth" );
-			_clusterScaleWidthAuto = info.GetBoolean( "clusterScaleWidthAuto" );
-			_base = (BarBase)info.GetValue( "base", typeof( BarBase ) );
-			_type = (BarType)info.GetValue( "type", typeof( BarType ) );
+			_minClusterGap = info.GetSingle("minClusterGap");
+			_minBarGap = info.GetSingle("minBarGap");
+			_clusterScaleWidth = info.GetDouble("clusterScaleWidth");
+			_clusterScaleWidthAuto = info.GetBoolean("clusterScaleWidthAuto");
+			_base = (BarBase)info.GetValue("base", typeof(BarBase));
+			_type = (BarType)info.GetValue("type", typeof(BarType));
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
-		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue( "schema", schema );
+			info.AddValue("schema", schema);
 
-			info.AddValue( "minClusterGap", _minClusterGap );
-			info.AddValue( "minBarGap", _minBarGap );
-			info.AddValue( "clusterScaleWidth", _clusterScaleWidth );
-			info.AddValue( "clusterScaleWidthAuto", _clusterScaleWidthAuto );
-			info.AddValue( "base", _base );
-			info.AddValue( "type", _type );
+			info.AddValue("minClusterGap", _minClusterGap);
+			info.AddValue("minBarGap", _minBarGap);
+			info.AddValue("clusterScaleWidth", _clusterScaleWidth);
+			info.AddValue("clusterScaleWidthAuto", _clusterScaleWidthAuto);
+			info.AddValue("base", _base);
+			info.AddValue("type", _type);
 		}
 
-	#endregion
+		#endregion
 
-	#region Methods
+		#region Methods
 
 		/// <summary>
 		/// Determine the <see cref="Axis"/> from which the <see cref="Bar"/> charts are based.
@@ -320,47 +322,46 @@ namespace ZedGraph
 			Axis baseAxis = BarBaseAxis();
 
 			// First, calculate the clusterScaleWidth for BarItem objects
-			if ( _clusterScaleWidthAuto && !baseAxis.Scale.IsAnyOrdinal )
+			if (_clusterScaleWidthAuto && !baseAxis.Scale.IsAnyOrdinal)
 			{
 				double minStep = Double.MaxValue;
 
-				foreach ( CurveItem curve in _ownerPane.CurveList )
+				foreach (CurveItem curve in _ownerPane.CurveList)
 				{
 					IPointList list = curve.Points;
 
-					if ( curve is BarItem )
+					if (curve is BarItem)
 					{
-						double step = GetMinStepSize( curve.Points, baseAxis );
+						double step = GetMinStepSize(curve.Points, baseAxis);
 						minStep = step < minStep ? step : minStep;
 					}
 				}
 
-				if ( minStep == Double.MaxValue )
+				if (minStep == Double.MaxValue)
 					minStep = 1.0;
 
 				_clusterScaleWidth = minStep;
 			}
 
 			// Second, calculate the sizes of any HiLowBarItem and JapaneseCandleStickItem objects
-			foreach ( CurveItem curve in _ownerPane.CurveList )
+			foreach (CurveItem curve in _ownerPane.CurveList)
 			{
 				IPointList list = curve.Points;
 
-//				if ( curve is HiLowBarItem &&
-//						(curve as HiLowBarItem).Bar.IsAutoSize )
-//				{
-//					( curve as HiLowBarItem ).Bar._userScaleSize =
-//								GetMinStepSize( list, baseAxis );
-//				}
-//				else if ( curve is JapaneseCandleStickItem &&
-				if ( curve is JapaneseCandleStickItem &&
-						(curve as JapaneseCandleStickItem).Stick.IsAutoSize )
+				//				if ( curve is HiLowBarItem &&
+				//						(curve as HiLowBarItem).Bar.IsAutoSize )
+				//				{
+				//					( curve as HiLowBarItem ).Bar._userScaleSize =
+				//								GetMinStepSize( list, baseAxis );
+				//				}
+				//				else if ( curve is JapaneseCandleStickItem &&
+				if (curve is JapaneseCandleStickItem &&
+						(curve as JapaneseCandleStickItem).Stick.IsAutoSize)
 				{
-					( curve as JapaneseCandleStickItem ).Stick._userScaleSize =
-								GetMinStepSize( list, baseAxis );
+					(curve as JapaneseCandleStickItem).Stick._userScaleSize =
+								GetMinStepSize(list, baseAxis);
 				}
 			}
-
 		}
 
 		/// <summary>
@@ -390,26 +391,26 @@ namespace ZedGraph
 		/// of interest</param>
 		/// <param name="baseAxis">The base axis for the bar</param>
 		/// <returns>The minimum increment between bars along the base axis</returns>
-		internal static double GetMinStepSize( IPointList list, Axis baseAxis )
+		internal static double GetMinStepSize(IPointList list, Axis baseAxis)
 		{
 			double minStep = Double.MaxValue;
 
-			if ( list.Count <= 0 || baseAxis._scale.IsAnyOrdinal )
+			if (list.Count <= 0 || baseAxis._scale.IsAnyOrdinal)
 				return 1.0;
 
 			PointPair lastPt = list[0];
-			for ( int i = 1; i < list.Count; i++ )
+			for (int i = 1; i < list.Count; i++)
 			{
 				PointPair pt = list[i];
-				if ( !pt.IsInvalid || !lastPt.IsInvalid )
+				if (!pt.IsInvalid || !lastPt.IsInvalid)
 				{
 					double step;
-					if ( baseAxis is XAxis || baseAxis is X2Axis )
+					if (baseAxis is XAxis || baseAxis is X2Axis)
 						step = pt.X - lastPt.X;
 					else
 						step = pt.Y - lastPt.Y;
 
-					if ( step > 0 && step < minStep )
+					if (step > 0 && step < minStep)
 						minStep = step;
 				}
 
@@ -417,17 +418,18 @@ namespace ZedGraph
 			}
 
 			double range = baseAxis.Scale._maxLinearized - baseAxis.Scale._minLinearized;
-			if ( range <= 0 )
+			if (range <= 0)
 				minStep = 1.0;
-//			else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
-			else if ( minStep <= 0 || minStep > range )
+			//			else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
+			else if (minStep <= 0 || minStep > range)
 				minStep = 0.1 * range;
 
 			return minStep;
 		}
-	#endregion
 
-	#region Defaults
+		#endregion
+
+		#region Defaults
 
 		/// <summary>
 		/// A simple struct that defines the
@@ -442,7 +444,7 @@ namespace ZedGraph
 			public static BarBase Base = BarBase.X;
 
 			/// <summary>
-			/// The default width of a bar cluster 
+			/// The default width of a bar cluster
 			/// on a <see cref="Bar"/> graph.  This value only applies to
 			/// <see cref="Bar"/> graphs, and only when the
 			/// <see cref="Axis.Type"/> is <see cref="AxisType.Linear"/>,
@@ -483,8 +485,7 @@ namespace ZedGraph
 			/// <seealso cref="BarSettings.Type"/>
 			public static BarType Type = BarType.Cluster;
 		}
-	#endregion
 
-
+		#endregion
 	}
 }

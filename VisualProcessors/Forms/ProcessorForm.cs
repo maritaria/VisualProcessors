@@ -24,11 +24,12 @@ namespace VisualProcessors.Forms
 		#region Properties
 
 		private bool m_Closing = false;
+		private bool m_LocationChanging = false;
 		private PipelineForm m_PipelineForm;
 		private Processor m_Processor;
 		private Type m_ProcessorType;
-		private bool m_LocationChanging = false;
 		private bool m_SizeChanging = false;
+
 		/// <summary>
 		///  Gets the PipelineForm the ProcessorForm belongs to.
 		/// </summary>
@@ -114,18 +115,7 @@ namespace VisualProcessors.Forms
 			}
 		}
 
-		void ProcessorSizeChanged(object sender, EventArgs e)
-		{
-			if (m_SizeChanging || (Processor==null))
-			{
-				return;
-			}
-			m_SizeChanging = true;
-			Size = Processor.Size;
-			m_SizeChanging = false;
-		}
-
-		void ProcessorLocationChanged(object sender, EventArgs e)
+		private void ProcessorLocationChanged(object sender, EventArgs e)
 		{
 			if (m_LocationChanging || (Processor == null))
 			{
@@ -136,9 +126,26 @@ namespace VisualProcessors.Forms
 			m_LocationChanging = false;
 		}
 
+		private void ProcessorSizeChanged(object sender, EventArgs e)
+		{
+			if (m_SizeChanging || (Processor == null))
+			{
+				return;
+			}
+			m_SizeChanging = true;
+			Size = Processor.Size;
+			m_SizeChanging = false;
+		}
+
 		#endregion Constructor
 
 		#region Methods
+
+		public void ForceClose()
+		{
+			m_Closing = true;
+			Close();
+		}
 
 		public void ShowInputChannel(string name)
 		{
@@ -146,12 +153,6 @@ namespace VisualProcessors.Forms
 			{
 				Tabs.SelectTab(InputTab);
 			}
-		}
-
-		public void ForceClose()
-		{
-			m_Closing = true;
-			Close();
 		}
 
 		#endregion Methods

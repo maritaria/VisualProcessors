@@ -20,8 +20,9 @@ namespace VisualProcessors.Controls
 		private bool m_Applied = false;
 		private bool m_CodeChanged = false;
 		private UserCodeContext m_UserCodeContext;
+
 		public CodeProcessor CodeProcessor { get; set; }
-		
+
 		#endregion Properties
 
 		#region Constructor
@@ -168,7 +169,7 @@ namespace VisualProcessors.Controls
 
 		private void DefaultCodeButton_Click(object sender, EventArgs e)
 		{
-			if (MessageBox.Show("Are you sure you want to replace your code with the default code?", "Restore default code", MessageBoxButtons.OKCancel)==DialogResult.OK)
+			if (MessageBox.Show("Are you sure you want to replace your code with the default code?", "Restore default code", MessageBoxButtons.OKCancel) == DialogResult.OK)
 			{
 				CodeBox.Text = CodeProcessor.DefaultCode;
 			}

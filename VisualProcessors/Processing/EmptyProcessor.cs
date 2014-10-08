@@ -11,14 +11,18 @@ namespace VisualProcessors.Processing
 		public EmptyProcessor()
 		{
 		}
-		public EmptyProcessor(string name) : base(name) 
+
+		public EmptyProcessor(string name)
+			: base(name)
 		{
 		}
+
 		protected override bool Prepare()
 		{
 			Console.WriteLine("EmptyProcessor.Prepare() " + Name);
 			return true;
 		}
+
 		protected override void Process()
 		{
 			Console.WriteLine("EmptyProcessor.Process() " + Name);

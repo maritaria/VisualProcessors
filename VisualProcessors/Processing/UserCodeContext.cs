@@ -6,8 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using VisualProcessors.Processing;
 using VisualProcessors.Controls;
+using VisualProcessors.Processing;
+
 namespace VisualProcessors.Processing
 {
 	public class UserCodeContext
@@ -17,10 +18,11 @@ namespace VisualProcessors.Processing
 		public List<CompilerError> CompileErrors = new List<CompilerError>();
 		public List<CompilerError> CompileWarnings = new List<CompilerError>();
 		public string Namespace = "VisualProcessors.UserCode";
+		public Action<CodeProcessor> PrepareFunction;
+		public Action<CodeProcessor> ProcessFunction;
 		public string UserCode = "";
 		public List<string> Usings = new List<string>();
-		public Action<CodeProcessor> ProcessFunction;
-		public Action<CodeProcessor> PrepareFunction;
+
 		public UserCodeContext()
 		{
 			Usings.Add("System");

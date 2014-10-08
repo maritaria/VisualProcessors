@@ -256,7 +256,6 @@
 			// Toolbox
 			// 
 			this.Toolbox.AutoScroll = true;
-			this.Toolbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Toolbox.Dock = System.Windows.Forms.DockStyle.Left;
 			this.Toolbox.Location = new System.Drawing.Point(0, 24);
 			this.Toolbox.Name = "Toolbox";

@@ -12,8 +12,8 @@ using ZedGraph;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies","Plots its InputChannels onto a ZedGraph in realtime","Red","",
-		AllowOptionalInputs = true,	HideOutputTab = true)]
+	[ProcessorAttribute("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
+		AllowOptionalInputs = true, HideOutputTab = true)]
 	public class GraphPlotter : Processor
 	{
 		#region Properties
@@ -94,6 +94,7 @@ namespace VisualProcessors.Processing
 			}
 			base.Stop();
 		}
+
 		protected override void Process()
 		{
 			lock (this)

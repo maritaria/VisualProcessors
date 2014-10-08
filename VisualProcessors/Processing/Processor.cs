@@ -18,10 +18,28 @@ namespace VisualProcessors.Processing
 		#region Properties
 
 		protected int m_ThreadSleep = 1;
+		private Point m_Location = new Point(0, 0);
 		private string m_Name = "Undefined";
+		private Size m_Size = new Size(0, 0);
 		private Thread m_WorkerThread;
-		
+
+		/// <summary>
+		///  Gets or sets the Height component of the processors Size property
+		/// </summary>
+		public int Height
+		{
+			get
+			{
+				return Size.Height;
+			}
+			set
+			{
+				Size = new Size(Size.Width, value);
+			}
+		}
+
 		public bool IsPrepared { get; protected set; }
+
 		public bool IsRunning
 		{
 			get
@@ -29,8 +47,7 @@ namespace VisualProcessors.Processing
 				return (m_WorkerThread != null) && m_WorkerThread.IsAlive;
 			}
 		}
-		private Point m_Location = new Point(0, 0);
-		private Size m_Size = new Size(0, 0);
+
 		/// <summary>
 		///  Gets or sets the location of the processor in the model
 		/// </summary>
@@ -46,79 +63,6 @@ namespace VisualProcessors.Processing
 				OnLocationChanged();
 			}
 		}
-		/// <summary>
-		/// Gets or sets the size of the processor's form in the model
-		/// </summary>
-		public Size Size
-		{
-			get
-			{
-				return m_Size;
-			}
-			set
-			{
-				m_Size = value;
-				OnSizeChanged();
-			}
-		}
-		/// <summary>
-		/// Gets or sets the X component of the processors Location property
-		/// </summary>
-		public int X
-		{
-			get
-			{
-				return Location.X;
-			}
-			set
-			{
-				Location = new Point(value, Location.Y);
-				OnModified();
-			}
-		}
-		/// <summary>
-		/// Gets or sets the Y component of the processors Location property
-		/// </summary>
-		public int Y
-		{
-			get
-			{
-				return Location.Y;
-			}
-			set
-			{
-				Location = new Point(Location.X, value);
-			}
-		}
-		/// <summary>
-		/// Gets or sets the Width component of the processors Size property
-		/// </summary>
-		public int Width
-		{
-			get
-			{
-				return Size.Width;
-			}
-			set
-			{
-				Size = new Size(value, Size.Height);
-			}
-		}
-		/// <summary>
-		/// Gets or sets the Height component of the processors Size property
-		/// </summary>
-		public int Height
-		{
-			get
-			{
-				return Size.Height;
-			}
-			set
-			{
-				Size = new Size(Size.Width, value);
-			}
-		}
-
 
 		/// <summary>
 		///  Gets or sets the name of the processor, must be unique within the pipeline
@@ -136,22 +80,94 @@ namespace VisualProcessors.Processing
 				OnNameChanged(old, value);
 			}
 		}
-		
-		#region Meta
 
-		public ProcessorAttribute Meta
+		/// <summary>
+		///  Gets or sets the size of the processor's form in the model
+		/// </summary>
+		public Size Size
 		{
 			get
 			{
-				ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute));
-				return (attr != null) ? attr : ProcessorAttribute.Default;
+				return m_Size;
+			}
+			set
+			{
+				m_Size = value;
+				OnSizeChanged();
 			}
 		}
-		public bool HasMeta
+
+		/// <summary>
+		///  Gets or sets the Width component of the processors Size property
+		/// </summary>
+		public int Width
 		{
 			get
 			{
-				return ((ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute)) != null);
+				return Size.Width;
+			}
+			set
+			{
+				Size = new Size(value, Size.Height);
+			}
+		}
+
+		/// <summary>
+		///  Gets or sets the X component of the processors Location property
+		/// </summary>
+		public int X
+		{
+			get
+			{
+				return Location.X;
+			}
+			set
+			{
+				Location = new Point(value, Location.Y);
+				OnModified();
+			}
+		}
+
+		/// <summary>
+		///  Gets or sets the Y component of the processors Location property
+		/// </summary>
+		public int Y
+		{
+			get
+			{
+				return Location.Y;
+			}
+			set
+			{
+				Location = new Point(Location.X, value);
+			}
+		}
+
+		#region Meta
+
+		public bool AllowOptionalInputs
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.AllowOptionalInputs;
+			}
+		}
+
+		public bool AllowUserSpawn
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return true;
+				}
+				return attr.AllowUserSpawn;
 			}
 		}
 
@@ -168,80 +184,6 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		public string Description
-		{
-			get
-			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return null;
-				}
-				return attr.Description;
-			}
-		}
-
-		public bool AllowOptionalInputs
-		{
-			get
-			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.AllowOptionalInputs;
-			}
-		}
-		public bool AllowUserSpawn
-		{
-			get
-			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return true;
-				}
-				return attr.AllowUserSpawn;
-			}
-		}
-		public bool HideInputTab
-		{
-			get
-			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.HideInputTab;
-			}
-		}
-		public bool HideSettingsTab
-		{
-			get
-			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.HideSettingsTab;
-			}
-		}
-		public bool HideOutputTab
-		{
-			get
-			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.HideOutputTab;
-			}
-		}
-
 		public string DefaultInput
 		{
 			get
@@ -254,6 +196,7 @@ namespace VisualProcessors.Processing
 				return attr.DefaultInput;
 			}
 		}
+
 		public string DefaultOutput
 		{
 			get
@@ -267,7 +210,76 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		#endregion
+		public string Description
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return null;
+				}
+				return attr.Description;
+			}
+		}
+
+		public bool HasMeta
+		{
+			get
+			{
+				return ((ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute)) != null);
+			}
+		}
+
+		public bool HideInputTab
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.HideInputTab;
+			}
+		}
+
+		public bool HideOutputTab
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.HideOutputTab;
+			}
+		}
+
+		public bool HideSettingsTab
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.HideSettingsTab;
+			}
+		}
+
+		public ProcessorAttribute Meta
+		{
+			get
+			{
+				ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute));
+				return (attr != null) ? attr : ProcessorAttribute.Default;
+			}
+		}
+
+		#endregion Meta
 
 		#endregion Properties
 
@@ -309,6 +321,15 @@ namespace VisualProcessors.Processing
 			panel.Controls.Add(input);
 		}
 
+		public void Reset()
+		{
+			if (IsRunning)
+			{
+				Stop();
+			}
+			IsPrepared = false;
+		}
+
 		public virtual bool Start()
 		{
 			if (m_WorkerThread != null)
@@ -342,13 +363,6 @@ namespace VisualProcessors.Processing
 			m_WorkerThread = null;
 		}
 
-		protected virtual void Process()
-		{
-			//Read
-			//Parse
-			//Write
-		}
-
 		protected virtual bool Prepare()
 		{
 			foreach (InputChannel channel in m_InputChannels)
@@ -358,13 +372,11 @@ namespace VisualProcessors.Processing
 			return true;
 		}
 
-		public void Reset()
+		protected virtual void Process()
 		{
-			if (IsRunning)
-			{
-				Stop();
-			}
-			IsPrepared = false;
+			//Read
+			//Parse
+			//Write
 		}
 
 		protected virtual void WorkerMethod()
@@ -387,13 +399,11 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-
 		#endregion Methods
 
 		#region InputChannels
 
 		private List<InputChannel> m_InputChannels = new List<InputChannel>();
-
 
 		public InputChannel GetInputChannel(string name)
 		{
@@ -585,6 +595,16 @@ namespace VisualProcessors.Processing
 		public event EventHandler LinkRemoved;
 
 		/// <summary>
+		///  Invoked when the location of the processor has been changed
+		/// </summary>
+		public event EventHandler LocationChanged;
+
+		/// <summary>
+		///  Invoked by the processor if any part of the processor has changed
+		/// </summary>
+		public event EventHandler Modified;
+
+		/// <summary>
 		///  Invoked just after the name of the processor has changed
 		/// </summary>
 		public event ProcessorNameChanged NameChanged;
@@ -603,40 +623,15 @@ namespace VisualProcessors.Processing
 		///  Invoked by the processor when the processor wants the pipeline to halt execution
 		/// </summary>
 		public event EventHandler RequestExecutionHalt;
-		/// <summary>
-		/// Invoked by the processor if any part of the processor has changed
-		/// </summary>
-		public event EventHandler Modified;
 
 		/// <summary>
-		/// Invoked when the location of the processor has been changed
-		/// </summary>
-		public event EventHandler LocationChanged;
-		/// <summary>
-		/// Invoked when the size of the processor has been changed
+		///  Invoked when the size of the processor has been changed
 		/// </summary>
 		public event EventHandler SizeChanged;
 
-		private void OnLocationChanged()
-		{
-			if (LocationChanged!=null)
-			{
-				LocationChanged(this, EventArgs.Empty);
-			}
-			OnModified();
-		}
-		private void OnSizeChanged()
-		{
-			if (SizeChanged!=null)
-			{
-				SizeChanged(this, EventArgs.Empty);
-			}
-			OnModified();
-		}
-
 		protected void OnModified()
 		{
-			if (Modified!=null)
+			if (Modified != null)
 			{
 				Modified(this, EventArgs.Empty);
 			}
@@ -686,6 +681,15 @@ namespace VisualProcessors.Processing
 			OnModified();
 		}
 
+		private void OnLocationChanged()
+		{
+			if (LocationChanged != null)
+			{
+				LocationChanged(this, EventArgs.Empty);
+			}
+			OnModified();
+		}
+
 		private void OnNameChanged(string oldname, string newname)
 		{
 			if (NameChanged != null)
@@ -713,14 +717,18 @@ namespace VisualProcessors.Processing
 			OnModified();
 		}
 
+		private void OnSizeChanged()
+		{
+			if (SizeChanged != null)
+			{
+				SizeChanged(this, EventArgs.Empty);
+			}
+			OnModified();
+		}
+
 		#endregion Events
 
 		#region Event Handlers
-
-		private void input_InputCompleted(object sender, EventArgs e)
-		{
-			Name = (sender as StringInputPanel).InputText;
-		}
 
 		private void channel_OutputAdded(object sender, EventArgs e)
 		{
@@ -740,6 +748,11 @@ namespace VisualProcessors.Processing
 			{
 				OnLinkAdded();
 			}
+		}
+
+		private void input_InputCompleted(object sender, EventArgs e)
+		{
+			Name = (sender as StringInputPanel).InputText;
 		}
 
 		#endregion Event Handlers
@@ -771,7 +784,6 @@ namespace VisualProcessors.Processing
 			new XmlSerializer(m_OutputChannels.GetType(), GetOverrides(m_OutputChannels.GetType(), "OutputChannels")).Serialize(writer, m_OutputChannels, ns);
 			new XmlSerializer(m_Location.GetType(), GetOverrides(m_Location.GetType(), "Location")).Serialize(writer, m_Location, ns);
 			new XmlSerializer(m_Size.GetType(), GetOverrides(m_Size.GetType(), "Size")).Serialize(writer, m_Size, ns);
-
 		}
 
 		private XmlAttributeOverrides GetOverrides(Type t, string name)
@@ -783,7 +795,6 @@ namespace VisualProcessors.Processing
 			overrides.Add(t, attribute);
 			return overrides;
 		}
-
 
 		#endregion IXmlSerializable Members
 

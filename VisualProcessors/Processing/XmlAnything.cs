@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using System.Reflection;
+
 namespace VisualProcessors.Processing
 {
 	public sealed class XmlAnything<T> : IXmlSerializable
 	{
+		private static string ProcessorAssemblyName = typeof(Processor).Assembly.GetName().Name;
+
 		public XmlAnything()
 		{
 		}
@@ -21,27 +24,6 @@ namespace VisualProcessors.Processing
 		}
 
 		public T Value { get; set; }
-		private static string ProcessorAssemblyName = typeof(Processor).Assembly.GetName().Name;
-		private Type FindType(string fullname)
-		{
-			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				foreach (AssemblyName a in asm.GetReferencedAssemblies())
-				{
-					if (a.Name == ProcessorAssemblyName)
-					{
-						foreach (Type _t in asm.GetTypes())
-						{
-							if (_t.AssemblyQualifiedName == fullname)
-							{
-								return _t;
-							}
-						}
-					}
-				}
-			}
-			return null;
-		}
 
 		public XmlSchema GetSchema()
 		{
@@ -58,8 +40,8 @@ namespace VisualProcessors.Processing
 			reader.Read(); // consume the value
 			if (type == "null")
 				return;// leave T at default value
-			Type t = Type.GetType(type,false,true);
-			if (t==null)
+			Type t = Type.GetType(type, false, true);
+			if (t == null)
 			{
 				t = FindType(type);
 			}
@@ -79,6 +61,27 @@ namespace VisualProcessors.Processing
 			XmlSerializer serializer = new XmlSerializer(type);
 			writer.WriteAttributeString("Type", type.AssemblyQualifiedName);
 			serializer.Serialize(writer, this.Value);
+		}
+
+		private Type FindType(string fullname)
+		{
+			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				foreach (AssemblyName a in asm.GetReferencedAssemblies())
+				{
+					if (a.Name == ProcessorAssemblyName)
+					{
+						foreach (Type _t in asm.GetTypes())
+						{
+							if (_t.AssemblyQualifiedName == fullname)
+							{
+								return _t;
+							}
+						}
+					}
+				}
+			}
+			return null;
 		}
 	}
 }

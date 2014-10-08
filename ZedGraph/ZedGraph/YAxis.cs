@@ -46,8 +46,8 @@ namespace ZedGraph
 		{
 			// <summary>
 			//  The default display mode for the <see cref="YAxis" /> (<see cref="Axis.IsVisible" />
-			//  property). true to display the scale values, title, tic marks, false to hide the
-			//  axis entirely.
+			//  property) . true to display the scale values, title, tic marks, false to hide the
+			//            axis entirely.
 			// </summary>
 			public static bool IsVisible = true;
 

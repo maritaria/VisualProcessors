@@ -57,24 +57,27 @@ namespace VisualProcessors.Forms
 		{
 			ChannelComboBox.Items.Clear();
 			string[] col;
+			string def = "";
 			if (m_Type == ChannelType.InputChannel)
 			{
 				col = Processor.GetInputChannelNames();
+				def = Processor.DefaultInput;
 			}
 			else
 			{
 				col = Processor.GetOutputChannelNames();
+				def = Processor.DefaultOutput;
 			}
+			int index = 0;
 			foreach (string cname in col)
 			{
-				ChannelComboBox.Items.Add(cname);
+				int i = ChannelComboBox.Items.Add(cname);
+				if (cname==def)
+				{
+					index = i;
+				}
 			}
-			if (ChannelComboBox.Items.Count == 1)
-			{
-				ChannelComboBox.SelectedIndex = 0;
-				DialogResult = DialogResult.OK;
-				Close();
-			}
+			ChannelComboBox.SelectedIndex = index;
 		}
 
 		#endregion Methods

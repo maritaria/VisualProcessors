@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -11,15 +12,14 @@ using VisualProcessors;
 using VisualProcessors.Controls;
 using VisualProcessors.Forms;
 using VisualProcessors.Processing;
-using System.Reflection;
 using ZedGraph;
 
 namespace VisualProcessors
 {
 	internal static class Program
 	{
-		public static List<Assembly> ProcessorAssemblies = new List<Assembly>();
 		public static List<Assembly> LoadedAssemblies = new List<Assembly>();
+		public static List<Assembly> ProcessorAssemblies = new List<Assembly>();
 
 		/// <summary>
 		///  The main entry point for the application.
@@ -40,7 +40,7 @@ namespace VisualProcessors
 			{
 				try
 				{
-					Console.Write("\t" + Path.GetFileName(f)+": ");
+					Console.Write("\t" + Path.GetFileName(f) + ": ");
 					Assembly asm = Assembly.LoadFrom(f);
 					LoadedAssemblies.Add(asm);
 					Console.WriteLine("Success");

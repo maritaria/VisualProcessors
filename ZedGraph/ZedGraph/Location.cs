@@ -338,7 +338,7 @@ namespace ZedGraph
 
 		/// <summary>
 		///  Constructor for the <see cref="Location" /> class that specifies the (x, y), (width,
-		///  height), and the <see cref="CoordType" />.
+		///  height) , and the <see cref="CoordType" />.
 		/// </summary>
 		/// <remarks>
 		///  The (x,y) position corresponds to the starting position, the (x2, y2) coorresponds to

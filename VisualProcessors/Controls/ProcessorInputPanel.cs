@@ -105,7 +105,7 @@ namespace VisualProcessors.Controls
 				{
 					InputChannel channel = m_Processor.GetInputChannel(channelname);
 					int i = InputChannelList.Items.Add(channel.Name);
-					if (channelname==m_Processor.DefaultInput)
+					if (channelname == m_Processor.DefaultInput)
 					{
 						index = i;
 					}

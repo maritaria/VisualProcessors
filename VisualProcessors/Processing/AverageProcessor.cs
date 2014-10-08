@@ -10,7 +10,7 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Calculates the average of a signal over time","Input","Output")]
+	[ProcessorAttribute("Bram Kamies", "Calculates the average of a signal over time", "Input", "Output")]
 	public class AverageProcessor : Processor
 	{
 		private List<double> m_History = new List<double>();

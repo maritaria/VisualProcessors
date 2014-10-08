@@ -19,6 +19,7 @@ namespace VisualProcessors.Controls
 
 		private PipelineForm m_PipelineForm;
 		private List<Type> m_Types = new List<Type>();
+
 		public PipelineForm PipelineForm
 		{
 			get
@@ -52,10 +53,33 @@ namespace VisualProcessors.Controls
 		#endregion Constructor
 
 		#region Methods
+
+		public void ClearButtonList()
+		{
+			foreach (Button b in ButtonPanel.Controls)
+			{
+				b.Dispose();
+			}
+			ButtonPanel.Controls.Clear();
+		}
+
+		public void PopulateButtonList()
+		{
+			ClearButtonList();
+			if (PipelineForm == null || PipelineForm.CurrentPipeline == null)
+			{
+				return;
+			}
+			foreach (Assembly asm in Program.ProcessorAssemblies)
+			{
+				AddAssembly(asm);
+			}
+		}
+
 		public void SetPipelineForm(PipelineForm pipeline)
 		{
 			ClearButtonList();
-			if (PipelineForm!=null)
+			if (PipelineForm != null)
 			{
 				PipelineForm.PipelineChanged -= PipelineForm_PipelineChanged;
 			}
@@ -66,59 +90,6 @@ namespace VisualProcessors.Controls
 				PipelineForm_PipelineChanged(null, PipelineForm.CurrentPipeline);
 			}
 			PopulateButtonList();
-		}
-		
-		public void PopulateButtonList()
-		{
-			ClearButtonList();
-			if (PipelineForm ==null || PipelineForm.CurrentPipeline==null)
-			{
-				return;
-			}
-			foreach(Assembly asm in Program.ProcessorAssemblies)
-			{
-				AddAssembly(asm);
-			}
-		}
-		public void ClearButtonList()
-		{
-
-			foreach (Button b in ButtonPanel.Controls)
-			{
-				b.Dispose();
-			}
-			ButtonPanel.Controls.Clear();
-		}
-
-		private void AddAssembly(Assembly assembly)
-		{
-			Type[] processorTypes = assembly.GetTypes();
-			foreach (Type processorType in processorTypes.Reverse())
-			{
-				if (processorType.IsSubclassOf(typeof(Processor)))
-				{
-					ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(processorType, typeof(ProcessorAttribute));
-					if (attr!=null && !attr.AllowUserSpawn)
-					{
-						//If the attribute is not null, and the AllowUserSpawn flag is false, then dont create a button for it
-						continue;
-					}
-					m_Types.Add(processorType);
-					Button b = new Button();
-					b.Dock = DockStyle.Top;
-					b.Text = processorType.Name;
-					b.TextAlign = ContentAlignment.MiddleLeft;
-					if (attr !=null)
-					{
-						DescriptionTooltip.SetToolTip(b, attr.Description);
-					}
-					b.Click += delegate(object _sender, EventArgs _e)
-					{
-						SpawnProcessor(processorType);
-					};
-					ButtonPanel.Controls.Add(b);
-				}
-			}
 		}
 
 		public void SpawnProcessor(Type t)
@@ -147,21 +118,52 @@ namespace VisualProcessors.Controls
 			}
 			Processor p = (Processor)Activator.CreateInstance(t, t.Name + counter);
 
-			ProcessorForm pf = PipelineForm.AddProcessor(p,false);
+			ProcessorForm pf = PipelineForm.AddProcessor(p, false);
 			Point pfcenter = pf.GetCenter();
 			Point offset = new Point(pfcenter.X - pf.Location.X, pfcenter.Y - pf.Location.Y);
 			pf.Location = new Point(pos.X - offset.X, pos.Y - offset.Y);
+		}
+
+		private void AddAssembly(Assembly assembly)
+		{
+			Type[] processorTypes = assembly.GetTypes();
+			foreach (Type processorType in processorTypes.Reverse())
+			{
+				if (processorType.IsSubclassOf(typeof(Processor)))
+				{
+					ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(processorType, typeof(ProcessorAttribute));
+					if (attr != null && !attr.AllowUserSpawn)
+					{
+						//If the attribute is not null, and the AllowUserSpawn flag is false, then dont create a button for it
+						continue;
+					}
+					m_Types.Add(processorType);
+					Button b = new Button();
+					b.Dock = DockStyle.Top;
+					b.Text = processorType.Name;
+					b.TextAlign = ContentAlignment.MiddleLeft;
+					if (attr != null)
+					{
+						DescriptionTooltip.SetToolTip(b, attr.Description);
+					}
+					b.Click += delegate(object _sender, EventArgs _e)
+					{
+						SpawnProcessor(processorType);
+					};
+					ButtonPanel.Controls.Add(b);
+				}
+			}
 		}
 
 		#endregion Methods
 
 		#region Event Handlers
 
-		void PipelineForm_PipelineChanged(Pipeline oldPipeline, Pipeline newPipeline)
+		private void PipelineForm_PipelineChanged(Pipeline oldPipeline, Pipeline newPipeline)
 		{
 			PopulateButtonList();
 		}
 
-		#endregion
+		#endregion Event Handlers
 	}
 }

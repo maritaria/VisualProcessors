@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using System.Reflection;
 
 namespace VisualProcessors.Processing
 {
@@ -18,6 +18,7 @@ namespace VisualProcessors.Processing
 		private bool m_BreakOnModification = true;
 		private List<Processor> m_Processors = new List<Processor>();
 		private bool m_Running = false;
+
 		public bool BreakOnModification
 		{
 			get
@@ -32,7 +33,7 @@ namespace VisualProcessors.Processing
 				}
 			}
 		}
-		
+
 		public bool IsRunning
 		{
 			get
@@ -95,7 +96,7 @@ namespace VisualProcessors.Processing
 			}
 			OnModified();
 		}
-		
+
 		public Processor GetByName(string name)
 		{
 			foreach (Processor p in m_Processors)
@@ -153,6 +154,21 @@ namespace VisualProcessors.Processing
 				}
 				m_Processors.Remove(p);
 				OnModified();
+			}
+		}
+
+		public void Reset()
+		{
+			if (IsRunning)
+			{
+				Stop();
+			}
+			lock (m_Processors)
+			{
+				foreach (Processor p in m_Processors)
+				{
+					p.Reset();
+				}
 			}
 		}
 
@@ -224,29 +240,23 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		public void Reset()
-		{
-			if (IsRunning)
-			{
-				Stop();
-			}
-			lock(m_Processors)
-			{
-				foreach (Processor p in m_Processors)
-				{
-					p.Reset();
-				}
-			}
-		}
-
 		#endregion Methods
 
 		#region Events
+
+		public event EventHandler Modified;
 
 		public event EventHandler Started;
 
 		public event EventHandler Stopped;
 
+		private void OnModified()
+		{
+			if (Modified != null)
+			{
+				Modified(this, EventArgs.Empty);
+			}
+		}
 
 		private void OnStarted()
 		{
@@ -261,16 +271,6 @@ namespace VisualProcessors.Processing
 			if (Stopped != null)
 			{
 				Stopped(this, EventArgs.Empty);
-			}
-		}
-
-		public event EventHandler Modified;
-
-		private void OnModified()
-		{
-			if (Modified!=null)
-			{
-				Modified(this, EventArgs.Empty);
 			}
 		}
 
@@ -295,7 +295,6 @@ namespace VisualProcessors.Processing
 		#endregion Event Handlers
 
 		#region IXmlSerializable Members
-
 
 		public XmlSchema GetSchema()
 		{
@@ -323,7 +322,7 @@ namespace VisualProcessors.Processing
 			ns.Add("", "");
 
 			List<XmlAnything<Processor>> plist = new List<XmlAnything<Processor>>();
-			XmlSerializer s2 = new XmlSerializer(plist.GetType(), GetOverrides(plist.GetType(),"Processors"));
+			XmlSerializer s2 = new XmlSerializer(plist.GetType(), GetOverrides(plist.GetType(), "Processors"));
 			foreach (Processor p in m_Processors)
 			{
 				plist.Add(new XmlAnything<Processor>(p));

@@ -38,6 +38,7 @@
 			// ButtonPanel
 			// 
 			this.ButtonPanel.AutoScroll = true;
+			this.ButtonPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.ButtonPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 16);
 			this.ButtonPanel.Name = "ButtonPanel";

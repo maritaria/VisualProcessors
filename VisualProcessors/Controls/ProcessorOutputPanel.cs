@@ -77,8 +77,8 @@ namespace VisualProcessors.Controls
 				int index = 0;
 				foreach (string name in Processor.GetOutputChannelNames())
 				{
-					int i =OutputComboBox.Items.Add(name);
-					if (name==Processor.DefaultOutput)
+					int i = OutputComboBox.Items.Add(name);
+					if (name == Processor.DefaultOutput)
 					{
 						index = i;
 					}

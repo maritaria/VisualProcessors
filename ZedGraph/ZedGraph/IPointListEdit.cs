@@ -87,7 +87,7 @@ namespace ZedGraph
 
 		/// <summary>
 		///  Removes a single data point from the list at the specified ordinal location (zero
-		///  based).
+		///  based) .
 		/// </summary>
 		void RemoveAt(int index);
 	}

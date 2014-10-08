@@ -10,7 +10,7 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Allows user C# code to be executed during simulations", "A", "Output1",
+	[ProcessorAttribute("Bram Kamies", "Allows user C# code to be executed during simulations", "Input1", "Output1",
 		AllowOptionalInputs = true)]
 	public class CodeProcessor : Processor
 	{
@@ -19,6 +19,7 @@ namespace VisualProcessors.Processing
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine + Environment.NewLine +
 			"public static void Prepare(CodeProcessor processor)" + Environment.NewLine +
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine;
+
 		public CodeProcessor()
 		{
 		}
@@ -26,23 +27,25 @@ namespace VisualProcessors.Processing
 		public CodeProcessor(string name)
 			: base(name)
 		{
-			AddInputChannel("A", false);
-			AddInputChannel("B", true);
-			AddInputChannel("C", true);
-			AddInputChannel("D", true);
-			AddInputChannel("E", true);
+			AddInputChannel("Input1", false);
+			AddInputChannel("Input2", true);
+			AddInputChannel("Input3", true);
+			AddInputChannel("Input4", true);
+			AddInputChannel("Input5", true);
 			AddOutputChannel("Output1");
 			AddOutputChannel("Output2");
 			AddOutputChannel("Output3");
+			AddOutputChannel("Output4");
+			AddOutputChannel("Output5");
 
 			Code = DefaultCode;
-
 		}
 
 		public string Code { get; set; }
 
-		public Action<CodeProcessor> ProcessFunction { get; set; }
 		public Action<CodeProcessor> PrepareFunction { get; set; }
+
+		public Action<CodeProcessor> ProcessFunction { get; set; }
 
 		public override void GetUserInterface(Panel panel)
 		{
@@ -50,6 +53,24 @@ namespace VisualProcessors.Processing
 			cpanel.Dock = DockStyle.Fill;
 			panel.Controls.Add(cpanel);
 			base.GetUserInterface(panel);
+		}
+
+		protected override bool Prepare()
+		{
+			base.Prepare();
+			if (PrepareFunction != null)
+			{
+				try
+				{
+					PrepareFunction(this);
+				}
+				catch (Exception e)
+				{
+					MessageBox.Show(e.ToString());
+					return false;
+				}
+			}
+			return true;
 		}
 
 		protected override void Process()
@@ -67,29 +88,12 @@ namespace VisualProcessors.Processing
 				}
 			}
 		}
-		protected override bool Prepare()
-		{
-			base.Prepare();
-			if (PrepareFunction!=null)
-			{
-				try
-				{
-					PrepareFunction(this);
-				}
-				catch (Exception e)
-				{
-					MessageBox.Show(e.ToString());
-					return false;
-				}
-			}
-			return true;
-		}
 
 		#region IXmlSerializable Members
 
 		public override void ReadXml(XmlReader reader)
 		{
-			Code = reader.GetAttribute("Code").Replace("\\t","\t");
+			Code = reader.GetAttribute("Code").Replace("\\t", "\t");
 			base.ReadXml(reader);
 		}
 

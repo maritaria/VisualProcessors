@@ -244,7 +244,7 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>
 		///  true for a primary <see cref="Axis" /> (for the <see cref="X2Axis" />, this is always
-		///  true), false otherwise
+		///  true) , false otherwise
 		/// </returns>
 		override internal bool IsPrimary(GraphPane pane)
 		{

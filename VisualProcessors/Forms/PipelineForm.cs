@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -12,7 +13,6 @@ using VisualProcessors;
 using VisualProcessors.Controls;
 using VisualProcessors.Forms;
 using VisualProcessors.Processing;
-using System.IO;
 
 namespace VisualProcessors.Forms
 {
@@ -20,28 +20,11 @@ namespace VisualProcessors.Forms
 	{
 		#region Properties
 
+		private bool m_IsSaved = false;
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
 		private bool m_PipelineStatusChanging = false;
-		private bool m_IsSaved = false;
-		public bool IsSaved
-		{
-			get
-			{
-				return m_IsSaved;
-			}
-			set
-			{
-				string str =Path.GetFileName(m_CurrentFilepath);
-				if (str=="")
-				{
-					str = "Unnamed";
-				}
-				Text = ((value) ? "" : "*") + str;
-				m_IsSaved = value;
-			}
-		}
 
 		public Pipeline CurrentPipeline
 		{
@@ -54,6 +37,25 @@ namespace VisualProcessors.Forms
 				SetPipeline(value);
 			}
 		}
+
+		public bool IsSaved
+		{
+			get
+			{
+				return m_IsSaved;
+			}
+			set
+			{
+				string str = Path.GetFileName(m_CurrentFilepath);
+				if (str == "")
+				{
+					str = "Unnamed";
+				}
+				Text = ((value) ? "" : "*") + str;
+				m_IsSaved = value;
+			}
+		}
+
 		public MdiClient MdiClient
 		{
 			get
@@ -69,7 +71,7 @@ namespace VisualProcessors.Forms
 		public PipelineForm()
 		{
 			InitializeComponent();
-			
+
 			//Update MenuItems
 			CurrentPipeline = null;
 
@@ -89,7 +91,7 @@ namespace VisualProcessors.Forms
 			MdiClient.MouseClick += MdiClientMouseClick;
 			MdiClient.BackColor = SystemColors.ActiveCaption;
 			m_MdiClientHelper = new MdiClientHelper(m_MdiClient);
-			
+
 			//Toolbox
 			Toolbox.PipelineForm = this;
 		}
@@ -108,7 +110,7 @@ namespace VisualProcessors.Forms
 				CurrentPipeline.Modified -= CurrentPipelineModification;
 				CurrentPipeline.Stop();
 			}
-			foreach(ProcessorForm pf in m_ProcessorForms)
+			foreach (ProcessorForm pf in m_ProcessorForms)
 			{
 				pf.ForceClose();
 			}
@@ -122,10 +124,10 @@ namespace VisualProcessors.Forms
 				CurrentPipeline.Stop();
 				foreach (string name in pipeline.GetListOfNames())
 				{
-					AddProcessor(pipeline.GetByName(name),true);
+					AddProcessor(pipeline.GetByName(name), true);
 				}
 			}
-			bool enabled = (CurrentPipeline!=null);
+			bool enabled = (CurrentPipeline != null);
 			closeToolStripMenuItem.Enabled = enabled;
 			saveToolStripMenuItem.Enabled = enabled;
 			saveAsToolStripMenuItem.Enabled = enabled;
@@ -133,17 +135,12 @@ namespace VisualProcessors.Forms
 			resetToolStripMenuItem.Enabled = enabled;
 			loadStateToolStripMenuItem.Enabled = enabled;
 			saveStateToolStripMenuItem.Enabled = enabled;
-			
-			OnPipelineChanged(old,CurrentPipeline);
+
+			OnPipelineChanged(old, CurrentPipeline);
 			if (MdiClient != null)
 			{
 				MdiClient.Invalidate();
 			}
-		}
-
-		void CurrentPipelineModification(object sender, EventArgs e)
-		{
-			IsSaved = false;
 		}
 
 		private Point CalculateChannelLink(Form a, Point end)
@@ -182,6 +179,11 @@ namespace VisualProcessors.Forms
 			return result;
 		}
 
+		private void CurrentPipelineModification(object sender, EventArgs e)
+		{
+			IsSaved = false;
+		}
+
 		#endregion Methods
 
 		#region ProcessorForm Control
@@ -192,8 +194,11 @@ namespace VisualProcessors.Forms
 		///  Adds a new processor to the pipeline, creates a ProcessorForm for it, and shows the
 		///  form on the MDIClient
 		/// </summary>
-		/// <param name="p">The processor to add to the underlaying pipeline</param>
-		/// <param name="useModel">When true, the new ProcessorForm will have the size and position that the given Processor describes, used when loading models from XML data</param>
+		/// <param name="p">       The processor to add to the underlaying pipeline</param>
+		/// <param name="useModel">
+		///  When true, the new ProcessorForm will have the size and position that the given
+		///  Processor describes, used when loading models from XML data
+		/// </param>
 		/// <returns>The (new) ProcessorForm that owns the processor</returns>
 		public ProcessorForm AddProcessor(Processor p, bool useModel)
 		{
@@ -378,17 +383,17 @@ namespace VisualProcessors.Forms
 
 		#region Events
 
-		public event Action<Pipeline,Pipeline> PipelineChanged;
+		public event Action<Pipeline, Pipeline> PipelineChanged;
 
 		private void OnPipelineChanged(Pipeline oldPipeline, Pipeline newPipeline)
 		{
-			if (PipelineChanged!=null)
+			if (PipelineChanged != null)
 			{
-				PipelineChanged(oldPipeline,newPipeline);
+				PipelineChanged(oldPipeline, newPipeline);
 			}
 		}
 
-		#endregion
+		#endregion Events
 
 		#region EventHandlers
 
@@ -529,100 +534,12 @@ namespace VisualProcessors.Forms
 		}
 
 		#endregion EventHandlers
-		
+
 		#region MenuStrip Implementation
 
 		#region Menu: File
 
 		private string m_CurrentFilepath = "";
-
-		private void newToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (CurrentPipeline != null && !IsSaved && !ConfirmNoSave())
-			{
-				return;
-			}
-			m_CurrentFilepath = "";
-			CreateNew();
-		}
-		private void openToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (CurrentPipeline != null && !IsSaved && !ConfirmNoSave())
-			{
-				return;
-			}
-			LoadFile();
-		}
-
-		private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (CurrentPipeline != null && !IsSaved && !ConfirmNoSave())
-			{
-				return;
-			}
-			CurrentPipeline = null;
-		}
-
-		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (CurrentPipeline != null)
-			{
-				SaveFile();
-			}
-		}
-		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (CurrentPipeline != null)
-			{
-				m_CurrentFilepath = SaveFileAs();
-			}
-		}
-
-		private bool ConfirmNoSave()
-		{
-			DialogResult result = MessageBox.Show("Do you want to save?", "Unsaved edits", MessageBoxButtons.YesNoCancel);
-			switch(result)
-			{
-				case System.Windows.Forms.DialogResult.Cancel:
-					return false;
-				case System.Windows.Forms.DialogResult.No:
-					return true;
-				case System.Windows.Forms.DialogResult.Yes:
-					SaveFile();
-					return true;
-			}
-			return true;
-		}
-
-
-		public void SaveFile()
-		{
-			if (m_CurrentFilepath != "")
-			{
-				FileStream file = new FileStream(m_CurrentFilepath, FileMode.Create);
-				CurrentPipeline.SaveToFile(file);
-				file.Close();
-				IsSaved = true;
-			}
-			else
-			{
-				m_CurrentFilepath = SaveFileAs();
-			}
-		}
-		public string SaveFileAs()
-		{
-			MainMenuSaveFileDialog.InitialDirectory = m_CurrentFilepath;
-			DialogResult result = MainMenuSaveFileDialog.ShowDialog();
-			if (result != DialogResult.Cancel)
-			{
-				m_CurrentFilepath = MainMenuSaveFileDialog.FileName;
-				FileStream file = new FileStream(m_CurrentFilepath, FileMode.Create);
-				CurrentPipeline.SaveToFile(file);
-				file.Close();
-				IsSaved = true;
-			}
-			return m_CurrentFilepath;
-		}
 
 		public void CreateNew()
 		{
@@ -645,12 +562,112 @@ namespace VisualProcessors.Forms
 			IsSaved = true;
 		}
 
+		public void SaveFile()
+		{
+			if (m_CurrentFilepath != "")
+			{
+				FileStream file = new FileStream(m_CurrentFilepath, FileMode.Create);
+				CurrentPipeline.SaveToFile(file);
+				file.Close();
+				IsSaved = true;
+			}
+			else
+			{
+				m_CurrentFilepath = SaveFileAs();
+			}
+		}
 
-		#endregion
+		public string SaveFileAs()
+		{
+			MainMenuSaveFileDialog.InitialDirectory = m_CurrentFilepath;
+			DialogResult result = MainMenuSaveFileDialog.ShowDialog();
+			if (result != DialogResult.Cancel)
+			{
+				m_CurrentFilepath = MainMenuSaveFileDialog.FileName;
+				FileStream file = new FileStream(m_CurrentFilepath, FileMode.Create);
+				CurrentPipeline.SaveToFile(file);
+				file.Close();
+				IsSaved = true;
+			}
+			return m_CurrentFilepath;
+		}
+
+		private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (CurrentPipeline != null && !IsSaved && !ConfirmNoSave())
+			{
+				return;
+			}
+			CurrentPipeline = null;
+		}
+
+		private bool ConfirmNoSave()
+		{
+			DialogResult result = MessageBox.Show("Do you want to save?", "Unsaved edits", MessageBoxButtons.YesNoCancel);
+			switch (result)
+			{
+				case System.Windows.Forms.DialogResult.Cancel:
+					return false;
+
+				case System.Windows.Forms.DialogResult.No:
+					return true;
+
+				case System.Windows.Forms.DialogResult.Yes:
+					SaveFile();
+					return true;
+			}
+			return true;
+		}
+
+		private void newToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (CurrentPipeline != null && !IsSaved && !ConfirmNoSave())
+			{
+				return;
+			}
+			m_CurrentFilepath = "";
+			CreateNew();
+		}
+
+		private void openToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (CurrentPipeline != null && !IsSaved && !ConfirmNoSave())
+			{
+				return;
+			}
+			LoadFile();
+		}
+
+		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (CurrentPipeline != null)
+			{
+				m_CurrentFilepath = SaveFileAs();
+			}
+		}
+
+		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (CurrentPipeline != null)
+			{
+				SaveFile();
+			}
+		}
+
+		#endregion Menu: File
 
 		#region Menu: Simulation
 
 		private bool m_RunCheckedChanging = false;
+
+		private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			m_RunCheckedChanging = true;
+			runToolStripMenuItem.Checked = false;
+			CurrentPipeline.Stop();
+			m_RunCheckedChanging = false;
+		}
+
 		private void runToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			runToolStripMenuItem.Checked = !runToolStripMenuItem.Checked;
@@ -663,15 +680,9 @@ namespace VisualProcessors.Forms
 				CurrentPipeline.Stop();
 			}
 		}
-		private void resetToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			m_RunCheckedChanging = true;
-			runToolStripMenuItem.Checked = false;
-			CurrentPipeline.Stop();
-			m_RunCheckedChanging = false;
-		}
 
-		#endregion
+		#endregion Menu: Simulation
+
 		#region Menu: Tools
 
 		private AssemblyForm m_AssemblyForm;
@@ -690,12 +701,10 @@ namespace VisualProcessors.Forms
 			}
 		}
 
-		#endregion
+		#endregion Menu: Tools
 
+		#endregion MenuStrip Implementation
 
-		
-		#endregion
-		
 		#region Interop
 
 		#endregion Interop

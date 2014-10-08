@@ -46,8 +46,8 @@ namespace ZedGraph
 		{
 			// <summary>
 			//  The default display mode for the <see cref="XAxis" /> (<see cref="Axis.IsVisible" />
-			//  property). true to display the scale values, title, tic marks, false to hide the
-			//  axis entirely.
+			//  property) . true to display the scale values, title, tic marks, false to hide the
+			//            axis entirely.
 			// </summary>
 			public static bool IsVisible = true;
 
@@ -238,7 +238,7 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>
 		///  true for a primary <see cref="Axis" /> (for the <see cref="XAxis" />, this is always
-		///  true), false otherwise
+		///  true) , false otherwise
 		/// </returns>
 		override internal bool IsPrimary(GraphPane pane)
 		{

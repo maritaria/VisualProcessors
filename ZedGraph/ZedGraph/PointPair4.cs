@@ -187,8 +187,8 @@ namespace ZedGraph
 
 		/// <summary>
 		///  Format this PointPair value using a general format string.
-		///  Example: a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
-		///  If <see paramref="isShowZ" /> is true, then the third "Z" coordinate is also shown.
+		///  Example: a format string of "e2" would give "( 1.23e+001, -1.69e+001 )". If <see
+		///           paramref="isShowZ" /> is true, then the third "Z" coordinate is also shown.
 		/// </summary>
 		/// <param name="format">  
 		///  A format string that will be used to format each of the two double type values (see

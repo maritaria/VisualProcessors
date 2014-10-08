@@ -32,11 +32,12 @@ namespace ZedGraph
 	///  done using Astronomical Julian Day numbers. The Astronomical Julian Day number is defined
 	///  as the number of days since noon on January 1st, 4713 B.C. (also referred to as 12:00 on
 	///  January 1, -4712).
-	///  NOTE: MS Excel actually has an error in the Serial Date calculations because it
-	///  errantly assumes 1900 is a leap year. The XDate calculations do not have this same error.
-	///  Therefore, XDate and Excel Date Serial values are 1 day different up until the date value
-	///  of 60 (in Excel, this is February 29th, 1900, and in XDate, this is February 28th, 1900).
-	///  At a value of 61 (March 1st, 1900) or greater, they agree with eachother.
+	///  NOTE: MS Excel actually has an error in the Serial Date calculations because it errantly
+	///        assumes 1900 is a leap year. The XDate calculations do not have this same error.
+	///        Therefore, XDate and Excel Date Serial values are 1 day different up until the date
+	///        value of 60 (in Excel, this is February 29th, 1900, and in XDate, this is February
+	///        28th, 1900). At a value of 61 (March 1st, 1900) or greater, they agree with
+	///        eachother.
 	/// </remarks>
 	/// <author>John Champion</author>
 	/// <version>$Revision: 3.23 $ $Date: 2007-11-11 06:56:34 $</version>
@@ -209,7 +210,7 @@ namespace ZedGraph
 		/// <summary>
 		///  Construct a date class from a calendar date and time (year, month, day, hour, minute,
 		///  second) , where seconds is a <see cref="System.Double" /> value (allowing fractional
-		///          seconds).
+		///  seconds) .
 		/// </summary>
 		/// <param name="year">  An integer value for the year, e.g., 1995.</param>
 		/// <param name="day">   
@@ -544,7 +545,7 @@ namespace ZedGraph
 
 		/// <summary>
 		///  Calculate an XL Date from the specified Calendar date (year, month, day, hour, minute,
-		///  second), first normalizing all input data values.
+		///  second) , first normalizing all input data values.
 		/// </summary>
 		/// <remarks>
 		///  The Calendar date is always based on the Gregorian Calendar. Note that the Gregorian
@@ -590,7 +591,7 @@ namespace ZedGraph
 
 		/// <summary>
 		///  Calculate an XL Date from the specified Calendar date (year, month, day, hour, minute,
-		///  second), first normalizing all input data values.
+		///  second) , first normalizing all input data values.
 		/// </summary>
 		/// <remarks>
 		///  The Calendar date is always based on the Gregorian Calendar. Note that the Gregorian
@@ -632,8 +633,8 @@ namespace ZedGraph
 
 		/// <summary>
 		///  Calculate an XL Date from the specified Calendar date (year, month, day, hour, minute,
-		///  second), first normalizing all input data values. The seconds value is a double type,
-		///  allowing fractional seconds.
+		///  second) , first normalizing all input data values. The seconds value is a double type,
+		///          allowing fractional seconds.
 		/// </summary>
 		/// <remarks>
 		///  The Calendar date is always based on the Gregorian Calendar. Note that the Gregorian
@@ -1025,8 +1026,8 @@ namespace ZedGraph
 
 		/// <summary>
 		///  Calculate an XL date from the specified Calendar date (year, month, day, hour, minute,
-		///  second). This is the internal trusted version, where all values are assumed to be
-		///  legitimate ( month is between 1 and 12, minute is between 0 and 59, etc. )
+		///  second) . This is the internal trusted version, where all values are assumed to be
+		///          legitimate ( month is between 1 and 12, minute is between 0 and 59, etc. )
 		/// </summary>
 		/// <param name="year">       The integer year value (e.g., 1994).</param>
 		/// <param name="month">      The integer month value (e.g., 7 for July).</param>
@@ -1255,6 +1256,16 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		///  Implicit conversion from XDate to float (an XL Date).
+		/// </summary>
+		/// <param name="xDate">The XDate struct on which to operate</param>
+		/// <returns>A double floating point value representing the XL Date</returns>
+		public static implicit operator float(XDate xDate)
+		{
+			return (float)xDate._xlDate;
+		}
+
+		/// <summary>
 		///  Implicit conversion from double (an XL Date) to XDate.
 		/// </summary>
 		/// <param name="xlDate">The XDate struct on which to operate</param>
@@ -1336,16 +1347,6 @@ namespace ZedGraph
 			return xDate;
 		}
 
-		/// <summary>
-		///  Implicit conversion from XDate to float (an XL Date).
-		/// </summary>
-		/// <param name="xDate">The XDate struct on which to operate</param>
-		/// <returns>A double floating point value representing the XL Date</returns>
-		public static implicit operator float(XDate xDate)
-		{
-			return (float)xDate._xlDate;
-		}
-
 		#endregion Operator Overload Methods
 
 		#region General Overrides
@@ -1364,8 +1365,8 @@ namespace ZedGraph
 		/// <param name="target">The second <see cref="XDate" /> object to be compared.</param>
 		/// <returns>
 		///  zero if <paramref name="target" /> is equal to the current instance,
-		///  - 1 if <paramref name="target" /> is less than the current instance, and
-		///  1 if <paramref name="target" /> is greater than the current instance.
+		///  - 1 if <paramref name="target" /> is less than the current instance, and 1 if <paramref
+		///    name="target" /> is greater than the current instance.
 		/// </returns>
 		public int CompareTo(object target)
 		{
@@ -1585,40 +1586,42 @@ namespace ZedGraph
 				///  elementswill be replaced with the corresponding date values:<list
 				///  type="table"><listheader><term>Variable</term><description>Description</description></listheader><item><term>&amp;mmmm</term><description>month
 				///  name (e.g.,
-				///  January)</description></item><item><term>&amp;mmm</term><description>month
-				///  abbreviation (e.g.,
-				///  Apr)</description></item><item><term>&amp;mm</term><description>padded month
-				///  number (e.g.
-				///  04)</description></item><item><term>&amp;m</term><description>non-padded month
-				///  number (e.g.,
-				///  4)</description></item><item><term>&amp;dd</term><description>padded day number
-				///  (e.g., 09)</description></item><item><term>&amp;d</term><description>non-padded
-				///  day number (e.g.,
-				///  9)</description></item><item><term>&amp;yyyy</term><description>4 digit year
-				///  number (e.g.,
-				///  1995)</description></item><item><term>&amp;yy</term><description>two digit year
-				///  number (e.g.,
-				///  95)</description></item><item><term>&amp;hh</term><description>padded 24 hour
-				///  time value (e.g.,
-				///  08)</description></item><item><term>&amp;h</term><description>non-padded 12
-				///  hour time value (e.g.,
-				///  8)</description></item><item><term>&amp;nn</term><description>padded minute
-				///  value (e.g,
-				///  05)</description></item><item><term>&amp;n</term><description>non-padded minute
-				///  value (e.g.,
-				///  5)</description></item><item><term>&amp;ss</term><description>padded second
-				///  value (e.g.,
-				///  03)</description></item><item><term>&amp;s</term><description>non-padded second
-				///  value (e.g., 3)</description></item><item><term>&amp;a</term><description>"am"
-				///  or "pm"</description></item><item><term>&amp;wwww</term><description>day of
-				///  week (e.g.,
-				///  Wednesday)</description></item><item><term>&amp;www</term><description>day of
-				///  week abbreviation (e.g., Wed)</description></item></list>
+				///  January) </description></item><item><term>&amp;mmm</term><description>month
+				///           abbreviation (e.g.,
+				///  Apr) </description></item><item><term>&amp;mm</term><description>padded month
+				///       number (e.g.
+				///  04) </description></item><item><term>&amp;m</term><description>non-padded month
+				///      number (e.g.,
+				///  4) </description></item><item><term>&amp;dd</term><description>padded day
+				///     number (e.g.,
+				///     09)</description></item><item><term>&amp;d</term><description>non-padded day
+				///     number (e.g.,
+				///  9) </description></item><item><term>&amp;yyyy</term><description>4 digit year
+				///     number (e.g.,
+				///  1995) </description></item><item><term>&amp;yy</term><description>two digit
+				///        year number (e.g.,
+				///  95) </description></item><item><term>&amp;hh</term><description>padded 24 hour
+				///      time value (e.g.,
+				///  08) </description></item><item><term>&amp;h</term><description>non-padded 12
+				///      hour time value (e.g.,
+				///  8) </description></item><item><term>&amp;nn</term><description>padded minute
+				///     value (e.g,
+				///  05) </description></item><item><term>&amp;n</term><description>non-padded
+				///      minute value (e.g.,
+				///  5) </description></item><item><term>&amp;ss</term><description>padded second
+				///     value (e.g.,
+				///  03) </description></item><item><term>&amp;s</term><description>non-padded
+				///      second value (e.g.,
+				///      3)</description></item><item><term>&amp;a</term><description>"am" or
+				///      "pm"</description></item><item><term>&amp;wwww</term><description>day of
+				///      week (e.g.,
+				///  Wednesday) </description></item><item><term>&amp;www</term><description>day of
+				///             week abbreviation (e.g., Wed)</description></item></list>
 				/// </param>
 				/// <example>
 				///  <para>"&amp;wwww, &amp;mmmm &amp;dd, &amp;yyyy &amp;h:&amp;nn &amp;a" ==&gt;
 				///  "Sunday, February 12, 1956 4:23 pm"</para><para>"&amp;dd-&amp;mmm-&amp;yy"
-				///  ==&gt; 12-Feb-56</para>
+				///  == &gt; 12-Feb-56</para>
 				/// </example>
 				/// <returns>A string representation of the date</returns>
 				public string ToString( string fmtStr )
@@ -1637,40 +1640,42 @@ namespace ZedGraph
 				///  elementswill be replaced with the corresponding date values:<list
 				///  type="table"><listheader><term>Variable</term><description>Description</description></listheader><item><term>&amp;mmmm</term><description>month
 				///  name (e.g.,
-				///  January)</description></item><item><term>&amp;mmm</term><description>month
-				///  abbreviation (e.g.,
-				///  Apr)</description></item><item><term>&amp;mm</term><description>padded month
-				///  number (e.g.
-				///  04)</description></item><item><term>&amp;m</term><description>non-padded month
-				///  number (e.g.,
-				///  4)</description></item><item><term>&amp;dd</term><description>padded day number
-				///  (e.g., 09)</description></item><item><term>&amp;d</term><description>non-padded
-				///  day number (e.g.,
-				///  9)</description></item><item><term>&amp;yyyy</term><description>4 digit year
-				///  number (e.g.,
-				///  1995)</description></item><item><term>&amp;yy</term><description>two digit year
-				///  number (e.g.,
-				///  95)</description></item><item><term>&amp;hh</term><description>padded 24 hour
-				///  time value (e.g.,
-				///  08)</description></item><item><term>&amp;h</term><description>non-padded 12
-				///  hour time value (e.g.,
-				///  8)</description></item><item><term>&amp;nn</term><description>padded minute
-				///  value (e.g,
-				///  05)</description></item><item><term>&amp;n</term><description>non-padded minute
-				///  value (e.g.,
-				///  5)</description></item><item><term>&amp;ss</term><description>padded second
-				///  value (e.g.,
-				///  03)</description></item><item><term>&amp;s</term><description>non-padded second
-				///  value (e.g., 3)</description></item><item><term>&amp;a</term><description>"am"
-				///  or "pm"</description></item><item><term>&amp;wwww</term><description>day of
-				///  week (e.g.,
-				///  Wednesday)</description></item><item><term>&amp;www</term><description>day of
-				///  week abbreviation (e.g., Wed)</description></item></list>
+				///  January) </description></item><item><term>&amp;mmm</term><description>month
+				///           abbreviation (e.g.,
+				///  Apr) </description></item><item><term>&amp;mm</term><description>padded month
+				///       number (e.g.
+				///  04) </description></item><item><term>&amp;m</term><description>non-padded month
+				///      number (e.g.,
+				///  4) </description></item><item><term>&amp;dd</term><description>padded day
+				///     number (e.g.,
+				///     09)</description></item><item><term>&amp;d</term><description>non-padded day
+				///     number (e.g.,
+				///  9) </description></item><item><term>&amp;yyyy</term><description>4 digit year
+				///     number (e.g.,
+				///  1995) </description></item><item><term>&amp;yy</term><description>two digit
+				///        year number (e.g.,
+				///  95) </description></item><item><term>&amp;hh</term><description>padded 24 hour
+				///      time value (e.g.,
+				///  08) </description></item><item><term>&amp;h</term><description>non-padded 12
+				///      hour time value (e.g.,
+				///  8) </description></item><item><term>&amp;nn</term><description>padded minute
+				///     value (e.g,
+				///  05) </description></item><item><term>&amp;n</term><description>non-padded
+				///      minute value (e.g.,
+				///  5) </description></item><item><term>&amp;ss</term><description>padded second
+				///     value (e.g.,
+				///  03) </description></item><item><term>&amp;s</term><description>non-padded
+				///      second value (e.g.,
+				///      3)</description></item><item><term>&amp;a</term><description>"am" or
+				///      "pm"</description></item><item><term>&amp;wwww</term><description>day of
+				///      week (e.g.,
+				///  Wednesday) </description></item><item><term>&amp;www</term><description>day of
+				///             week abbreviation (e.g., Wed)</description></item></list>
 				/// </param>
 				/// <example>
 				///  <para>"&amp;wwww, &amp;mmmm &amp;dd, &amp;yyyy &amp;h:&amp;nn &amp;a" ==&gt;
 				///  "Sunday, February 12, 1956 4:23 pm"</para><para>"&amp;dd-&amp;mmm-&amp;yy"
-				///  ==&gt; 12-Feb-56</para>
+				///  == &gt; 12-Feb-56</para>
 				/// </example>
 				/// <returns>A string representation of the date</returns>
 				public static string ToString( double xlDate, string fmtStr )

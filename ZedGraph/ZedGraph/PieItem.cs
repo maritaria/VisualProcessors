@@ -186,13 +186,13 @@ namespace ZedGraph
 
 			/// <summary>
 			///  The default color for filling in the PieItem (<see cref="ZedGraph.Fill.Color" />
-			///  property).
+			///  property) .
 			/// </summary>
 			public static Color FillColor = Color.Red;
 
 			/// <summary>
 			///  The default fill mode for this PieItem (<see cref="ZedGraph.Fill.Type" />
-			///  property).
+			///  property) .
 			/// </summary>
 			public static FillType FillType = FillType.Brush;
 
@@ -204,7 +204,7 @@ namespace ZedGraph
 
 			/// <summary>
 			///  The default border mode for PieItem (<see cref="ZedGraph.LineBase.IsVisible" />
-			///  property). true to display frame around PieItem, false otherwise
+			///  property) . true to display frame around PieItem, false otherwise
 			/// </summary>
 			public static bool IsBorderVisible = true;
 

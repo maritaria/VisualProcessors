@@ -42,7 +42,7 @@ namespace ZedGraph
 
 		/// <summary>
 		///  The color saturation (intensity) value, ranging from 0 (gray scale) to 255 (most
-		///  colored).
+		///  colored) .
 		/// </summary>
 		public byte S;
 

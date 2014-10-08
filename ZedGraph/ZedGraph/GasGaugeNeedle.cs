@@ -361,8 +361,7 @@ namespace ZedGraph
 			/// <summary>
 			///  The default border mode for GasGaugeNeedle (<see cref="ZedGraph.LineBase.IsVisible"
 			///  />
-			///  property) .
-			///  true to display frame around GasGaugeNeedle, false otherwise
+			///  property) . true to display frame around GasGaugeNeedle, false otherwise
 			/// </summary>
 			public static bool IsBorderVisible = true;
 

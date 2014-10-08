@@ -209,7 +209,7 @@ namespace ZedGraph
 		/// <summary>
 		///  Implicit conversion from PointPair to PointF. Note that this conversion can result in
 		///  data loss, since the data are being cast from a type double (64 bit) to a float (32
-		///  bit).
+		///  bit) .
 		/// </summary>
 		/// <param name="pair">The PointPair struct on which to operate</param>
 		/// <returns>A PointF struct equivalent to the PointPair</returns>
@@ -274,9 +274,9 @@ namespace ZedGraph
 		/// <summary>
 		///  Format this PointPair value using different general format strings for the X and Y
 		///  values.
-		///  Example: a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
-		///  The Z value is not displayed (see <see cref="PointPair.ToString( string, string, string
-		///  )" />).
+		///  Example: a format string of "e2" would give "( 1.23e+001, -1.69e+001 )". The Z value is
+		///           not displayed (see <see cref="PointPair.ToString( string, string, string )"
+		///           />).
 		/// </summary>
 		/// <param name="formatX">
 		///  A format string that will be used to format the X double type value (see <see

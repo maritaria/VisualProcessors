@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button","","Output",
+	[ProcessorAttribute("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button", "", "Output",
 		HideInputTab = true)]
 	public class DirectInputProcessor : Processor
 	{

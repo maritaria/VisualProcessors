@@ -9,6 +9,8 @@ namespace VisualProcessors.Processing
 	[AttributeUsage(AttributeTargets.Class)]
 	public class ProcessorAttribute : System.Attribute
 	{
+		public static ProcessorAttribute Default = new ProcessorAttribute("Unknown", "Unknown", "Unknown", "Unknown");
+
 		/// <summary>
 		///  Determines whether the input channels are allowed to be optional
 		/// </summary>
@@ -57,13 +59,12 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public bool HideSettingsTab = false;
 
-		public ProcessorAttribute(string author, string description,string defaultinput,string defaultoutput)
+		public ProcessorAttribute(string author, string description, string defaultinput, string defaultoutput)
 		{
 			Author = author;
 			Description = description;
 			DefaultInput = defaultinput;
 			DefaultOutput = defaultoutput;
 		}
-		public static ProcessorAttribute Default = new ProcessorAttribute("Unknown", "Unknown", "Unknown", "Unknown");
 	}
 }
