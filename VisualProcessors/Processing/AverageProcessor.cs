@@ -19,8 +19,8 @@ namespace VisualProcessors.Processing
 		{
 		}
 
-		public AverageProcessor(string name)
-			: base(name)
+		public AverageProcessor(Pipeline pipeline, string name)
+			: base(pipeline, name)
 		{
 			AddInputChannel("Input", false);
 			AddInputChannel("HistorySize", false);

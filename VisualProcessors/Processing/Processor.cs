@@ -22,21 +22,15 @@ namespace VisualProcessors.Processing
 		private string m_Name = "Undefined";
 		private Size m_Size = new Size(0, 0);
 		private Thread m_WorkerThread;
-
-		/// <summary>
-		///  Gets or sets the Height component of the processors Size property
-		/// </summary>
-		public int Height
+		private Pipeline m_Pipeline;
+		public Pipeline Pipeline
 		{
 			get
 			{
-				return Size.Height;
-			}
-			set
-			{
-				Size = new Size(Size.Width, value);
+				return m_Pipeline;
 			}
 		}
+
 
 		public bool IsPrepared { get; protected set; }
 
@@ -45,22 +39,6 @@ namespace VisualProcessors.Processing
 			get
 			{
 				return (m_WorkerThread != null) && m_WorkerThread.IsAlive;
-			}
-		}
-
-		/// <summary>
-		///  Gets or sets the location of the processor in the model
-		/// </summary>
-		public Point Location
-		{
-			get
-			{
-				return m_Location;
-			}
-			set
-			{
-				m_Location = value;
-				OnLocationChanged();
 			}
 		}
 
@@ -81,6 +59,38 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		#region ProcessorForm
+
+		/// <summary>
+		///  Gets or sets the Height component of the processors Size property
+		/// </summary>
+		public int Height
+		{
+			get
+			{
+				return Size.Height;
+			}
+			set
+			{
+				Size = new Size(Size.Width, value);
+			}
+		}
+
+		/// <summary>
+		///  Gets or sets the location of the processor in the model
+		/// </summary>
+		public Point Location
+		{
+			get
+			{
+				return m_Location;
+			}
+			set
+			{
+				m_Location = value;
+				OnLocationChanged();
+			}
+		}
 		/// <summary>
 		///  Gets or sets the size of the processor's form in the model
 		/// </summary>
@@ -142,6 +152,7 @@ namespace VisualProcessors.Processing
 				Location = new Point(Location.X, value);
 			}
 		}
+		#endregion
 
 		#region Meta
 
@@ -298,9 +309,10 @@ namespace VisualProcessors.Processing
 		/// <param name="name">
 		///  The name of the processor, must be unique within the pipeline the processor belongs to.
 		/// </param>
-		public Processor(string name)
+		public Processor(Pipeline pipeline, string name)
 		{
-			Name = name;
+			m_Pipeline = pipeline;
+			m_Name = name;
 		}
 
 		~Processor()
@@ -320,7 +332,6 @@ namespace VisualProcessors.Processing
 			input.Dock = DockStyle.Top;
 			panel.Controls.Add(input);
 		}
-
 		public void Reset()
 		{
 			if (IsRunning)
@@ -329,8 +340,7 @@ namespace VisualProcessors.Processing
 			}
 			IsPrepared = false;
 		}
-
-		public virtual bool Start()
+		public virtual void Start()
 		{
 			if (m_WorkerThread != null)
 			{
@@ -338,15 +348,12 @@ namespace VisualProcessors.Processing
 			}
 			if (!IsPrepared)
 			{
-				if (!Prepare())
-				{
-					return false;
-				}
+				Prepare();
+				IsPrepared = true;
 			}
 			m_WorkerThread = new Thread(new ThreadStart(WorkerMethod));
 			m_WorkerThread.IsBackground = true;
 			m_WorkerThread.Start();
-			return true;
 		}
 
 		public virtual void Stop()
@@ -363,13 +370,16 @@ namespace VisualProcessors.Processing
 			m_WorkerThread = null;
 		}
 
-		protected virtual bool Prepare()
+		protected virtual void Prepare()
 		{
+			if (IsRunning)
+			{
+				Stop();
+			}
 			foreach (InputChannel channel in m_InputChannels)
 			{
 				channel.Clear();
 			}
-			return true;
 		}
 
 		protected virtual void Process()
@@ -546,6 +556,7 @@ namespace VisualProcessors.Processing
 
 		internal void Build(Pipeline pipeline)
 		{
+			m_Pipeline = pipeline;
 			m_InputChannels.Clear();
 			m_OutputChannels.Clear();
 			foreach (InputChannel input in m_RawInput)
@@ -618,16 +629,14 @@ namespace VisualProcessors.Processing
 		///  Invoked after an OutputChannel has safely removed
 		/// </summary>
 		public event EventHandler OutputChannelRemoved;
-
-		/// <summary>
-		///  Invoked by the processor when the processor wants the pipeline to halt execution
-		/// </summary>
-		public event EventHandler RequestExecutionHalt;
-
+		
 		/// <summary>
 		///  Invoked when the size of the processor has been changed
 		/// </summary>
 		public event EventHandler SizeChanged;
+
+		public event Action<Processor,string> Warning;
+		public event Action<Processor, string> Error;
 
 		protected void OnModified()
 		{
@@ -637,11 +646,18 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		protected void OnRequestExecutionHalt()
+		protected void OnWarning(string message)
 		{
-			if (RequestExecutionHalt != null)
+			if (Warning!=null)
 			{
-				RequestExecutionHalt(this, EventArgs.Empty);
+				Warning(this, message);
+			}
+		}
+		protected void OnError(string message)
+		{
+			if (Error!=null)
+			{
+				Error(this, message);
 			}
 		}
 
@@ -800,7 +816,7 @@ namespace VisualProcessors.Processing
 
 		#region IDisposable Members
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			foreach (InputChannel input in m_InputChannels)
 			{

@@ -35,8 +35,8 @@ namespace VisualProcessors.Processing
 			SetupLists();
 		}
 
-		public GraphPlotter(string name)
-			: base(name)
+		public GraphPlotter(Pipeline pipeline, string name)
+			: base(pipeline, name)
 		{
 			AddInputChannel("Red", true);
 			AddInputChannel("Blue", true);
@@ -67,7 +67,7 @@ namespace VisualProcessors.Processing
 			base.GetUserInterface(panel);
 		}
 
-		public override bool Start()
+		public override void Start()
 		{
 			if (m_RenderThread != null)
 			{
@@ -76,11 +76,14 @@ namespace VisualProcessors.Processing
 			m_RenderThread = new Thread(new ThreadStart(RenderThreadMethod));
 			m_RenderThread.IsBackground = true;
 			m_RenderThread.Start();
-			m_StartTimestamp = DateTime.Now;
 			base.Start();
-			return true;
 		}
 
+		protected override void Prepare()
+		{
+			m_StartTimestamp = DateTime.Now;
+			base.Prepare();
+		}
 		public override void Stop()
 		{
 			if (m_RenderThread != null)

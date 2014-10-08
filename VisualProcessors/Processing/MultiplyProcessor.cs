@@ -16,8 +16,8 @@ namespace VisualProcessors.Processing
 		{
 		}
 
-		public MultiplyProcessor(string name)
-			: base(name)
+		public MultiplyProcessor(Pipeline pipeline, string name)
+			: base(pipeline, name)
 		{
 			AddInputChannel("A", false);
 			AddInputChannel("B", false);

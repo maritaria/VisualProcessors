@@ -18,8 +18,8 @@ namespace VisualProcessors.Processing
 		{
 		}
 
-		public DirectInputProcessor(string name)
-			: base(name)
+		public DirectInputProcessor(Pipeline pipeline, string name)
+			: base(pipeline, name)
 		{
 			AddInputChannel("DNC", false);
 			AddOutputChannel("Output");

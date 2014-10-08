@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Windows.Forms;
 
 namespace VisualProcessors.Processing
 {
@@ -81,7 +82,6 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
-				p.RequestExecutionHalt += p_RequestExecutionHalt;
 				p.InputChannelAdded += ProcessorModified;
 				p.InputChannelRemoved += ProcessorModified;
 				p.OutputChannelAdded += ProcessorModified;
@@ -89,6 +89,8 @@ namespace VisualProcessors.Processing
 				p.LinkAdded += ProcessorModified;
 				p.LinkRemoved += ProcessorModified;
 				p.NameChanged += delegate(Processor pr, string o, string n) { OnModified(); };
+				p.Error += OnError;
+				p.Warning += OnWarning;
 				if (GetByName(p.Name) == null)
 				{
 					m_Processors.Add(p);
@@ -141,7 +143,6 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
-				p.RequestExecutionHalt -= p_RequestExecutionHalt;
 				p.InputChannelAdded -= ProcessorModified;
 				p.InputChannelRemoved -= ProcessorModified;
 				p.OutputChannelAdded -= ProcessorModified;
@@ -192,27 +193,30 @@ namespace VisualProcessors.Processing
 
 		public void Start()
 		{
-			bool failed = false;
+			bool fail = false;
 			lock (m_Processors)
 			{
 				foreach (Processor p in m_Processors)
 				{
-					if (!p.Start())
+					try
 					{
-						failed = true;
+						p.Start();
+					}
+					catch(Exception e)
+					{
+						fail = true;
+						OnError(p, e.Message);
 						break;
 					}
 				}
 				m_Running = true;
 			}
-			if (failed)
+			if (fail)
 			{
 				Stop();
+				return;
 			}
-			else
-			{
-				OnStarted();
-			}
+			OnStarted();
 		}
 
 		public void Stop()
@@ -249,6 +253,30 @@ namespace VisualProcessors.Processing
 		public event EventHandler Started;
 
 		public event EventHandler Stopped;
+		/// <summary>
+		/// Invoked when a Processor indicates a warning
+		/// </summary>
+		public event Action<Processor, string> Warning;
+		/// <summary>
+		/// Invoked when a Processor indicates an error
+		/// </summary>
+		public event Action<Processor, string> Error;
+
+		private void OnWarning(Processor p, string s)
+		{
+			if (Warning != null)
+			{
+				Warning(p, s);
+			}
+		}
+
+		private void OnError(Processor p, string s)
+		{
+			if (Error != null)
+			{
+				Error(p, s);
+			}
+		}
 
 		private void OnModified()
 		{

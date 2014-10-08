@@ -116,7 +116,7 @@ namespace VisualProcessors.Controls
 					break;
 				counter++;
 			}
-			Processor p = (Processor)Activator.CreateInstance(t, t.Name + counter);
+			Processor p = (Processor)Activator.CreateInstance(t, PipelineForm.CurrentPipeline, t.Name + counter);
 
 			ProcessorForm pf = PipelineForm.AddProcessor(p, false);
 			Point pfcenter = pf.GetCenter();

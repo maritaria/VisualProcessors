@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			this.Tabs = new System.Windows.Forms.TabControl();
 			this.InputTab = new System.Windows.Forms.TabPage();
 			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
@@ -38,12 +37,10 @@
 			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			this.MinimalTab = new System.Windows.Forms.TabPage();
 			this.LinkEndpointButton = new System.Windows.Forms.Button();
-			this.ErrorIcon = new System.Windows.Forms.ErrorProvider(this.components);
 			this.Tabs.SuspendLayout();
 			this.InputTab.SuspendLayout();
 			this.SettingsTab.SuspendLayout();
 			this.OutputTab.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.ErrorIcon)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// Tabs
@@ -142,10 +139,6 @@
 			this.LinkEndpointButton.Visible = false;
 			this.LinkEndpointButton.Click += new System.EventHandler(this.LinkEndpointButton_Click);
 			// 
-			// ErrorIcon
-			// 
-			this.ErrorIcon.ContainerControl = this;
-			// 
 			// ProcessorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -166,7 +159,6 @@
 			this.InputTab.ResumeLayout(false);
 			this.SettingsTab.ResumeLayout(false);
 			this.OutputTab.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.ErrorIcon)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -174,7 +166,6 @@
 		#endregion
 
 		private System.Windows.Forms.Button LinkEndpointButton;
-		private System.Windows.Forms.ErrorProvider ErrorIcon;
 		private Controls.ProcessorOutputPanel ProcessorOutputView;
 		private System.Windows.Forms.TabControl Tabs;
 		private System.Windows.Forms.TabPage InputTab;

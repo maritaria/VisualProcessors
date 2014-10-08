@@ -26,6 +26,7 @@ namespace VisualProcessors.Forms
 		private Pipeline m_Pipeline;
 		private bool m_PipelineStatusChanging = false;
 
+
 		public Pipeline CurrentPipeline
 		{
 			get
@@ -89,7 +90,6 @@ namespace VisualProcessors.Forms
 			MdiClient.MouseMove += MdiclientMouseMove;
 			MdiClient.MouseUp += MdiClientMouseUp;
 			MdiClient.MouseClick += MdiClientMouseClick;
-			MdiClient.BackColor = SystemColors.ActiveCaption;
 			m_MdiClientHelper = new MdiClientHelper(m_MdiClient);
 
 			//Toolbox
@@ -108,6 +108,8 @@ namespace VisualProcessors.Forms
 				CurrentPipeline.Started -= PipelineStarted;
 				CurrentPipeline.Stopped -= PipelineStopped;
 				CurrentPipeline.Modified -= CurrentPipelineModification;
+				CurrentPipeline.Warning -= CurrentPipeline_Warning;
+				CurrentPipeline.Error -= CurrentPipeline_Error;
 				CurrentPipeline.Stop();
 			}
 			foreach (ProcessorForm pf in m_ProcessorForms)
@@ -121,11 +123,18 @@ namespace VisualProcessors.Forms
 				CurrentPipeline.Started += PipelineStarted;
 				CurrentPipeline.Stopped += PipelineStopped;
 				CurrentPipeline.Modified += CurrentPipelineModification;
+				CurrentPipeline.Warning += CurrentPipeline_Warning;
+				CurrentPipeline.Error += CurrentPipeline_Error;
 				CurrentPipeline.Stop();
 				foreach (string name in pipeline.GetListOfNames())
 				{
 					AddProcessor(pipeline.GetByName(name), true);
 				}
+				SimulationStatusLabel.Text = "Edit-mode";
+			}
+			else
+			{
+				SimulationStatusLabel.Text = "No file";
 			}
 			bool enabled = (CurrentPipeline != null);
 			closeToolStripMenuItem.Enabled = enabled;
@@ -141,6 +150,19 @@ namespace VisualProcessors.Forms
 			{
 				MdiClient.Invalidate();
 			}
+		}
+
+		void CurrentPipeline_Error(Processor arg1, string arg2)
+		{
+			ShowProcessor(arg1.Name);
+			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+			ErrorIcon.Icon = SystemIcons.Error;
+		}
+
+		void CurrentPipeline_Warning(Processor arg1, string arg2)
+		{
+			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+			ErrorIcon.Icon = SystemIcons.Warning;
 		}
 
 		private Point CalculateChannelLink(Form a, Point end)
@@ -469,16 +491,24 @@ namespace VisualProcessors.Forms
 			m_IsDragging = false;
 			Cursor = Cursors.Default;
 		}
-
+		
 		private void MdiClientPaintLinks(object sender, PaintEventArgs e)
 		{
+#warning Optimization needed
 			BufferedGraphicsContext currentContext;
 			BufferedGraphics myBuffer;
 			currentContext = BufferedGraphicsManager.Current;
 			myBuffer = currentContext.Allocate(m_MdiClient.CreateGraphics(), m_MdiClient.DisplayRectangle);
 			if (CurrentPipeline != null)
 			{
-				myBuffer.Graphics.Clear(MdiClient.BackColor);
+				if (CurrentPipeline.IsRunning)
+				{
+					myBuffer.Graphics.Clear(Color.LightCoral);
+				}
+				else
+				{
+					myBuffer.Graphics.Clear(SystemColors.ActiveCaption);
+				}
 			}
 			else
 			{
@@ -526,11 +556,15 @@ namespace VisualProcessors.Forms
 		private void PipelineStarted(object sender, EventArgs e)
 		{
 			runToolStripMenuItem.Checked = true;
+			SimulationStatusLabel.Text = "Simulating";
+			MdiClient.Invalidate();
 		}
 
 		private void PipelineStopped(object sender, EventArgs e)
 		{
 			runToolStripMenuItem.Checked = false;
+			SimulationStatusLabel.Text = "Edit-mode";
+			MdiClient.Invalidate();
 		}
 
 		#endregion EventHandlers
@@ -540,6 +574,14 @@ namespace VisualProcessors.Forms
 		#region Menu: File
 
 		private string m_CurrentFilepath = "";
+		
+		public string  CurrentFilepath
+		{
+			get
+			{
+				return m_CurrentFilepath;
+			}
+		}
 
 		public void CreateNew()
 		{
@@ -662,9 +704,13 @@ namespace VisualProcessors.Forms
 
 		private void resetToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			if(m_RunCheckedChanging)
+			{
+				return;
+			}
 			m_RunCheckedChanging = true;
 			runToolStripMenuItem.Checked = false;
-			CurrentPipeline.Stop();
+			CurrentPipeline.Reset();
 			m_RunCheckedChanging = false;
 		}
 

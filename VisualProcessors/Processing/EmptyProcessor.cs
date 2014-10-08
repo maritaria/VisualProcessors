@@ -12,15 +12,14 @@ namespace VisualProcessors.Processing
 		{
 		}
 
-		public EmptyProcessor(string name)
-			: base(name)
+		public EmptyProcessor(Pipeline pipeline, string name)
+			: base(pipeline, name)
 		{
 		}
 
-		protected override bool Prepare()
+		protected override void Prepare()
 		{
 			Console.WriteLine("EmptyProcessor.Prepare() " + Name);
-			return true;
 		}
 
 		protected override void Process()

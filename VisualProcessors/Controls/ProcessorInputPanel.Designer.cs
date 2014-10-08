@@ -30,6 +30,7 @@
 		{
 			this.InputSplitContainer = new System.Windows.Forms.SplitContainer();
 			this.InputChannelList = new System.Windows.Forms.ListBox();
+			this.OptionalCheckBox = new System.Windows.Forms.CheckBox();
 			this.ConstantInput = new System.Windows.Forms.TextBox();
 			this.ConstantRadioButton = new System.Windows.Forms.RadioButton();
 			this.LinkRadioButton = new System.Windows.Forms.RadioButton();
@@ -37,7 +38,6 @@
 			this.ConfigurationLabel = new System.Windows.Forms.Label();
 			this.UnlinkButton = new System.Windows.Forms.Button();
 			this.LinkButton = new System.Windows.Forms.Button();
-			this.OptionalCheckBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.InputSplitContainer)).BeginInit();
 			this.InputSplitContainer.Panel1.SuspendLayout();
 			this.InputSplitContainer.Panel2.SuspendLayout();
@@ -65,8 +65,9 @@
 			this.InputSplitContainer.Panel2.Controls.Add(this.ConfigurationGroupBox);
 			this.InputSplitContainer.Panel2.Controls.Add(this.UnlinkButton);
 			this.InputSplitContainer.Panel2.Controls.Add(this.LinkButton);
-			this.InputSplitContainer.Size = new System.Drawing.Size(342, 199);
-			this.InputSplitContainer.SplitterDistance = 131;
+			this.InputSplitContainer.Panel2MinSize = 200;
+			this.InputSplitContainer.Size = new System.Drawing.Size(350, 199);
+			this.InputSplitContainer.SplitterDistance = 130;
 			this.InputSplitContainer.TabIndex = 2;
 			// 
 			// InputChannelList
@@ -76,15 +77,26 @@
 			this.InputChannelList.IntegralHeight = false;
 			this.InputChannelList.Location = new System.Drawing.Point(0, 0);
 			this.InputChannelList.Name = "InputChannelList";
-			this.InputChannelList.Size = new System.Drawing.Size(131, 199);
+			this.InputChannelList.Size = new System.Drawing.Size(130, 199);
 			this.InputChannelList.TabIndex = 0;
 			this.InputChannelList.SelectedIndexChanged += new System.EventHandler(this.InputChannelList_SelectedIndexChanged);
+			// 
+			// OptionalCheckBox
+			// 
+			this.OptionalCheckBox.AutoSize = true;
+			this.OptionalCheckBox.Location = new System.Drawing.Point(3, 97);
+			this.OptionalCheckBox.Name = "OptionalCheckBox";
+			this.OptionalCheckBox.Size = new System.Drawing.Size(65, 17);
+			this.OptionalCheckBox.TabIndex = 18;
+			this.OptionalCheckBox.Text = "Optional";
+			this.OptionalCheckBox.UseVisualStyleBackColor = true;
+			this.OptionalCheckBox.CheckedChanged += new System.EventHandler(this.OptionalCheckBox_CheckedChanged);
 			// 
 			// ConstantInput
 			// 
 			this.ConstantInput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ConstantInput.Enabled = false;
-			this.ConstantInput.Location = new System.Drawing.Point(99, 71);
+			this.ConstantInput.Location = new System.Drawing.Point(108, 71);
 			this.ConstantInput.Name = "ConstantInput";
 			this.ConstantInput.Size = new System.Drawing.Size(105, 20);
 			this.ConstantInput.TabIndex = 16;
@@ -124,7 +136,7 @@
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationLabel);
 			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
-			this.ConfigurationGroupBox.Size = new System.Drawing.Size(201, 36);
+			this.ConfigurationGroupBox.Size = new System.Drawing.Size(210, 36);
 			this.ConfigurationGroupBox.TabIndex = 13;
 			this.ConfigurationGroupBox.TabStop = false;
 			this.ConfigurationGroupBox.Text = "Configuration";
@@ -142,7 +154,7 @@
 			// 
 			this.UnlinkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.UnlinkButton.Enabled = false;
-			this.UnlinkButton.Location = new System.Drawing.Point(144, 42);
+			this.UnlinkButton.Location = new System.Drawing.Point(153, 42);
 			this.UnlinkButton.Name = "UnlinkButton";
 			this.UnlinkButton.Size = new System.Drawing.Size(60, 23);
 			this.UnlinkButton.TabIndex = 17;
@@ -154,7 +166,7 @@
 			// 
 			this.LinkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.LinkButton.Enabled = false;
-			this.LinkButton.Location = new System.Drawing.Point(78, 42);
+			this.LinkButton.Location = new System.Drawing.Point(87, 42);
 			this.LinkButton.Name = "LinkButton";
 			this.LinkButton.Size = new System.Drawing.Size(60, 23);
 			this.LinkButton.TabIndex = 12;
@@ -162,24 +174,13 @@
 			this.LinkButton.UseVisualStyleBackColor = true;
 			this.LinkButton.Click += new System.EventHandler(this.LinkButton_Click);
 			// 
-			// OptionalCheckBox
-			// 
-			this.OptionalCheckBox.AutoSize = true;
-			this.OptionalCheckBox.Location = new System.Drawing.Point(3, 97);
-			this.OptionalCheckBox.Name = "OptionalCheckBox";
-			this.OptionalCheckBox.Size = new System.Drawing.Size(65, 17);
-			this.OptionalCheckBox.TabIndex = 18;
-			this.OptionalCheckBox.Text = "Optional";
-			this.OptionalCheckBox.UseVisualStyleBackColor = true;
-			this.OptionalCheckBox.CheckedChanged += new System.EventHandler(this.OptionalCheckBox_CheckedChanged);
-			// 
 			// ProcessorInputPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.InputSplitContainer);
 			this.Name = "ProcessorInputPanel";
-			this.Size = new System.Drawing.Size(342, 199);
+			this.Size = new System.Drawing.Size(350, 199);
 			this.InputSplitContainer.Panel1.ResumeLayout(false);
 			this.InputSplitContainer.Panel2.ResumeLayout(false);
 			this.InputSplitContainer.Panel2.PerformLayout();

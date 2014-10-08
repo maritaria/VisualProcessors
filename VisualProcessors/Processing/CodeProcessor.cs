@@ -24,8 +24,8 @@ namespace VisualProcessors.Processing
 		{
 		}
 
-		public CodeProcessor(string name)
-			: base(name)
+		public CodeProcessor(Pipeline pipeline, string name)
+			: base(pipeline, name)
 		{
 			AddInputChannel("Input1", false);
 			AddInputChannel("Input2", true);
@@ -55,7 +55,7 @@ namespace VisualProcessors.Processing
 			base.GetUserInterface(panel);
 		}
 
-		protected override bool Prepare()
+		protected override void Prepare()
 		{
 			base.Prepare();
 			if (PrepareFunction != null)
@@ -66,11 +66,9 @@ namespace VisualProcessors.Processing
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show(e.ToString());
-					return false;
+					OnError("The Prepare() function threw an exception!" + Environment.NewLine + e.Message);
 				}
 			}
-			return true;
 		}
 
 		protected override void Process()
@@ -83,8 +81,7 @@ namespace VisualProcessors.Processing
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show(e.ToString());
-					OnRequestExecutionHalt();
+					OnError("The Process() function threw an exception!" + Environment.NewLine + e.Message);
 				}
 			}
 		}

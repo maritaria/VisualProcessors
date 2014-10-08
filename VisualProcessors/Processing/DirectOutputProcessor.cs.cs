@@ -19,8 +19,8 @@ namespace VisualProcessors.Processing
 		{
 		}
 
-		public DirectOutputProcessor(string name)
-			: base(name)
+		public DirectOutputProcessor(Pipeline pipeline, string name)
+			: base(pipeline, name)
 		{
 			AddInputChannel("Input", false);
 		}

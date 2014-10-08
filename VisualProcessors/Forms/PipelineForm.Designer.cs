@@ -55,9 +55,14 @@
 			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.MainMenuSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.MainMenuOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.ErrorIcon = new System.Windows.Forms.ErrorProvider(this.components);
+			this.MdiStatusStrip = new System.Windows.Forms.StatusStrip();
+			this.SimulationStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.Toolbox = new VisualProcessors.Controls.ToolboxPanel();
 			this.MdiClientContextMenu.SuspendLayout();
 			this.MainMenu.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ErrorIcon)).BeginInit();
+			this.MdiStatusStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MdiClientContextMenu
@@ -253,6 +258,26 @@
 			this.MainMenuOpenFileDialog.Filter = "XML file|*.xml|All files|*.*";
 			this.MainMenuOpenFileDialog.Title = "Load File";
 			// 
+			// ErrorIcon
+			// 
+			this.ErrorIcon.ContainerControl = this;
+			// 
+			// MdiStatusStrip
+			// 
+			this.MdiStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SimulationStatusLabel});
+			this.MdiStatusStrip.Location = new System.Drawing.Point(175, 412);
+			this.MdiStatusStrip.Name = "MdiStatusStrip";
+			this.MdiStatusStrip.Size = new System.Drawing.Size(518, 22);
+			this.MdiStatusStrip.TabIndex = 4;
+			this.MdiStatusStrip.Text = "statusStrip1";
+			// 
+			// SimulationStatusLabel
+			// 
+			this.SimulationStatusLabel.Name = "SimulationStatusLabel";
+			this.SimulationStatusLabel.Size = new System.Drawing.Size(42, 17);
+			this.SimulationStatusLabel.Text = "No file";
+			// 
 			// Toolbox
 			// 
 			this.Toolbox.AutoScroll = true;
@@ -268,6 +293,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(693, 434);
+			this.Controls.Add(this.MdiStatusStrip);
 			this.Controls.Add(this.Toolbox);
 			this.Controls.Add(this.MainMenu);
 			this.IsMdiContainer = true;
@@ -277,6 +303,9 @@
 			this.MdiClientContextMenu.ResumeLayout(false);
 			this.MainMenu.ResumeLayout(false);
 			this.MainMenu.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ErrorIcon)).EndInit();
+			this.MdiStatusStrip.ResumeLayout(false);
+			this.MdiStatusStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -310,6 +339,9 @@
 		private System.Windows.Forms.OpenFileDialog MainMenuOpenFileDialog;
 		private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem assemblyInformationToolStripMenuItem;
+		private System.Windows.Forms.ErrorProvider ErrorIcon;
+		private System.Windows.Forms.StatusStrip MdiStatusStrip;
+		private System.Windows.Forms.ToolStripStatusLabel SimulationStatusLabel;
 		
 
 	}
