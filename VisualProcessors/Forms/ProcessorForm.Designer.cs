@@ -33,12 +33,12 @@
 			this.InputTab = new System.Windows.Forms.TabPage();
 			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
 			this.SettingsTab = new System.Windows.Forms.TabPage();
+			this.SettingsPanel = new System.Windows.Forms.Panel();
 			this.OutputTab = new System.Windows.Forms.TabPage();
 			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			this.MinimalTab = new System.Windows.Forms.TabPage();
 			this.LinkEndpointButton = new System.Windows.Forms.Button();
 			this.ErrorIcon = new System.Windows.Forms.ErrorProvider(this.components);
-			this.SettingsPanel = new System.Windows.Forms.Panel();
 			this.Tabs.SuspendLayout();
 			this.InputTab.SuspendLayout();
 			this.SettingsTab.SuspendLayout();
@@ -92,6 +92,14 @@
 			this.SettingsTab.Text = "Settings";
 			this.SettingsTab.UseVisualStyleBackColor = true;
 			// 
+			// SettingsPanel
+			// 
+			this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsPanel.Location = new System.Drawing.Point(0, 0);
+			this.SettingsPanel.Name = "SettingsPanel";
+			this.SettingsPanel.Size = new System.Drawing.Size(370, 172);
+			this.SettingsPanel.TabIndex = 0;
+			// 
 			// OutputTab
 			// 
 			this.OutputTab.Controls.Add(this.ProcessorOutputView);
@@ -138,14 +146,6 @@
 			// 
 			this.ErrorIcon.ContainerControl = this;
 			// 
-			// SettingsPanel
-			// 
-			this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.SettingsPanel.Location = new System.Drawing.Point(0, 0);
-			this.SettingsPanel.Name = "SettingsPanel";
-			this.SettingsPanel.Size = new System.Drawing.Size(370, 172);
-			this.SettingsPanel.TabIndex = 0;
-			// 
 			// ProcessorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -161,6 +161,7 @@
 			this.Text = "ProcessorForm";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProcessorForm_FormClosing);
 			this.LocationChanged += new System.EventHandler(this.ProcessorForm_LocationChanged);
+			this.SizeChanged += new System.EventHandler(this.ProcessorForm_SizeChanged);
 			this.Tabs.ResumeLayout(false);
 			this.InputTab.ResumeLayout(false);
 			this.SettingsTab.ResumeLayout(false);

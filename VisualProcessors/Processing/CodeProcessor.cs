@@ -10,11 +10,15 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorMeta(Author = "Bram Kamies",
-		Description = "Allows user C# code to be executed during simulations",
+	[ProcessorAttribute("Bram Kamies", "Allows user C# code to be executed during simulations", "A", "Output1",
 		AllowOptionalInputs = true)]
 	public class CodeProcessor : Processor
 	{
+		public static string DefaultCode =
+			"public static void Process(CodeProcessor processor)" + Environment.NewLine +
+			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine + Environment.NewLine +
+			"public static void Prepare(CodeProcessor processor)" + Environment.NewLine +
+			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine;
 		public CodeProcessor()
 		{
 		}
@@ -31,15 +35,14 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output2");
 			AddOutputChannel("Output3");
 
-			Code = "public static void Process(CodeProcessor processor)" + Environment.NewLine +
-				"{" + Environment.NewLine +
-				"\tthrow new Exception();" + Environment.NewLine +
-				"}";
+			Code = DefaultCode;
+
 		}
 
 		public string Code { get; set; }
 
 		public Action<CodeProcessor> ProcessFunction { get; set; }
+		public Action<CodeProcessor> PrepareFunction { get; set; }
 
 		public override void GetUserInterface(Panel panel)
 		{
@@ -64,18 +67,35 @@ namespace VisualProcessors.Processing
 				}
 			}
 		}
+		protected override bool Prepare()
+		{
+			base.Prepare();
+			if (PrepareFunction!=null)
+			{
+				try
+				{
+					PrepareFunction(this);
+				}
+				catch (Exception e)
+				{
+					MessageBox.Show(e.ToString());
+					return false;
+				}
+			}
+			return true;
+		}
 
 		#region IXmlSerializable Members
 
 		public override void ReadXml(XmlReader reader)
 		{
-			Code = reader.GetAttribute("Code");
+			Code = reader.GetAttribute("Code").Replace("\\t","\t");
 			base.ReadXml(reader);
 		}
 
 		public override void WriteXml(XmlWriter writer)
 		{
-			writer.WriteAttributeString("Code", Code);
+			writer.WriteAttributeString("Code", Code.Replace("\t", "\\t"));
 			base.WriteXml(writer);
 		}
 

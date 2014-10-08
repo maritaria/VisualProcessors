@@ -78,7 +78,15 @@
     <Compile Include="Controls\ToolboxPanel.Designer.cs">
       <DependentUpon>ToolboxPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UserCodeContext.cs" />
+    <Compile Include="Forms\AssemblyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AssemblyForm.Designer.cs">
+      <DependentUpon>AssemblyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BranchOperation.cs" />
+    <Compile Include="Processing\EmptyProcessor.cs" />
+    <Compile Include="Processing\UserCodeContext.cs" />
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,7 +107,6 @@
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Processing\AssemblyDetails.cs" />
     <Compile Include="Processing\GraphPlotter.cs" />
     <Compile Include="Processing\AverageProcessor.cs" />
     <Compile Include="Processing\AddProcessor.cs" />
@@ -131,6 +138,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ToolboxPanel.resx">
       <DependentUpon>ToolboxPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AssemblyForm.resx">
+      <DependentUpon>AssemblyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ChannelSelectionBox.resx">
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>

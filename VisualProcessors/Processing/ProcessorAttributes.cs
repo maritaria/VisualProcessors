@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace VisualProcessors.Processing
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class ProcessorMeta : System.Attribute
+	public class ProcessorAttribute : System.Attribute
 	{
 		/// <summary>
 		///  Determines whether the input channels are allowed to be optional
 		/// </summary>
-		public bool AllowOptionalInputs = true;
+		public bool AllowOptionalInputs = false;
 
 		/// <summary>
 		///  Determines whether the user can spawn this processor on demand
@@ -22,22 +22,22 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Determines the author of the processor
 		/// </summary>
-		public string Author = "This class probably has no ProcessorMeta Attribute";
+		public string Author;
 
 		/// <summary>
 		///  Determines the name of the default/primary InputChannel
 		/// </summary>
-		public string DefaultInput = "";
+		public string DefaultInput;
 
 		/// <summary>
 		///  Determines the name of the default/primary OutputChannel
 		/// </summary>
-		public string DefaultOutput = "";
+		public string DefaultOutput;
 
 		/// <summary>
 		///  A short description of the processor
 		/// </summary>
-		public string Description = "This class probably has no ProcessorMeta Attribute";
+		public string Description;
 
 		/// <summary>
 		///  Determines whether to hide the 'Input' TabPage on the ProcessorForm for this type of
@@ -57,8 +57,13 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public bool HideSettingsTab = false;
 
-		public ProcessorMeta()
+		public ProcessorAttribute(string author, string description,string defaultinput,string defaultoutput)
 		{
+			Author = author;
+			Description = description;
+			DefaultInput = defaultinput;
+			DefaultOutput = defaultoutput;
 		}
+		public static ProcessorAttribute Default = new ProcessorAttribute("Unknown", "Unknown", "Unknown", "Unknown");
 	}
 }

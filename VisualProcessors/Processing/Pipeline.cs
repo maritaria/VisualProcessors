@@ -17,7 +17,6 @@ namespace VisualProcessors.Processing
 
 		private bool m_BreakOnModification = true;
 		private List<Processor> m_Processors = new List<Processor>();
-		private List<Assembly> m_Assemblies = new List<Assembly>();
 		private bool m_Running = false;
 		public bool BreakOnModification
 		{
@@ -33,15 +32,7 @@ namespace VisualProcessors.Processing
 				}
 			}
 		}
-
-		public Assembly[] Assemblies
-		{
-			get
-			{
-				return m_Assemblies.ToArray();
-			}
-		}
-
+		
 		public bool IsRunning
 		{
 			get
@@ -56,7 +47,6 @@ namespace VisualProcessors.Processing
 
 		public Pipeline()
 		{
-			AddAssembly(this.GetType().Assembly);
 		}
 
 		#endregion Constructor
@@ -82,6 +72,10 @@ namespace VisualProcessors.Processing
 			}
 			lock (m_Processors)
 			{
+				if (m_Processors.Contains(p))
+				{
+					return;
+				}
 				if (m_Running)
 				{
 					Stop();
@@ -93,23 +87,15 @@ namespace VisualProcessors.Processing
 				p.OutputChannelRemoved += ProcessorModified;
 				p.LinkAdded += ProcessorModified;
 				p.LinkRemoved += ProcessorModified;
+				p.NameChanged += delegate(Processor pr, string o, string n) { OnModified(); };
 				if (GetByName(p.Name) == null)
 				{
 					m_Processors.Add(p);
 				}
 			}
+			OnModified();
 		}
-
-
-		public void AddAssembly(Assembly asm)
-		{
-			if (!m_Assemblies.Contains(asm))
-			{
-				m_Assemblies.Add(asm);
-				OnAssemblyAdded(asm);
-			}
-		}
-
+		
 		public Processor GetByName(string name)
 		{
 			foreach (Processor p in m_Processors)
@@ -166,6 +152,7 @@ namespace VisualProcessors.Processing
 					p.Dispose();
 				}
 				m_Processors.Remove(p);
+				OnModified();
 			}
 		}
 
@@ -189,15 +176,27 @@ namespace VisualProcessors.Processing
 
 		public void Start()
 		{
+			bool failed = false;
 			lock (m_Processors)
 			{
 				foreach (Processor p in m_Processors)
 				{
-					p.Start();
+					if (!p.Start())
+					{
+						failed = true;
+						break;
+					}
 				}
 				m_Running = true;
 			}
-			OnStarted();
+			if (failed)
+			{
+				Stop();
+			}
+			else
+			{
+				OnStarted();
+			}
 		}
 
 		public void Stop()
@@ -225,6 +224,21 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		public void Reset()
+		{
+			if (IsRunning)
+			{
+				Stop();
+			}
+			lock(m_Processors)
+			{
+				foreach (Processor p in m_Processors)
+				{
+					p.Reset();
+				}
+			}
+		}
+
 		#endregion Methods
 
 		#region Events
@@ -233,15 +247,6 @@ namespace VisualProcessors.Processing
 
 		public event EventHandler Stopped;
 
-		public event Action<Pipeline, Assembly> AssemblyAdded;
-
-		private void OnAssemblyAdded(Assembly asm)
-		{
-			if (AssemblyAdded!=null)
-			{
-				AssemblyAdded(this, asm);
-			}
-		}
 
 		private void OnStarted()
 		{
@@ -256,6 +261,16 @@ namespace VisualProcessors.Processing
 			if (Stopped != null)
 			{
 				Stopped(this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler Modified;
+
+		private void OnModified()
+		{
+			if (Modified!=null)
+			{
+				Modified(this, EventArgs.Empty);
 			}
 		}
 
@@ -274,6 +289,7 @@ namespace VisualProcessors.Processing
 			{
 				Stop();
 			}
+			OnModified();
 		}
 
 		#endregion Event Handlers
@@ -289,13 +305,6 @@ namespace VisualProcessors.Processing
 		public void ReadXml(XmlReader reader)
 		{
 			reader.Read();//Consume <pipeline...>
-			List<AssemblyDetails> assemblies = new List<AssemblyDetails>();
-			XmlSerializer s1 = new XmlSerializer(assemblies.GetType(), GetOverrides(assemblies.GetType(), "Assemblies"));
-			assemblies = (List<AssemblyDetails>)s1.Deserialize(reader);
-			foreach (AssemblyDetails asmd in assemblies)
-			{
-				m_Assemblies.Add(asmd.GetAssembly());
-			}
 
 			List<XmlAnything<Processor>> plist = new List<XmlAnything<Processor>>();
 			XmlSerializer s2 = new XmlSerializer(plist.GetType(), GetOverrides(plist.GetType(), "Processors"));
@@ -312,14 +321,6 @@ namespace VisualProcessors.Processing
 		{
 			XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
 			ns.Add("", "");
-
-			List<AssemblyDetails> assemblies = new List<AssemblyDetails>();
-			XmlSerializer s1 = new XmlSerializer(assemblies.GetType(), GetOverrides(assemblies.GetType(), "Assemblies"));
-			foreach (Assembly asm in m_Assemblies)
-			{
-				assemblies.Add(new AssemblyDetails(asm));
-			}
-			s1.Serialize(writer, assemblies, ns);
 
 			List<XmlAnything<Processor>> plist = new List<XmlAnything<Processor>>();
 			XmlSerializer s2 = new XmlSerializer(plist.GetType(), GetOverrides(plist.GetType(),"Processors"));

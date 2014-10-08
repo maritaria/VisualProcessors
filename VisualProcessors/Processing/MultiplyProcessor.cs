@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorMeta(Author = "Bram Kamies", Description = "Multiplies two values together", DefaultOutput = "Output")]
+	[ProcessorAttribute("Bram Kamies","Multiplies two values together","A","Output")]
 	public class MultiplyProcessor : Processor
 	{
 		public MultiplyProcessor()

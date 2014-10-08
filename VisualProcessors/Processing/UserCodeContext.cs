@@ -7,21 +7,20 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VisualProcessors.Processing;
-
-namespace VisualProcessors.Controls
+using VisualProcessors.Controls;
+namespace VisualProcessors.Processing
 {
 	public class UserCodeContext
 	{
 		public List<Assembly> Assemblies = new List<Assembly>();
 		public string Classname = "UserCode";
-		public Action<CodeProcessor> CompiledFunction;
 		public List<CompilerError> CompileErrors = new List<CompilerError>();
 		public List<CompilerError> CompileWarnings = new List<CompilerError>();
-		public string MethodDeclaration = "public static void Process(CodeProcessor processor)";
 		public string Namespace = "VisualProcessors.UserCode";
 		public string UserCode = "";
 		public List<string> Usings = new List<string>();
-
+		public Action<CodeProcessor> ProcessFunction;
+		public Action<CodeProcessor> PrepareFunction;
 		public UserCodeContext()
 		{
 			Usings.Add("System");
@@ -77,13 +76,25 @@ namespace VisualProcessors.Controls
 			//Bind function
 			Assembly assembly = results.CompiledAssembly;
 			Type program = assembly.GetType(Namespace + "." + Classname);
-			MethodInfo main = program.GetMethod("Process");
-			if (main == null)
+			MethodInfo process = program.GetMethod("Process");
+			if (process == null)
 			{
 				CompileErrors.Add(new CompilerError("userinput", 1, 1, "0", "No function 'Process' is defined"));
 				return false;
 			}
-			CompiledFunction = (Action<CodeProcessor>)Delegate.CreateDelegate(typeof(Action<CodeProcessor>), main);
+			else
+			{
+				ProcessFunction = (Action<CodeProcessor>)Delegate.CreateDelegate(typeof(Action<CodeProcessor>), process);
+			}
+			MethodInfo prepare = program.GetMethod("Prepare");
+			if (prepare == null)
+			{
+				CompileWarnings.Add(new CompilerError("userinput", 1, 1, "0", "No function 'Prepare' is defined"));
+			}
+			else
+			{
+				PrepareFunction = (Action<CodeProcessor>)Delegate.CreateDelegate(typeof(Action<CodeProcessor>), prepare);
+			}
 			return true;
 		}
 

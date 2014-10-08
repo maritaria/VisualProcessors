@@ -27,7 +27,8 @@ namespace VisualProcessors.Forms
 		private PipelineForm m_PipelineForm;
 		private Processor m_Processor;
 		private Type m_ProcessorType;
-
+		private bool m_LocationChanging = false;
+		private bool m_SizeChanging = false;
 		/// <summary>
 		///  Gets the PipelineForm the ProcessorForm belongs to.
 		/// </summary>
@@ -63,36 +64,76 @@ namespace VisualProcessors.Forms
 
 		#region Constructor
 
-		public ProcessorForm(PipelineForm pipeline, Processor processor)
+		public ProcessorForm(PipelineForm pipeline, Processor processor, bool useModel)
 		{
-			m_PipelineForm = pipeline;
 			InitializeComponent();
+
+			//Initialize values
+			m_PipelineForm = pipeline;
 			m_PreviousTab = Tabs.SelectedTab;
 
 			//Processor
 			m_Processor = processor;
 			m_ProcessorType = processor.GetType();
+			if (!useModel)
+			{
+				Processor.Location = this.Location;
+				processor.Size = this.Size;
+			}
 			Processor.NameChanged += ProcessorNameChanged;
+			Processor.LocationChanged += ProcessorLocationChanged;
+			Processor.SizeChanged += ProcessorSizeChanged;
 			ProcessorNameChanged(Processor, Processor.Name, Processor.Name);
+			if (useModel)
+			{
+				ProcessorLocationChanged(this, EventArgs.Empty);
+				ProcessorSizeChanged(this, EventArgs.Empty);
+			}
 
 			//Input
 			ProcessorInputView.Pipeline = Pipeline;
 			ProcessorInputView.Processor = Processor;
-			if (!Processor.HasInputChannels)
+			if (Processor.HideInputTab)
 			{
 				Tabs.TabPages.Remove(InputTab);
 			}
 
 			//Settings
 			processor.GetUserInterface(SettingsPanel);
+			if (Processor.HideSettingsTab)
+			{
+				Tabs.TabPages.Remove(SettingsTab);
+			}
 
 			//Output
 			ProcessorOutputView.Pipeline = Pipeline;
 			ProcessorOutputView.Processor = Processor;
-			if (!Processor.HasOutputChannels)
+			if (Processor.HideOutputTab)
 			{
 				Tabs.TabPages.Remove(OutputTab);
 			}
+		}
+
+		void ProcessorSizeChanged(object sender, EventArgs e)
+		{
+			if (m_SizeChanging || (Processor==null))
+			{
+				return;
+			}
+			m_SizeChanging = true;
+			Size = Processor.Size;
+			m_SizeChanging = false;
+		}
+
+		void ProcessorLocationChanged(object sender, EventArgs e)
+		{
+			if (m_LocationChanging || (Processor == null))
+			{
+				return;
+			}
+			m_LocationChanging = true;
+			Location = Processor.Location;
+			m_LocationChanging = false;
 		}
 
 		#endregion Constructor
@@ -105,6 +146,12 @@ namespace VisualProcessors.Forms
 			{
 				Tabs.SelectTab(InputTab);
 			}
+		}
+
+		public void ForceClose()
+		{
+			m_Closing = true;
+			Close();
 		}
 
 		#endregion Methods
@@ -144,7 +191,10 @@ namespace VisualProcessors.Forms
 
 		private void ProcessorForm_LocationChanged(object sender, EventArgs e)
 		{
-			Processor.Location = this.Location;
+			if (!MinimalViewEnabled)
+			{
+				Processor.Location = this.Location;
+			}
 		}
 
 		private void ProcessorNameChanged(Processor p, string oldname, string newname)
@@ -221,5 +271,13 @@ namespace VisualProcessors.Forms
 		}
 
 		#endregion Minimal View
+
+		private void ProcessorForm_SizeChanged(object sender, EventArgs e)
+		{
+			if (!MinimalViewEnabled)
+			{
+				this.Processor.Size = this.Size;
+			}
+		}
 	}
 }

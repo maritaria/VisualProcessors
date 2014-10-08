@@ -10,8 +10,8 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorMeta(Author = "Bram Kamies", Description = "Writes a 0 to its OutputChannel, triggered via a clickable button",
-		HideInputTab = true, AllowOptionalInputs = false, DefaultOutput = "Output")]
+	[ProcessorAttribute("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button","","Output",
+		HideInputTab = true)]
 	public class DirectInputProcessor : Processor
 	{
 		public DirectInputProcessor()
@@ -23,14 +23,6 @@ namespace VisualProcessors.Processing
 		{
 			AddInputChannel("DNC", false);
 			AddOutputChannel("Output");
-		}
-
-		public override bool HasInputChannels
-		{
-			get
-			{
-				return false;
-			}
 		}
 
 		public override void GetUserInterface(Panel panel)

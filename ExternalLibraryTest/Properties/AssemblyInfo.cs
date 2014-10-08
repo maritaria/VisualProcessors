@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ExternalProcessorTest")]
+[assembly: AssemblyTitle("ExternalLibraryTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ExternalProcessorTest")]
+[assembly: AssemblyProduct("ExternalLibraryTest")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a1e28e1e-7822-4cdd-9d58-9051dd6e7882")]
+[assembly: Guid("4f39675a-2adb-4e61-b37c-63137a433dc5")]
 
 // Version information for an assembly consists of the following four values:
 //

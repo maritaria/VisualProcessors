@@ -65,17 +65,19 @@ namespace VisualProcessors.Controls
 				PipelineForm.PipelineChanged += PipelineForm_PipelineChanged;
 				PipelineForm_PipelineChanged(null, PipelineForm.CurrentPipeline);
 			}
+			PopulateButtonList();
 		}
 		
 		public void PopulateButtonList()
 		{
 			ClearButtonList();
-			if (PipelineForm.CurrentPipeline != null)
+			if (PipelineForm ==null || PipelineForm.CurrentPipeline==null)
 			{
-				foreach (Assembly asm in PipelineForm.CurrentPipeline.Assemblies)
-				{
-					AddAssembly(asm);
-				}
+				return;
+			}
+			foreach(Assembly asm in Program.ProcessorAssemblies)
+			{
+				AddAssembly(asm);
 			}
 		}
 		public void ClearButtonList()
@@ -95,19 +97,20 @@ namespace VisualProcessors.Controls
 			{
 				if (processorType.IsSubclassOf(typeof(Processor)))
 				{
+					ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(processorType, typeof(ProcessorAttribute));
+					if (attr!=null && !attr.AllowUserSpawn)
+					{
+						//If the attribute is not null, and the AllowUserSpawn flag is false, then dont create a button for it
+						continue;
+					}
 					m_Types.Add(processorType);
 					Button b = new Button();
 					b.Dock = DockStyle.Top;
 					b.Text = processorType.Name;
 					b.TextAlign = ContentAlignment.MiddleLeft;
-					foreach (Attribute attr in Attribute.GetCustomAttributes(processorType))
+					if (attr !=null)
 					{
-						if (attr is ProcessorMeta)
-						{
-							ProcessorMeta pm = attr as ProcessorMeta;
-							DescriptionTooltip.SetToolTip(b, pm.Description);
-							break;
-						}
+						DescriptionTooltip.SetToolTip(b, attr.Description);
 					}
 					b.Click += delegate(object _sender, EventArgs _e)
 					{
@@ -144,7 +147,7 @@ namespace VisualProcessors.Controls
 			}
 			Processor p = (Processor)Activator.CreateInstance(t, t.Name + counter);
 
-			ProcessorForm pf = PipelineForm.AddProcessor(p);
+			ProcessorForm pf = PipelineForm.AddProcessor(p,false);
 			Point pfcenter = pf.GetCenter();
 			Point offset = new Point(pfcenter.X - pf.Location.X, pfcenter.Y - pf.Location.Y);
 			pf.Location = new Point(pos.X - offset.X, pos.Y - offset.Y);
@@ -156,21 +159,9 @@ namespace VisualProcessors.Controls
 
 		void PipelineForm_PipelineChanged(Pipeline oldPipeline, Pipeline newPipeline)
 		{
-			if (oldPipeline != null)
-			{
-				oldPipeline.AssemblyAdded -= PipelineAssemblyAdded;
-			}
-			if (newPipeline != null)
-			{
-				newPipeline.AssemblyAdded += PipelineAssemblyAdded;
-			}
 			PopulateButtonList();
 		}
 
-		private void PipelineAssemblyAdded(Pipeline p, Assembly asm)
-		{
-			AddAssembly(asm);
-		}
 		#endregion
 	}
 }

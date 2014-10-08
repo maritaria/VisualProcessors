@@ -20,9 +20,8 @@ namespace VisualProcessors.Controls
 		private bool m_Applied = false;
 		private bool m_CodeChanged = false;
 		private UserCodeContext m_UserCodeContext;
-
 		public CodeProcessor CodeProcessor { get; set; }
-
+		
 		#endregion Properties
 
 		#region Constructor
@@ -34,24 +33,13 @@ namespace VisualProcessors.Controls
 			LoadCodeDialog.InitialDirectory = Application.StartupPath;
 		}
 
-		public CodePanel(CodeProcessor cp, string usercode = "")
+		public CodePanel(CodeProcessor cp, string usercode)
 			: this()
 		{
 			CodeProcessor = cp;
 			CodeBox.Text = cp.Code;
 			m_UserCodeContext = new UserCodeContext();
-			if (usercode == "")
-			{
-				CodeBox.Text = m_UserCodeContext.MethodDeclaration + Environment.NewLine +
-					"{" + Environment.NewLine +
-					"\tvar a=processor.GetInputChannel(\"A\").GetValue();" + Environment.NewLine +
-					"\tprocessor.GetOutputChannel(\"Output1\").WriteValue(a+1);" + Environment.NewLine +
-					"}";
-			}
-			else
-			{
-				CodeBox.Text = usercode;
-			}
+			CodeBox.Text = usercode;
 		}
 
 		#endregion Constructor
@@ -66,7 +54,8 @@ namespace VisualProcessors.Controls
 		{
 			if (!m_Applied)
 			{
-				CodeProcessor.ProcessFunction = m_UserCodeContext.CompiledFunction;
+				CodeProcessor.ProcessFunction = m_UserCodeContext.ProcessFunction;
+				CodeProcessor.PrepareFunction = m_UserCodeContext.PrepareFunction;
 				CodeProcessor.Code = CodeBox.Text;
 				ErrorList.Items.Add("[Processor Updated]");
 				ApplyButton.Enabled = false;
@@ -174,6 +163,14 @@ namespace VisualProcessors.Controls
 				m_CodeChanged = true;
 				m_Applied = false;
 				ErrorList.Items.Add("[Code modified]");
+			}
+		}
+
+		private void DefaultCodeButton_Click(object sender, EventArgs e)
+		{
+			if (MessageBox.Show("Are you sure you want to replace your code with the default code?", "Restore default code", MessageBoxButtons.OKCancel)==DialogResult.OK)
+			{
+				CodeBox.Text = CodeProcessor.DefaultCode;
 			}
 		}
 	}

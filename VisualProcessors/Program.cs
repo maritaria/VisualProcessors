@@ -11,37 +11,74 @@ using VisualProcessors;
 using VisualProcessors.Controls;
 using VisualProcessors.Forms;
 using VisualProcessors.Processing;
-using ZedGraph;
 using System.Reflection;
+using ZedGraph;
 
 namespace VisualProcessors
 {
 	internal static class Program
 	{
+		public static List<Assembly> ProcessorAssemblies = new List<Assembly>();
+		public static List<Assembly> LoadedAssemblies = new List<Assembly>();
+
 		/// <summary>
 		///  The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		private static void Main()
+		public static void Main()
 		{
-			Pipeline p = new Pipeline();
+			string assemblyDirectory = "/Assemblies";
+			string dir = Application.StartupPath + assemblyDirectory;
+			if (!Directory.Exists(dir))
+			{
+				Console.WriteLine("Creating " + assemblyDirectory + " directory");
+				Directory.CreateDirectory(dir);
+			}
 
-			DirectInputProcessor in1 = new DirectInputProcessor("DirectInputProcessor1");
-			CodeProcessor code1 = new CodeProcessor("CodeProcessor1");
-			GraphPlotter gplot = new GraphPlotter("GraphPlotter1");
-			in1.GetOutputChannel("Output").Link(code1.GetInputChannel("A"));
-			code1.GetOutputChannel("Output1").Link(gplot.GetInputChannel("Red"));
-			p.AddProcessor(in1);
-			p.AddProcessor(code1);
-			p.AddProcessor(gplot);
+			Console.WriteLine("Loading assemblies from " + assemblyDirectory);
+			foreach (string f in Directory.EnumerateFiles(dir))
+			{
+				try
+				{
+					Console.Write("\t" + Path.GetFileName(f)+": ");
+					Assembly asm = Assembly.LoadFrom(f);
+					LoadedAssemblies.Add(asm);
+					Console.WriteLine("Success");
+				}
+				catch
+				{
+					Console.WriteLine("Failed");
+				}
+			}
 
-			string path = Application.StartupPath + "/output.xml";
-			FileStream file = new FileStream(path, FileMode.Create);
-
-			p.SaveToFile(file);
-			file.Position = 0;
-
-			var dp = Pipeline.LoadFromFile(file);
+			Assembly processorAssembly = typeof(Processor).Assembly;
+			AssemblyName processorName = processorAssembly.GetName();
+			string name = processorName.Name;
+			Console.WriteLine("Listing assemblies that reference " + name);
+			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				foreach (AssemblyName reference in asm.GetReferencedAssemblies())
+				{
+					if (reference.Name == name)
+					{
+						if (reference.Version != processorName.Version)
+						{
+							Console.WriteLine("\t" + asm.GetName().Name + " VERSION MISMATCH!!!");
+						}
+						else
+						{
+							Console.WriteLine("\t" + asm.GetName().Name);
+						}
+						ProcessorAssemblies.Add(asm);
+						break;
+					}
+				}
+			}
+			if (!ProcessorAssemblies.Contains(processorAssembly))
+			{
+				Console.WriteLine("\t" + processorAssembly.GetName().Name);
+				ProcessorAssemblies.Add(processorAssembly);
+			}
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);

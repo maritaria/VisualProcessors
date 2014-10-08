@@ -100,22 +100,18 @@ namespace VisualProcessors.Controls
 				m_Processor.InputChannelAdded += ProcessorChannelsChanged;
 				m_Processor.InputChannelRemoved += ProcessorChannelsChanged;
 				InputChannelList.Items.Clear();
+				int index = -1;
 				foreach (string channelname in m_Processor.GetInputChannelNames())
 				{
 					InputChannel channel = m_Processor.GetInputChannel(channelname);
-					InputChannelList.Items.Add(channel.Name);
-				}
-				InputChannelList.SelectedIndex = (InputChannelList.Items.Count > 0) ? 0 : -1;
-				OptionalCheckBox.Enabled = false;
-				foreach (Attribute attr in Attribute.GetCustomAttributes(m_Processor.GetType()))
-				{
-					if (attr is ProcessorMeta)
+					int i = InputChannelList.Items.Add(channel.Name);
+					if (channelname==m_Processor.DefaultInput)
 					{
-						ProcessorMeta pm = attr as ProcessorMeta;
-						OptionalCheckBox.Enabled = pm.AllowOptionalInputs;
-						break;
+						index = i;
 					}
 				}
+				InputChannelList.SelectedIndex = index;
+				OptionalCheckBox.Enabled = m_Processor.AllowOptionalInputs;
 			}
 			UpdateLinkData(this, EventArgs.Empty);
 		}
@@ -253,13 +249,13 @@ namespace VisualProcessors.Controls
 			{
 				m_InputChannel.IsConstant = ConstantRadioButton.Checked;
 			}
-			Pipeline.InvalidateFormView();
+			Pipeline.MdiClient.Invalidate();
 			UpdateChannel();
 		}
 
 		private void SelectedInputChannelSourceChanged(object sender, EventArgs e)
 		{
-			Pipeline.InvalidateFormView();
+			Pipeline.MdiClient.Invalidate();
 			UpdateChannel();
 		}
 
@@ -269,7 +265,7 @@ namespace VisualProcessors.Controls
 			{
 				m_InputChannel.Unlink();
 			}
-			Pipeline.InvalidateFormView();
+			Pipeline.MdiClient.Invalidate();
 			UpdateChannel();
 		}
 

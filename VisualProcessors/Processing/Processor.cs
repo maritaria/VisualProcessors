@@ -20,7 +20,8 @@ namespace VisualProcessors.Processing
 		protected int m_ThreadSleep = 1;
 		private string m_Name = "Undefined";
 		private Thread m_WorkerThread;
-
+		
+		public bool IsPrepared { get; protected set; }
 		public bool IsRunning
 		{
 			get
@@ -28,11 +29,96 @@ namespace VisualProcessors.Processing
 				return (m_WorkerThread != null) && m_WorkerThread.IsAlive;
 			}
 		}
-
+		private Point m_Location = new Point(0, 0);
+		private Size m_Size = new Size(0, 0);
 		/// <summary>
 		///  Gets or sets the location of the processor in the model
 		/// </summary>
-		public Point Location { get; set; }
+		public Point Location
+		{
+			get
+			{
+				return m_Location;
+			}
+			set
+			{
+				m_Location = value;
+				OnLocationChanged();
+			}
+		}
+		/// <summary>
+		/// Gets or sets the size of the processor's form in the model
+		/// </summary>
+		public Size Size
+		{
+			get
+			{
+				return m_Size;
+			}
+			set
+			{
+				m_Size = value;
+				OnSizeChanged();
+			}
+		}
+		/// <summary>
+		/// Gets or sets the X component of the processors Location property
+		/// </summary>
+		public int X
+		{
+			get
+			{
+				return Location.X;
+			}
+			set
+			{
+				Location = new Point(value, Location.Y);
+				OnModified();
+			}
+		}
+		/// <summary>
+		/// Gets or sets the Y component of the processors Location property
+		/// </summary>
+		public int Y
+		{
+			get
+			{
+				return Location.Y;
+			}
+			set
+			{
+				Location = new Point(Location.X, value);
+			}
+		}
+		/// <summary>
+		/// Gets or sets the Width component of the processors Size property
+		/// </summary>
+		public int Width
+		{
+			get
+			{
+				return Size.Width;
+			}
+			set
+			{
+				Size = new Size(value, Size.Height);
+			}
+		}
+		/// <summary>
+		/// Gets or sets the Height component of the processors Size property
+		/// </summary>
+		public int Height
+		{
+			get
+			{
+				return Size.Height;
+			}
+			set
+			{
+				Size = new Size(Size.Width, value);
+			}
+		}
+
 
 		/// <summary>
 		///  Gets or sets the name of the processor, must be unique within the pipeline
@@ -50,6 +136,138 @@ namespace VisualProcessors.Processing
 				OnNameChanged(old, value);
 			}
 		}
+		
+		#region Meta
+
+		public ProcessorAttribute Meta
+		{
+			get
+			{
+				ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute));
+				return (attr != null) ? attr : ProcessorAttribute.Default;
+			}
+		}
+		public bool HasMeta
+		{
+			get
+			{
+				return ((ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute)) != null);
+			}
+		}
+
+		public string Author
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return null;
+				}
+				return attr.Author;
+			}
+		}
+
+		public string Description
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return null;
+				}
+				return attr.Description;
+			}
+		}
+
+		public bool AllowOptionalInputs
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.AllowOptionalInputs;
+			}
+		}
+		public bool AllowUserSpawn
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return true;
+				}
+				return attr.AllowUserSpawn;
+			}
+		}
+		public bool HideInputTab
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.HideInputTab;
+			}
+		}
+		public bool HideSettingsTab
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.HideSettingsTab;
+			}
+		}
+		public bool HideOutputTab
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return false;
+				}
+				return attr.HideOutputTab;
+			}
+		}
+
+		public string DefaultInput
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return null;
+				}
+				return attr.DefaultInput;
+			}
+		}
+		public string DefaultOutput
+		{
+			get
+			{
+				ProcessorAttribute attr = Meta;
+				if (attr == null)
+				{
+					return null;
+				}
+				return attr.DefaultOutput;
+			}
+		}
+
+		#endregion
 
 		#endregion Properties
 
@@ -91,15 +309,23 @@ namespace VisualProcessors.Processing
 			panel.Controls.Add(input);
 		}
 
-		public virtual void Start()
+		public virtual bool Start()
 		{
 			if (m_WorkerThread != null)
 			{
 				Stop();
 			}
+			if (!IsPrepared)
+			{
+				if (!Prepare())
+				{
+					return false;
+				}
+			}
 			m_WorkerThread = new Thread(new ThreadStart(WorkerMethod));
 			m_WorkerThread.IsBackground = true;
 			m_WorkerThread.Start();
+			return true;
 		}
 
 		public virtual void Stop()
@@ -118,6 +344,27 @@ namespace VisualProcessors.Processing
 
 		protected virtual void Process()
 		{
+			//Read
+			//Parse
+			//Write
+		}
+
+		protected virtual bool Prepare()
+		{
+			foreach (InputChannel channel in m_InputChannels)
+			{
+				channel.Clear();
+			}
+			return true;
+		}
+
+		public void Reset()
+		{
+			if (IsRunning)
+			{
+				Stop();
+			}
+			IsPrepared = false;
 		}
 
 		protected virtual void WorkerMethod()
@@ -140,10 +387,6 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		private void input_InputCompleted(object sender, EventArgs e)
-		{
-			this.Name = (sender as StringInputPanel).InputText;
-		}
 
 		#endregion Methods
 
@@ -151,13 +394,6 @@ namespace VisualProcessors.Processing
 
 		private List<InputChannel> m_InputChannels = new List<InputChannel>();
 
-		public virtual bool HasInputChannels
-		{
-			get
-			{
-				return m_InputChannels.Count > 0;
-			}
-		}
 
 		public InputChannel GetInputChannel(string name)
 		{
@@ -227,14 +463,6 @@ namespace VisualProcessors.Processing
 		#region OutputChannels
 
 		private List<OutputChannel> m_OutputChannels = new List<OutputChannel>();
-
-		public virtual bool HasOutputChannels
-		{
-			get
-			{
-				return m_OutputChannels.Count > 0;
-			}
-		}
 
 		public OutputChannel GetOutputChannel(string name)
 		{
@@ -375,6 +603,44 @@ namespace VisualProcessors.Processing
 		///  Invoked by the processor when the processor wants the pipeline to halt execution
 		/// </summary>
 		public event EventHandler RequestExecutionHalt;
+		/// <summary>
+		/// Invoked by the processor if any part of the processor has changed
+		/// </summary>
+		public event EventHandler Modified;
+
+		/// <summary>
+		/// Invoked when the location of the processor has been changed
+		/// </summary>
+		public event EventHandler LocationChanged;
+		/// <summary>
+		/// Invoked when the size of the processor has been changed
+		/// </summary>
+		public event EventHandler SizeChanged;
+
+		private void OnLocationChanged()
+		{
+			if (LocationChanged!=null)
+			{
+				LocationChanged(this, EventArgs.Empty);
+			}
+			OnModified();
+		}
+		private void OnSizeChanged()
+		{
+			if (SizeChanged!=null)
+			{
+				SizeChanged(this, EventArgs.Empty);
+			}
+			OnModified();
+		}
+
+		protected void OnModified()
+		{
+			if (Modified!=null)
+			{
+				Modified(this, EventArgs.Empty);
+			}
+		}
 
 		protected void OnRequestExecutionHalt()
 		{
@@ -390,6 +656,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelAdded(this, EventArgs.Empty);
 			}
+			OnModified();
 		}
 
 		private void OnInputChannelRemoved()
@@ -398,6 +665,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelRemoved(this, EventArgs.Empty);
 			}
+			OnModified();
 		}
 
 		private void OnLinkAdded()
@@ -406,6 +674,7 @@ namespace VisualProcessors.Processing
 			{
 				LinkAdded(this, EventArgs.Empty);
 			}
+			OnModified();
 		}
 
 		private void OnLinkRemoved()
@@ -414,6 +683,7 @@ namespace VisualProcessors.Processing
 			{
 				LinkRemoved(this, EventArgs.Empty);
 			}
+			OnModified();
 		}
 
 		private void OnNameChanged(string oldname, string newname)
@@ -422,6 +692,7 @@ namespace VisualProcessors.Processing
 			{
 				NameChanged(this, oldname, newname);
 			}
+			OnModified();
 		}
 
 		private void OnOutputChannelAdded()
@@ -430,6 +701,7 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelAdded(this, EventArgs.Empty);
 			}
+			OnModified();
 		}
 
 		private void OnOutputChannelRemoved()
@@ -438,11 +710,17 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelRemoved(this, EventArgs.Empty);
 			}
+			OnModified();
 		}
 
 		#endregion Events
 
 		#region Event Handlers
+
+		private void input_InputCompleted(object sender, EventArgs e)
+		{
+			Name = (sender as StringInputPanel).InputText;
+		}
 
 		private void channel_OutputAdded(object sender, EventArgs e)
 		{
@@ -479,6 +757,8 @@ namespace VisualProcessors.Processing
 			reader.Read();
 			m_RawInput = (List<InputChannel>)new XmlSerializer(m_InputChannels.GetType(), GetOverrides(m_InputChannels.GetType(), "InputChannels")).Deserialize(reader);
 			m_RawOutput = (List<OutputChannel>)new XmlSerializer(m_OutputChannels.GetType(), GetOverrides(m_OutputChannels.GetType(), "OutputChannels")).Deserialize(reader);
+			m_Location = (Point)new XmlSerializer(m_Location.GetType(), GetOverrides(m_Location.GetType(), "Location")).Deserialize(reader);
+			m_Size = (Size)new XmlSerializer(m_Size.GetType(), GetOverrides(m_Size.GetType(), "Size")).Deserialize(reader);
 			reader.ReadEndElement();
 		}
 
@@ -489,6 +769,9 @@ namespace VisualProcessors.Processing
 			ns.Add("", "");
 			new XmlSerializer(m_InputChannels.GetType(), GetOverrides(m_InputChannels.GetType(), "InputChannels")).Serialize(writer, m_InputChannels, ns);
 			new XmlSerializer(m_OutputChannels.GetType(), GetOverrides(m_OutputChannels.GetType(), "OutputChannels")).Serialize(writer, m_OutputChannels, ns);
+			new XmlSerializer(m_Location.GetType(), GetOverrides(m_Location.GetType(), "Location")).Serialize(writer, m_Location, ns);
+			new XmlSerializer(m_Size.GetType(), GetOverrides(m_Size.GetType(), "Size")).Serialize(writer, m_Size, ns);
+
 		}
 
 		private XmlAttributeOverrides GetOverrides(Type t, string name)
@@ -500,6 +783,7 @@ namespace VisualProcessors.Processing
 			overrides.Add(t, attribute);
 			return overrides;
 		}
+
 
 		#endregion IXmlSerializable Members
 

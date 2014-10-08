@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-
+using System.Reflection;
 namespace VisualProcessors.Processing
 {
 	public sealed class XmlAnything<T> : IXmlSerializable
@@ -21,6 +21,27 @@ namespace VisualProcessors.Processing
 		}
 
 		public T Value { get; set; }
+		private static string ProcessorAssemblyName = typeof(Processor).Assembly.GetName().Name;
+		private Type FindType(string fullname)
+		{
+			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				foreach (AssemblyName a in asm.GetReferencedAssemblies())
+				{
+					if (a.Name == ProcessorAssemblyName)
+					{
+						foreach (Type _t in asm.GetTypes())
+						{
+							if (_t.AssemblyQualifiedName == fullname)
+							{
+								return _t;
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
 
 		public XmlSchema GetSchema()
 		{
@@ -33,11 +54,16 @@ namespace VisualProcessors.Processing
 			{
 				throw new FormatException("expected a type attribute!");
 			}
-			string type = reader.GetAttribute("type");
+			string type = reader.GetAttribute("Type");
 			reader.Read(); // consume the value
 			if (type == "null")
 				return;// leave T at default value
-			XmlSerializer serializer = new XmlSerializer(Type.GetType(type));
+			Type t = Type.GetType(type,false,true);
+			if (t==null)
+			{
+				t = FindType(type);
+			}
+			XmlSerializer serializer = new XmlSerializer(t);
 			this.Value = (T)serializer.Deserialize(reader);
 			reader.ReadEndElement();
 		}
@@ -46,12 +72,12 @@ namespace VisualProcessors.Processing
 		{
 			if (Value == null)
 			{
-				writer.WriteAttributeString("type", "null");
+				writer.WriteAttributeString("Type", "null");
 				return;
 			}
 			Type type = this.Value.GetType();
 			XmlSerializer serializer = new XmlSerializer(type);
-			writer.WriteAttributeString("type", type.AssemblyQualifiedName);
+			writer.WriteAttributeString("Type", type.AssemblyQualifiedName);
 			serializer.Serialize(writer, this.Value);
 		}
 	}

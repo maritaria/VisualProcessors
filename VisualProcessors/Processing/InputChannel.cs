@@ -64,6 +64,7 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+
 		/// <summary>
 		///  Gets or sets the default value used when the inputchannel is optional, but no data is
 		///  available
@@ -117,6 +118,12 @@ namespace VisualProcessors.Processing
 		#endregion Constructor
 
 		#region Methods
+
+
+		public void Clear()
+		{
+			m_Data.Clear();
+		}
 
 		/// <summary>
 		///  Gets the oldest value from the inputchannel, and removes it from the channel.

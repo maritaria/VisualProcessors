@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExternalProcessorTest
+namespace VisualProcessors.Forms
 {
-	class Program
+	public class BranchOperation
 	{
-		static void Main(string[] args)
-		{
-		}
 	}
 }

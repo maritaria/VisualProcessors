@@ -12,10 +12,8 @@ using ZedGraph;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorMeta(Author = "Bram Kamies",
-		Description = "Plots its InputChannels onto a ZedGraph in realtime",
-		AllowOptionalInputs = true,
-		HideOutputTab = true)]
+	[ProcessorAttribute("Bram Kamies","Plots its InputChannels onto a ZedGraph in realtime","Red","",
+		AllowOptionalInputs = true,	HideOutputTab = true)]
 	public class GraphPlotter : Processor
 	{
 		#region Properties
@@ -69,7 +67,7 @@ namespace VisualProcessors.Processing
 			base.GetUserInterface(panel);
 		}
 
-		public override void Start()
+		public override bool Start()
 		{
 			if (m_RenderThread != null)
 			{
@@ -80,6 +78,7 @@ namespace VisualProcessors.Processing
 			m_RenderThread.Start();
 			m_StartTimestamp = DateTime.Now;
 			base.Start();
+			return true;
 		}
 
 		public override void Stop()
@@ -95,7 +94,6 @@ namespace VisualProcessors.Processing
 			}
 			base.Stop();
 		}
-
 		protected override void Process()
 		{
 			lock (this)

@@ -74,9 +74,14 @@ namespace VisualProcessors.Controls
 			OutputGridView.Rows.Clear();
 			if (Processor != null)
 			{
+				int index = 0;
 				foreach (string name in Processor.GetOutputChannelNames())
 				{
-					OutputComboBox.Items.Add(name);
+					int i =OutputComboBox.Items.Add(name);
+					if (name==Processor.DefaultOutput)
+					{
+						index = i;
+					}
 					OutputChannel channel = Processor.GetOutputChannel(name);
 					foreach (InputChannel target in channel.Targets)
 					{
@@ -87,7 +92,7 @@ namespace VisualProcessors.Controls
 				{
 					if (selected == null)
 					{
-						OutputComboBox.SelectedIndex = 0;
+						OutputComboBox.SelectedIndex = index;
 					}
 					else
 					{
@@ -103,7 +108,7 @@ namespace VisualProcessors.Controls
 
 		private void LinkOutputButton_Click(object sender, EventArgs e)
 		{
-			if (Processor.HasOutputChannels)
+			if (Processor.GetOutputChannelNames().Length > 0)
 			{
 				Pipeline.StartLinkMode(Pipeline.GetProcessorForm(Processor.Name), (string)OutputComboBox.SelectedItem, LinkMode.OutputFirst);
 			}
@@ -151,7 +156,7 @@ namespace VisualProcessors.Controls
 			}
 			if (rows.Count > 0)
 			{
-				Pipeline.InvalidateFormView();
+				Pipeline.MdiClient.Invalidate();
 			}
 		}
 
