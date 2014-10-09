@@ -50,6 +50,18 @@ namespace VisualProcessors.Controls
 			}
 		}
 
+		public bool InputArrowsOnly
+		{
+			get
+			{
+				return InputNumeric.ReadOnly;
+			}
+			set
+			{
+				InputNumeric.ReadOnly = value;
+			}
+		}
+
 		public bool IsInputValid { get; private set; }
 
 		#endregion Properties
