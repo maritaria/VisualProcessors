@@ -48,6 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\FilepathInputPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FilepathInputPanel.Designer.cs">
+      <DependentUpon>FilepathInputPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\NumericInputPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -134,6 +140,9 @@
     <Compile Include="Processing\XmlAnything.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\FilepathInputPanel.resx">
+      <DependentUpon>FilepathInputPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\NumericInputPanel.resx">
       <DependentUpon>NumericInputPanel.cs</DependentUpon>
     </EmbeddedResource>

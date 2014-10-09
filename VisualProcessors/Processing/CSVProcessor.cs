@@ -76,6 +76,7 @@ namespace VisualProcessors.Processing
 
 			panel.Controls.Add(channelInput);
 
+#warning Make this a new InputPanel
 			Panel filePanel = new Panel();
 			TextBox fileTextBox = new TextBox();
 			Button fileBrowseButton = new Button();
