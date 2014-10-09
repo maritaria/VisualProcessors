@@ -58,6 +58,18 @@ namespace VisualProcessors.Processing
 		///  Processor
 		/// </summary>
 		public bool HideSettingsTab = false;
+		/// <summary>
+		/// Determines the title of the 'Input' tab
+		/// </summary>
+		public string InputTabLabel = "Input";
+		/// <summary>
+		/// Determines the title of the 'Settings' tab
+		/// </summary>
+		public string SettingsTabLabel = "Settings";
+		/// <summary>
+		/// Determines the title of the 'Output' tab
+		/// </summary>
+		public string OutputTabLabel = "Output";
 
 		public ProcessorAttribute(string author, string description, string defaultinput, string defaultoutput)
 		{

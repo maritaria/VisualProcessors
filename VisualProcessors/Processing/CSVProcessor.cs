@@ -17,9 +17,9 @@ namespace VisualProcessors.Processing
 		#region Properties
 
 		private StreamWriter m_FileWriter;
+		private bool m_Loaded = false;
 		private bool m_OutputSet = false;
 		private bool m_Overwrite = true;
-		private bool m_Loaded = false;
 
 		public string FilePath
 		{
@@ -33,6 +33,7 @@ namespace VisualProcessors.Processing
 				OnModified(true);
 			}
 		}
+
 		public string Seperator
 		{
 			get
@@ -107,11 +108,6 @@ namespace VisualProcessors.Processing
 			base.GetUserInterface(panel);
 		}
 
-		void seperatorInput_InputCompleted(object sender, EventArgs e)
-		{
-			Seperator = (sender as StringInputPanel).InputText;
-		}
-
 		public override void Start()
 		{
 			base.Start();
@@ -135,7 +131,7 @@ namespace VisualProcessors.Processing
 		{
 			if (m_Loaded)
 			{
-				if (FilePath!="")
+				if (FilePath != "")
 				{
 					m_OutputSet = true;
 				}
@@ -162,6 +158,7 @@ namespace VisualProcessors.Processing
 			}
 			m_FileWriter.WriteLine();
 		}
+
 		protected override void WorkerMethod()
 		{
 			if (!m_OutputSet)
@@ -173,6 +170,7 @@ namespace VisualProcessors.Processing
 				base.WorkerMethod();
 			}
 		}
+
 		private void DisposeFileWriter()
 		{
 			if (m_FileWriter != null)
@@ -181,9 +179,10 @@ namespace VisualProcessors.Processing
 				m_FileWriter = null;
 			}
 		}
+
 		private void ThrowExceptionOnInvalid(string path)
 		{
-			if (path=="")
+			if (path == "")
 			{
 				throw new Exception("No output file selected");
 			}
@@ -255,10 +254,12 @@ namespace VisualProcessors.Processing
 				ThrowExceptionOnInvalid(e.FilePath);
 				FilePath = e.FilePath;
 				e.AcceptPath = true;
+				m_OutputSet = true;
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				e.AcceptPath = false;
+				m_OutputSet = false;
 				OnError(ex.Message);
 			}
 		}
@@ -270,6 +271,11 @@ namespace VisualProcessors.Processing
 				DialogResult result = MessageBox.Show("If you want to change the output file, the simulation has to pause, are you sure you want to pause the simulation?", "Pause required", MessageBoxButtons.YesNo);
 				e.Cancel = (result == DialogResult.Yes);//OnModified() will be called when the target file changes
 			}
+		}
+
+		private void seperatorInput_InputCompleted(object sender, EventArgs e)
+		{
+			Seperator = (sender as StringInputPanel).InputText;
 		}
 
 		#endregion Event Handlers

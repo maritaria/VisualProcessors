@@ -579,8 +579,12 @@ namespace VisualProcessors.Forms
 
 		private void PipelineWarning(Processor arg1, string arg2)
 		{
-			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-			ErrorIcon.Icon = SystemIcons.Warning;
+			MethodInvoker action = delegate
+			{
+				ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+				ErrorIcon.Icon = SystemIcons.Warning;
+			};
+			this.BeginInvoke(action);
 		}
 
 		private void PipelineModification(object sender, ProcessorModifiedEventArgs e)

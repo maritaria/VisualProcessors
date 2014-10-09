@@ -63,7 +63,7 @@ namespace VisualProcessors
 					{
 						if (reference.Version != processorName.Version)
 						{
-							Console.WriteLine("\t" + asm.GetName().Name + " VERSION MISMATCH!!!");
+							Console.WriteLine("\t" + asm.GetName().Name + " Version mismatch!");
 						}
 						else
 						{
