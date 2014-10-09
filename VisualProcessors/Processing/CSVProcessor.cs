@@ -157,6 +157,7 @@ namespace VisualProcessors.Processing
 				}
 			}
 			m_FileWriter.WriteLine();
+			m_FileWriter.Flush();
 		}
 
 		protected override void WorkerMethod()
