@@ -30,17 +30,23 @@
 		{
 			this.Tabs = new System.Windows.Forms.TabControl();
 			this.InputTab = new System.Windows.Forms.TabPage();
-			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
 			this.SettingsTab = new System.Windows.Forms.TabPage();
 			this.SettingsPanel = new System.Windows.Forms.Panel();
 			this.OutputTab = new System.Windows.Forms.TabPage();
-			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			this.MinimalTab = new System.Windows.Forms.TabPage();
-			this.LinkEndpointButton = new System.Windows.Forms.Button();
+			this.ConfirmLinkButton = new System.Windows.Forms.Button();
+			this.LinkButtons = new System.Windows.Forms.SplitContainer();
+			this.CancelLinkButton = new System.Windows.Forms.Button();
+			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
+			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			this.Tabs.SuspendLayout();
 			this.InputTab.SuspendLayout();
 			this.SettingsTab.SuspendLayout();
 			this.OutputTab.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.LinkButtons)).BeginInit();
+			this.LinkButtons.Panel1.SuspendLayout();
+			this.LinkButtons.Panel2.SuspendLayout();
+			this.LinkButtons.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// Tabs
@@ -53,7 +59,7 @@
 			this.Tabs.Location = new System.Drawing.Point(0, 0);
 			this.Tabs.Name = "Tabs";
 			this.Tabs.SelectedIndex = 0;
-			this.Tabs.Size = new System.Drawing.Size(378, 198);
+			this.Tabs.Size = new System.Drawing.Size(398, 200);
 			this.Tabs.TabIndex = 0;
 			this.Tabs.SelectedIndexChanged += new System.EventHandler(this.Tabs_SelectedIndexChanged);
 			// 
@@ -63,28 +69,17 @@
 			this.InputTab.Location = new System.Drawing.Point(4, 22);
 			this.InputTab.Name = "InputTab";
 			this.InputTab.Padding = new System.Windows.Forms.Padding(3);
-			this.InputTab.Size = new System.Drawing.Size(370, 172);
+			this.InputTab.Size = new System.Drawing.Size(390, 174);
 			this.InputTab.TabIndex = 1;
 			this.InputTab.Text = "Input";
 			this.InputTab.UseVisualStyleBackColor = true;
-			// 
-			// ProcessorInputView
-			// 
-			this.ProcessorInputView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProcessorInputView.Location = new System.Drawing.Point(3, 3);
-			this.ProcessorInputView.Name = "ProcessorInputView";
-			this.ProcessorInputView.Pipeline = null;
-			this.ProcessorInputView.Processor = null;
-			this.ProcessorInputView.SelectedInputChannel = null;
-			this.ProcessorInputView.Size = new System.Drawing.Size(364, 166);
-			this.ProcessorInputView.TabIndex = 0;
 			// 
 			// SettingsTab
 			// 
 			this.SettingsTab.Controls.Add(this.SettingsPanel);
 			this.SettingsTab.Location = new System.Drawing.Point(4, 22);
 			this.SettingsTab.Name = "SettingsTab";
-			this.SettingsTab.Size = new System.Drawing.Size(370, 172);
+			this.SettingsTab.Size = new System.Drawing.Size(390, 174);
 			this.SettingsTab.TabIndex = 2;
 			this.SettingsTab.Text = "Settings";
 			this.SettingsTab.UseVisualStyleBackColor = true;
@@ -94,7 +89,7 @@
 			this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsPanel.Location = new System.Drawing.Point(0, 0);
 			this.SettingsPanel.Name = "SettingsPanel";
-			this.SettingsPanel.Size = new System.Drawing.Size(370, 172);
+			this.SettingsPanel.Size = new System.Drawing.Size(390, 174);
 			this.SettingsPanel.TabIndex = 0;
 			// 
 			// OutputTab
@@ -103,10 +98,71 @@
 			this.OutputTab.Location = new System.Drawing.Point(4, 22);
 			this.OutputTab.Name = "OutputTab";
 			this.OutputTab.Padding = new System.Windows.Forms.Padding(3);
-			this.OutputTab.Size = new System.Drawing.Size(370, 172);
+			this.OutputTab.Size = new System.Drawing.Size(390, 174);
 			this.OutputTab.TabIndex = 0;
 			this.OutputTab.Text = "Output";
 			this.OutputTab.UseVisualStyleBackColor = true;
+			// 
+			// MinimalTab
+			// 
+			this.MinimalTab.Location = new System.Drawing.Point(4, 22);
+			this.MinimalTab.Name = "MinimalTab";
+			this.MinimalTab.Size = new System.Drawing.Size(390, 174);
+			this.MinimalTab.TabIndex = 3;
+			this.MinimalTab.Text = "Minimal";
+			this.MinimalTab.UseVisualStyleBackColor = true;
+			// 
+			// ConfirmLinkButton
+			// 
+			this.ConfirmLinkButton.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ConfirmLinkButton.Location = new System.Drawing.Point(0, 0);
+			this.ConfirmLinkButton.Name = "ConfirmLinkButton";
+			this.ConfirmLinkButton.Size = new System.Drawing.Size(198, 23);
+			this.ConfirmLinkButton.TabIndex = 2;
+			this.ConfirmLinkButton.Text = "Link Endpoint";
+			this.ConfirmLinkButton.UseVisualStyleBackColor = true;
+			this.ConfirmLinkButton.Click += new System.EventHandler(this.LinkEndpointButton_Click);
+			// 
+			// LinkButtons
+			// 
+			this.LinkButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.LinkButtons.IsSplitterFixed = true;
+			this.LinkButtons.Location = new System.Drawing.Point(0, 200);
+			this.LinkButtons.Name = "LinkButtons";
+			// 
+			// LinkButtons.Panel1
+			// 
+			this.LinkButtons.Panel1.Controls.Add(this.CancelLinkButton);
+			// 
+			// LinkButtons.Panel2
+			// 
+			this.LinkButtons.Panel2.Controls.Add(this.ConfirmLinkButton);
+			this.LinkButtons.Size = new System.Drawing.Size(398, 23);
+			this.LinkButtons.SplitterDistance = 198;
+			this.LinkButtons.SplitterWidth = 2;
+			this.LinkButtons.TabIndex = 3;
+			this.LinkButtons.Visible = false;
+			// 
+			// CancelLinkButton
+			// 
+			this.CancelLinkButton.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.CancelLinkButton.Location = new System.Drawing.Point(0, 0);
+			this.CancelLinkButton.Name = "CancelLinkButton";
+			this.CancelLinkButton.Size = new System.Drawing.Size(198, 23);
+			this.CancelLinkButton.TabIndex = 0;
+			this.CancelLinkButton.Text = "Cancel";
+			this.CancelLinkButton.UseVisualStyleBackColor = true;
+			// 
+			// ProcessorInputView
+			// 
+			this.ProcessorInputView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProcessorInputView.Location = new System.Drawing.Point(3, 3);
+			this.ProcessorInputView.Name = "ProcessorInputView";
+			this.ProcessorInputView.Pipeline = null;
+			this.ProcessorInputView.Processor = null;
+			this.ProcessorInputView.SelectedInputChannel = null;
+			this.ProcessorInputView.Size = new System.Drawing.Size(384, 168);
+			this.ProcessorInputView.TabIndex = 0;
 			// 
 			// ProcessorOutputView
 			// 
@@ -115,37 +171,16 @@
 			this.ProcessorOutputView.Name = "ProcessorOutputView";
 			this.ProcessorOutputView.Pipeline = null;
 			this.ProcessorOutputView.Processor = null;
-			this.ProcessorOutputView.Size = new System.Drawing.Size(364, 166);
+			this.ProcessorOutputView.Size = new System.Drawing.Size(384, 168);
 			this.ProcessorOutputView.TabIndex = 0;
-			// 
-			// MinimalTab
-			// 
-			this.MinimalTab.Location = new System.Drawing.Point(4, 22);
-			this.MinimalTab.Name = "MinimalTab";
-			this.MinimalTab.Size = new System.Drawing.Size(370, 172);
-			this.MinimalTab.TabIndex = 3;
-			this.MinimalTab.Text = "Minimal";
-			this.MinimalTab.UseVisualStyleBackColor = true;
-			// 
-			// LinkEndpointButton
-			// 
-			this.LinkEndpointButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.LinkEndpointButton.Location = new System.Drawing.Point(0, 198);
-			this.LinkEndpointButton.Name = "LinkEndpointButton";
-			this.LinkEndpointButton.Size = new System.Drawing.Size(378, 25);
-			this.LinkEndpointButton.TabIndex = 2;
-			this.LinkEndpointButton.Text = "Link Endpoint";
-			this.LinkEndpointButton.UseVisualStyleBackColor = true;
-			this.LinkEndpointButton.Visible = false;
-			this.LinkEndpointButton.Click += new System.EventHandler(this.LinkEndpointButton_Click);
 			// 
 			// ProcessorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(378, 223);
+			this.ClientSize = new System.Drawing.Size(398, 223);
 			this.Controls.Add(this.Tabs);
-			this.Controls.Add(this.LinkEndpointButton);
+			this.Controls.Add(this.LinkButtons);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -159,13 +194,17 @@
 			this.InputTab.ResumeLayout(false);
 			this.SettingsTab.ResumeLayout(false);
 			this.OutputTab.ResumeLayout(false);
+			this.LinkButtons.Panel1.ResumeLayout(false);
+			this.LinkButtons.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.LinkButtons)).EndInit();
+			this.LinkButtons.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Button LinkEndpointButton;
+		private System.Windows.Forms.Button ConfirmLinkButton;
 		private Controls.ProcessorOutputPanel ProcessorOutputView;
 		private System.Windows.Forms.TabControl Tabs;
 		private System.Windows.Forms.TabPage InputTab;
@@ -174,6 +213,8 @@
 		private System.Windows.Forms.TabPage MinimalTab;
 		private Controls.ProcessorInputPanel ProcessorInputView;
 		private System.Windows.Forms.Panel SettingsPanel;
+		private System.Windows.Forms.SplitContainer LinkButtons;
+		private System.Windows.Forms.Button CancelLinkButton;
 
 	}
 }

@@ -29,7 +29,7 @@ namespace VisualProcessors.Forms
 		private Processor m_Processor;
 		private Type m_ProcessorType;
 		private bool m_SizeChanging = false;
-
+		private LinkMode m_LinkMode = LinkMode.Disabled;
 		/// <summary>
 		///  Gets the PipelineForm the ProcessorForm belongs to.
 		/// </summary>
@@ -44,21 +44,6 @@ namespace VisualProcessors.Forms
 		public Processor Processor
 		{
 			get { return m_Processor; }
-		}
-
-		/// <summary>
-		///  Gets or sets whether the Link button should be visible
-		/// </summary>
-		public bool ShowLinkButton
-		{
-			get
-			{
-				return LinkEndpointButton.Visible;
-			}
-			set
-			{
-				LinkEndpointButton.Visible = value;
-			}
 		}
 
 		#endregion Properties
@@ -115,6 +100,49 @@ namespace VisualProcessors.Forms
 			}
 		}
 
+		#endregion Constructor
+
+		#region Methods
+
+		public void ForceClose()
+		{
+			m_Closing = true;
+			Close();
+		}
+
+		public void ShowInputChannel(string name)
+		{
+			if (ProcessorInputView.ShowInputChannel(name))
+			{
+				Tabs.SelectTab(InputTab);
+			}
+		}
+		public void SetLinkMode(LinkMode mode,bool origin)
+		{
+			m_LinkMode = mode;
+			LinkButtons.Visible = (mode != LinkMode.Disabled);
+			CancelLinkButton.Enabled = origin;
+			switch(mode)
+			{
+				case LinkMode.InputFirst:
+					ConfirmLinkButton.Text = "Link Output";
+					ConfirmLinkButton.Enabled = !Processor.HideOutputTab && (Processor.OutputChannelCount > 0);
+					break;
+				case LinkMode.OutputFirst:
+					ConfirmLinkButton.Text = "Link Input";
+					ConfirmLinkButton.Enabled = !Processor.HideInputTab && (Processor.InputChannelCount > 0);
+					break;
+			}
+		}
+
+		#endregion Methods
+
+		#region Events
+
+		#endregion Events
+
+		#region Event Handlers
+
 		private void ProcessorLocationChanged(object sender, EventArgs e)
 		{
 			if (m_LocationChanging || (Processor == null))
@@ -136,32 +164,6 @@ namespace VisualProcessors.Forms
 			Size = Processor.Size;
 			m_SizeChanging = false;
 		}
-
-		#endregion Constructor
-
-		#region Methods
-
-		public void ForceClose()
-		{
-			m_Closing = true;
-			Close();
-		}
-
-		public void ShowInputChannel(string name)
-		{
-			if (ProcessorInputView.ShowInputChannel(name))
-			{
-				Tabs.SelectTab(InputTab);
-			}
-		}
-
-		#endregion Methods
-
-		#region Events
-
-		#endregion Events
-
-		#region Event Handlers
 
 		private void LinkEndpointButton_Click(object sender, EventArgs e)
 		{

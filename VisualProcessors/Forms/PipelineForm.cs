@@ -358,7 +358,7 @@ namespace VisualProcessors.Forms
 		{
 			foreach (ProcessorForm pform in m_ProcessorForms)
 			{
-				pform.ShowLinkButton = false;
+				pform.SetLinkMode(LinkMode.Disabled, false);
 			}
 			m_LinkMode = LinkMode.Disabled;
 		}
@@ -375,7 +375,7 @@ namespace VisualProcessors.Forms
 			}
 			foreach (ProcessorForm pform in m_ProcessorForms)
 			{
-				pform.ShowLinkButton = (pform != first);
+				pform.SetLinkMode(mode, pform == first);
 			}
 			m_LinkStart = first;
 			m_LinkChannelName = channelname;

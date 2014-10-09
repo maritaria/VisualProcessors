@@ -380,6 +380,7 @@ namespace VisualProcessors.Processing
 			m_WorkerThread.IsBackground = true;
 			m_WorkerThread.Start();
 		}
+
 		/// <summary>
 		/// Stops the execution of the processor (if its running). Blocks until the workerthread has terminated.
 		/// </summary>
@@ -459,6 +460,16 @@ namespace VisualProcessors.Processing
 			return null;
 		}
 		/// <summary>
+		/// Gets the number of InputChannels the processor has
+		/// </summary>
+		public int InputChannelCount
+		{
+			get
+			{
+				return m_InputChannels.Count;
+			}
+		}
+		/// <summary>
 		/// Gets an array of strings containing the names of the InputChannels that the Processor has.
 		/// </summary>
 		/// <returns></returns>
@@ -526,6 +537,16 @@ namespace VisualProcessors.Processing
 		#region OutputChannels
 
 		private List<OutputChannel> m_OutputChannels = new List<OutputChannel>();
+		/// <summary>
+		/// Gets the number of OutputChannels the processor has
+		/// </summary>
+		public int OutputChannelCount
+		{
+			get
+			{
+				return m_OutputChannels.Count;
+			}
+		}
 
 		/// <summary>
 		/// Gets an OutputChannel of the Processor by its name, returns null if no OutputChannel with that name exists.
