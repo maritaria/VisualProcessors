@@ -72,7 +72,7 @@ namespace VisualProcessors.Forms
 							InformationList.Items.Add("AllowUserSpawn: " + ((pm.AllowUserSpawn) ? "Allowed" : "Denied"));
 							InformationList.Items.Add("AllowOptionalInputs: " + ((pm.AllowOptionalInputs) ? "Allowed" : "Denied"));
 							InformationList.Items.Add("Default InputChannel: " + pm.DefaultInput);
-							InformationList.Items.Add("Default OutputChannel: " + pm.DefaultInput);
+							InformationList.Items.Add("Default OutputChannel: " + pm.DefaultOutput);
 							InformationList.Items.Add("InputTab: " + ((pm.HideInputTab) ? "Hidden" : "Shown"));
 							InformationList.Items.Add("SettingsTab: " + ((pm.HideSettingsTab) ? "Hidden" : "Shown"));
 							InformationList.Items.Add("OutputTab: " + ((pm.HideOutputTab) ? "Hidden" : "Shown"));
