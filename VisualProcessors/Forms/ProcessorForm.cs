@@ -33,7 +33,7 @@ namespace VisualProcessors.Forms
 		/// <summary>
 		///  Gets the PipelineForm the ProcessorForm belongs to.
 		/// </summary>
-		public PipelineForm Pipeline
+		public PipelineForm PipelineForm
 		{
 			get { return m_PipelineForm; }
 		}
@@ -49,13 +49,18 @@ namespace VisualProcessors.Forms
 		#endregion Properties
 
 		#region Constructor
-
-		public ProcessorForm(PipelineForm pipeline, Processor processor, bool useModel)
+		/// <summary>
+		/// Creates a new ProcessorForm to display a Processor instance on.
+		/// </summary>
+		/// <param name="pipelineform">The PipelineForm that owns the ProcessorForm</param>
+		/// <param name="processor">The Processor to display and configure with the form</param>
+		/// <param name="useModel">When true, the form is sized and positioned according to the processors Size and Location properties respectively. (Set to true if the processor was deserialized from XML)</param>
+		public ProcessorForm(PipelineForm pipelineform, Processor processor, bool useModel)
 		{
 			InitializeComponent();
 
 			//Initialize values
-			m_PipelineForm = pipeline;
+			m_PipelineForm = pipelineform;
 			m_PreviousTab = Tabs.SelectedTab;
 
 			//Processor
@@ -77,7 +82,7 @@ namespace VisualProcessors.Forms
 			}
 
 			//Input
-			ProcessorInputView.Pipeline = Pipeline;
+			ProcessorInputView.Pipeline = PipelineForm;
 			ProcessorInputView.Processor = Processor;
 			if (Processor.HideInputTab)
 			{
@@ -92,7 +97,7 @@ namespace VisualProcessors.Forms
 			}
 
 			//Output
-			ProcessorOutputView.Pipeline = Pipeline;
+			ProcessorOutputView.Pipeline = PipelineForm;
 			ProcessorOutputView.Processor = Processor;
 			if (Processor.HideOutputTab)
 			{
@@ -103,13 +108,18 @@ namespace VisualProcessors.Forms
 		#endregion Constructor
 
 		#region Methods
-
+		/// <summary>
+		/// Closes the form without showing the confirmation MessageBox
+		/// </summary>
 		public void ForceClose()
 		{
 			m_Closing = true;
 			Close();
 		}
-
+		/// <summary>
+		/// Focusses the TabControl on the 'Input' tab, and selects the channel with the given name
+		/// </summary>
+		/// <param name="name">The name of the InputChannel to select</param>
 		public void ShowInputChannel(string name)
 		{
 			if (ProcessorInputView.ShowInputChannel(name))
@@ -117,6 +127,11 @@ namespace VisualProcessors.Forms
 				Tabs.SelectTab(InputTab);
 			}
 		}
+		/// <summary>
+		/// Sets the linkmode of the form
+		/// </summary>
+		/// <param name="mode">The current linkmode</param>
+		/// <param name="origin">True if the current form is the form that started the linkmode session, false otherwise</param>
 		public void SetLinkMode(LinkMode mode,bool origin)
 		{
 			m_LinkMode = mode;
@@ -137,12 +152,15 @@ namespace VisualProcessors.Forms
 
 		#endregion Methods
 
-		#region Events
-
-		#endregion Events
-
 		#region Event Handlers
 
+		private void ProcessorForm_SizeChanged(object sender, EventArgs e)
+		{
+			if (!MinimalViewEnabled)
+			{
+				this.Processor.Size = this.Size;
+			}
+		}
 		private void ProcessorLocationChanged(object sender, EventArgs e)
 		{
 			if (m_LocationChanging || (Processor == null))
@@ -167,7 +185,7 @@ namespace VisualProcessors.Forms
 
 		private void LinkEndpointButton_Click(object sender, EventArgs e)
 		{
-			Pipeline.CompleteLinkMode(this);
+			PipelineForm.CompleteLinkMode(this);
 		}
 
 		private void ProcessorForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -187,7 +205,7 @@ namespace VisualProcessors.Forms
 				}
 				else
 				{
-					Pipeline.RemoveProcessor(this.Processor.Name);
+					PipelineForm.RemoveProcessor(this.Processor.Name);
 				}
 			}
 		}
@@ -275,12 +293,5 @@ namespace VisualProcessors.Forms
 
 		#endregion Minimal View
 
-		private void ProcessorForm_SizeChanged(object sender, EventArgs e)
-		{
-			if (!MinimalViewEnabled)
-			{
-				this.Processor.Size = this.Size;
-			}
-		}
 	}
 }
