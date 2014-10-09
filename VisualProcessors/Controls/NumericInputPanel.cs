@@ -14,22 +14,22 @@ using VisualProcessors.Processing;
 
 namespace VisualProcessors.Controls
 {
-	public partial class StringInputPanel : UserControl
+	public partial class NumericInputPanel : UserControl
 	{
 		#region Properties
 
 		private bool m_Changing = false;
 
-		public string InputText
+		public decimal InputValue
 		{
 			get
 			{
-				return InputTextBox.Text;
+				return InputNumeric.Value;
 			}
 			set
 			{
 				m_Changing = true;
-				InputTextBox.Text = value;
+				InputNumeric.Value = value;
 				m_Changing = false;
 			}
 		}
@@ -43,10 +43,10 @@ namespace VisualProcessors.Controls
 			set
 			{
 				InputLabel.Text = value;
-				int oldright = InputTextBox.Right;
+				int oldright = InputNumeric.Right;
 				InputLabel.Width = InputLabel.PreferredWidth;
-				InputTextBox.Left = InputLabel.Right;
-				InputTextBox.Width = oldright - InputTextBox.Left;
+				InputNumeric.Left = InputLabel.Right;
+				InputNumeric.Width = oldright - InputNumeric.Left;
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace VisualProcessors.Controls
 
 		#region Contructor
 
-		public StringInputPanel()
+		public NumericInputPanel()
 		{
 			m_Changing = true;
 			InitializeComponent();
@@ -113,16 +113,16 @@ namespace VisualProcessors.Controls
 				}
 			}
 		}
-
-		private void InputTextBox_TextChanged(object sender, EventArgs e)
+		private void InputNumeric_ValueChanged(object sender, EventArgs e)
 		{
 			if (!m_Changing)
 			{
 				IsInputValid = OnRequestValidation();
-				InputTextBox.BackColor = IsInputValid ? Color.White : Color.Red;
+				InputNumeric.BackColor = IsInputValid ? Color.White : Color.Red;
 			}
 		}
 
 		#endregion Event Handlers
+
 	}
 }

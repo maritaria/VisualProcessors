@@ -48,6 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\NumericInputPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\NumericInputPanel.Designer.cs">
+      <DependentUpon>NumericInputPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\StringInputPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -128,6 +134,9 @@
     <Compile Include="Processing\XmlAnything.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\NumericInputPanel.resx">
+      <DependentUpon>NumericInputPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\StringInputPanel.resx">
       <DependentUpon>StringInputPanel.cs</DependentUpon>
     </EmbeddedResource>
