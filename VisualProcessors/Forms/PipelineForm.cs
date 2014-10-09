@@ -647,6 +647,10 @@ namespace VisualProcessors.Forms
 				m_CurrentFilepath = SaveFileAs();
 			}
 		}
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
+		}
 
 		public string SaveFileAs()
 		{
@@ -777,6 +781,7 @@ namespace VisualProcessors.Forms
 		}
 
 		#endregion Menu: Tools
+
 
 		#endregion MenuStrip Implementation
 
