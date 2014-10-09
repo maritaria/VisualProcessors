@@ -12,6 +12,12 @@ namespace VisualProcessors.Processing
 	[ProcessorAttribute("Bram Kamies", "Adds two values together", "A", "Output")]
 	public class AddProcessor : Processor
 	{
+		#region Properties
+
+		#endregion
+
+		#region Constructor
+
 		public AddProcessor()
 		{
 		}
@@ -24,11 +30,16 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output");
 		}
 
+		#endregion
+
+		#region Methods
 		protected override void Process()
 		{
 			double a = GetInputChannel("A").GetValue();
 			double b = GetInputChannel("B").GetValue();
 			GetOutputChannel("Output").WriteValue(a + b);
 		}
+
+		#endregion
 	}
 }

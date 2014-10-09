@@ -85,6 +85,7 @@
       <DependentUpon>AssemblyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\BranchOperation.cs" />
+    <Compile Include="Processing\DeltaProcessor.cs" />
     <Compile Include="Processing\CSVProcessor.cs" />
     <Compile Include="Processing\EmptyProcessor.cs" />
     <Compile Include="Processing\ProcessorModifiedEventArgs.cs" />
