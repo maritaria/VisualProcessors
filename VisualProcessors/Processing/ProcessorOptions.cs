@@ -80,7 +80,7 @@ namespace VisualProcessors.Processing
 			reader.ReadStartElement();
 			while (reader.Name == "Option")
 			{
-				SetOption(reader.GetAttribute("Key"), reader.ReadElementContentAsString());
+				SetOption(StringDeserialize(reader.GetAttribute("Key")), StringDeserialize(reader.ReadElementContentAsString()));
 			}
 			reader.ReadEndElement();
 		}
@@ -90,8 +90,8 @@ namespace VisualProcessors.Processing
 			foreach(Option o in m_Options)
 			{
 				writer.WriteStartElement("Option");
-				writer.WriteAttributeString("Key", o.Key);
-				writer.WriteValue(o.Value);
+				writer.WriteAttributeString("Key", StringSerialize(o.Key));
+				writer.WriteValue(StringSerialize(o.Value));
 				writer.WriteEndElement();
 			}
 		}
@@ -103,6 +103,14 @@ namespace VisualProcessors.Processing
 			attribute.Xmlns = false;
 			overrides.Add(t, attribute);
 			return overrides;
+		}
+		private string StringSerialize(string source)
+		{
+			return source.Replace("\\", "\\\\").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\t", "\\t");
+		}
+		private string StringDeserialize(string source)
+		{
+			return source.Replace("\\\\", "\\").Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
 		}
 
 		#endregion
