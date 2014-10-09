@@ -71,7 +71,12 @@ namespace VisualProcessors.Processing
 
 		public void ReadXml(XmlReader reader)
 		{
-			XmlReader subtree = reader.ReadSubtree();
+			if (reader.IsEmptyElement)
+			{
+				//In case of <Options />, consume the Options tag otherwise the ReadEndElement will read to far.
+				reader.Read();
+				return;
+			}
 			reader.ReadStartElement();
 			while (reader.Name == "Option")
 			{
