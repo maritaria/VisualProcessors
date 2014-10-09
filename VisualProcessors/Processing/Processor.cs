@@ -302,9 +302,28 @@ namespace VisualProcessors.Processing
 		{
 			StringInputPanel input = new StringInputPanel();
 			input.InputCompleted += input_InputCompleted;
+			input.RequestValidation += input_RequestValidation;
 			input.InputTitle = "Name:";
 			input.Dock = DockStyle.Top;
+			input.InputText = Name;
 			panel.Controls.Add(input);
+		}
+
+		void input_RequestValidation(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (sender is StringInputPanel)
+			{
+				StringInputPanel panel = sender as StringInputPanel;
+				Processor p = Pipeline.GetByName(panel.InputText);
+				if (p==null)
+				{
+					e.Cancel = false;
+				}
+				else
+				{
+					e.Cancel = (this !=p);
+				}
+			}
 		}
 		/// <summary>
 		/// Stops the processor if its running, and sets IsPrepared to false, this will cause the processor to clear its buffer on the next Start() call.

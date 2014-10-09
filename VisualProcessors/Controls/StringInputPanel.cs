@@ -63,7 +63,9 @@ namespace VisualProcessors.Controls
 			IsInputValid = false;
 			m_Changing = false;
 		}
-		public StringInputPanel(string title) : this()
+
+		public StringInputPanel(string title)
+			: this()
 		{
 			InputTitle = title;
 		}
@@ -89,17 +91,24 @@ namespace VisualProcessors.Controls
 			{
 				InputCompleted(this, EventArgs.Empty);
 			}
+			InputTextBox.BackColor = Color.White;
 		}
 
-		private bool OnRequestValidation()
+		private void OnRequestValidation()
 		{
+			m_Changing = true;
 			if (RequestValidation != null)
 			{
 				CancelEventArgs carg = new CancelEventArgs(false);
 				RequestValidation(this, carg);
-				return !carg.Cancel;
+				IsInputValid = !carg.Cancel;
 			}
-			return true;
+			else
+			{
+				IsInputValid = true;
+			}
+			InputTextBox.BackColor = IsInputValid ? Color.Yellow : Color.Red;
+			m_Changing = false;
 		}
 
 		#endregion Event
@@ -113,8 +122,13 @@ namespace VisualProcessors.Controls
 				e.SuppressKeyPress = true;
 				if (!m_Changing && IsInputValid)
 				{
+					InputTextBox.BackColor = Color.White;
 					OnInputCompleted();
 				}
+			}
+			else
+			{
+				OnRequestValidation();
 			}
 		}
 
@@ -122,8 +136,7 @@ namespace VisualProcessors.Controls
 		{
 			if (!m_Changing)
 			{
-				IsInputValid = OnRequestValidation();
-				InputTextBox.BackColor = IsInputValid ? Color.White : Color.Red;
+				OnRequestValidation();
 			}
 		}
 

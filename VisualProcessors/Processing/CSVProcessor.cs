@@ -33,6 +33,18 @@ namespace VisualProcessors.Processing
 				OnModified(true);
 			}
 		}
+		public string Seperator
+		{
+			get
+			{
+				return Options.GetOption("Seperator");
+			}
+			set
+			{
+				Options.SetOption("Seperator", value);
+				OnModified(false);
+			}
+		}
 
 		#endregion Properties
 
@@ -49,6 +61,7 @@ namespace VisualProcessors.Processing
 		{
 			AddInputChannel("1", false);
 			FilePath = "";
+			Seperator = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator;
 		}
 
 		#endregion Constructor
@@ -75,8 +88,6 @@ namespace VisualProcessors.Processing
 			channelInput.InputIncrement = 1;
 			channelInput.InputCompleted += channelCountInput_InputCompleted;
 
-			panel.Controls.Add(channelInput);
-
 			SaveFileDialog fileDialog = new SaveFileDialog();
 			fileDialog.Filter = "CSV-file|*.csv";
 			fileDialog.FileName = Application.StartupPath;
@@ -85,9 +96,20 @@ namespace VisualProcessors.Processing
 			fileInput.BrowseComplete += fileInput_BrowseComplete;
 			fileInput.CanBrowse += fileInput_CanBrowse;
 
-			panel.Controls.Add(fileInput);
+			StringInputPanel seperatorInput = new StringInputPanel("Seperator:");
+			seperatorInput.Dock = DockStyle.Top;
+			seperatorInput.InputText = Seperator;
+			seperatorInput.InputCompleted += seperatorInput_InputCompleted;
 
+			panel.Controls.Add(seperatorInput);
+			panel.Controls.Add(channelInput);
+			panel.Controls.Add(fileInput);
 			base.GetUserInterface(panel);
+		}
+
+		void seperatorInput_InputCompleted(object sender, EventArgs e)
+		{
+			Seperator = (sender as StringInputPanel).InputText;
 		}
 
 		public override void Start()
@@ -134,7 +156,8 @@ namespace VisualProcessors.Processing
 				m_FileWriter.Write(GetInputChannel((i + 1).ToString()).GetValue());
 				if (i < c - 1)
 				{
-					m_FileWriter.Write(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+					//System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator
+					m_FileWriter.Write(Seperator);
 				}
 			}
 			m_FileWriter.WriteLine();
