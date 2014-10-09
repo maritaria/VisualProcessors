@@ -23,6 +23,14 @@ namespace VisualProcessors.Processing
 		private Size m_Size = new Size(0, 0);
 		private Thread m_WorkerThread;
 		private Pipeline m_Pipeline;
+		private ProcessorOptions m_Options = new ProcessorOptions();
+		public ProcessorOptions Options
+		{
+			get
+			{
+				return m_Options;
+			}
+		}
 		public Pipeline Pipeline
 		{
 			get
@@ -788,6 +796,7 @@ namespace VisualProcessors.Processing
 			m_RawOutput = (List<OutputChannel>)new XmlSerializer(m_OutputChannels.GetType(), GetOverrides(m_OutputChannels.GetType(), "OutputChannels")).Deserialize(reader);
 			m_Location = (Point)new XmlSerializer(m_Location.GetType(), GetOverrides(m_Location.GetType(), "Location")).Deserialize(reader);
 			m_Size = (Size)new XmlSerializer(m_Size.GetType(), GetOverrides(m_Size.GetType(), "Size")).Deserialize(reader);
+			m_Options = (ProcessorOptions)new XmlSerializer(m_Options.GetType(), GetOverrides(m_Options.GetType(), "Options")).Deserialize(reader);
 			reader.ReadEndElement();
 		}
 
@@ -800,6 +809,7 @@ namespace VisualProcessors.Processing
 			new XmlSerializer(m_OutputChannels.GetType(), GetOverrides(m_OutputChannels.GetType(), "OutputChannels")).Serialize(writer, m_OutputChannels, ns);
 			new XmlSerializer(m_Location.GetType(), GetOverrides(m_Location.GetType(), "Location")).Serialize(writer, m_Location, ns);
 			new XmlSerializer(m_Size.GetType(), GetOverrides(m_Size.GetType(), "Size")).Serialize(writer, m_Size, ns);
+			new XmlSerializer(m_Options.GetType(), GetOverrides(m_Options.GetType(), "Options")).Serialize(writer, m_Options, ns);
 		}
 
 		private XmlAttributeOverrides GetOverrides(Type t, string name)

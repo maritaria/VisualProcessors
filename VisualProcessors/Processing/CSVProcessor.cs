@@ -14,18 +14,33 @@ namespace VisualProcessors.Processing
 		HideOutputTab=true,DefaultInput="1")]
 	public class CSVProcessor : Processor
 	{
-		private string m_OutputFile = "";
+		#region Properties
 		private bool m_OutputSet = false;
 		private int m_ChannelCount = 1;
 		private StreamWriter m_FileWriter;
 		private bool m_Overwrite = true;
-		public CSVProcessor() :base() { }
+		public string FilePath
+		{
+			get
+			{
+				return Options.GetOption("FilePath");
+			}
+			set
+			{
+				Options.SetOption("FilePath", value);
+			}
+		}
+		#endregion
+		#region Constructor
+		public CSVProcessor() : base() { }
 
 		public CSVProcessor(Pipeline pipeline, string name)
 			: base(pipeline, name)
 		{
 			AddInputChannel("1", false);
 		}
+		#endregion
+		#region Methods
 
 		public override void GetUserInterface(Panel panel)
 		{
@@ -71,7 +86,7 @@ namespace VisualProcessors.Processing
 				if (result == DialogResult.OK)
 				{
 					fileTextBox.Text = sfd.FileName;
-					m_OutputFile = sfd.FileName;
+					FilePath = sfd.FileName;
 					m_OutputSet = true;
 					m_Overwrite = true;
 					fileUnsetButton.Enabled = true;
@@ -125,7 +140,7 @@ namespace VisualProcessors.Processing
 			{
 				mode = FileMode.Create;
 			}
-			m_FileWriter = new StreamWriter(new FileStream(m_OutputFile,mode));
+			m_FileWriter = new StreamWriter(new FileStream(FilePath,mode));
 		}
 
 		protected override void Prepare()
@@ -174,5 +189,7 @@ namespace VisualProcessors.Processing
 				m_FileWriter = null;
 			}
 		}
+
+		#endregion
 	}
 }
