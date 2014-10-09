@@ -152,7 +152,6 @@ namespace VisualProcessors.Processing
 			set
 			{
 				Location = new Point(value, Location.Y);
-				OnModified();
 			}
 		}
 
@@ -684,7 +683,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Invoked by the processor if any part of the processor has changed
 		/// </summary>
-		public event EventHandler Modified;
+		public event EventHandler<ProcessorModifiedEventArgs> Modified;
 
 		/// <summary>
 		///  Invoked just after the name of the processor has changed.
@@ -723,11 +722,11 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		/// Invokes the Modified event
 		/// </summary>
-		protected void OnModified()
+		protected void OnModified(bool shouldHalt)
 		{
 			if (Modified != null)
 			{
-				Modified(this, EventArgs.Empty);
+				Modified(this, new ProcessorModifiedEventArgs(this,shouldHalt));
 			}
 		}
 		/// <summary>
@@ -748,7 +747,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelAdded(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(true);
 		}
 
 		private void OnInputChannelRemoved()
@@ -757,7 +756,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelRemoved(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(true);
 		}
 
 		private void OnLinkAdded()
@@ -766,7 +765,7 @@ namespace VisualProcessors.Processing
 			{
 				LinkAdded(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(true);
 		}
 
 		private void OnLinkRemoved()
@@ -775,7 +774,7 @@ namespace VisualProcessors.Processing
 			{
 				LinkRemoved(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(true);
 		}
 
 		private void OnLocationChanged()
@@ -784,7 +783,7 @@ namespace VisualProcessors.Processing
 			{
 				LocationChanged(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(false);
 		}
 
 		private void OnNameChanged(string oldname, string newname)
@@ -793,7 +792,7 @@ namespace VisualProcessors.Processing
 			{
 				NameChanged(this, oldname, newname);
 			}
-			OnModified();
+			OnModified(false);
 		}
 
 		private void OnOutputChannelAdded()
@@ -802,7 +801,7 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelAdded(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(true);
 		}
 
 		private void OnOutputChannelRemoved()
@@ -811,7 +810,7 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelRemoved(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(true);
 		}
 
 		private void OnSizeChanged()
@@ -820,7 +819,7 @@ namespace VisualProcessors.Processing
 			{
 				SizeChanged(this, EventArgs.Empty);
 			}
-			OnModified();
+			OnModified(false);
 		}
 
 		#endregion Events

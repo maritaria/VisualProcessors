@@ -175,6 +175,7 @@ namespace VisualProcessors.Controls
 				m_Applied = false;
 				ErrorList.Items.Add("[Code modified]");
 			}
+			CodeProcessor.Code = CodeBox.Text;
 		}
 
 		private void DefaultCodeButton_Click(object sender, EventArgs e)

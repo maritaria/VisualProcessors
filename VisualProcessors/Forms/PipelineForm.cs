@@ -105,9 +105,9 @@ namespace VisualProcessors.Forms
 			{
 				CurrentPipeline.Started -= PipelineStarted;
 				CurrentPipeline.Stopped -= PipelineStopped;
-				CurrentPipeline.Modified -= CurrentPipelineModification;
-				CurrentPipeline.Warning -= CurrentPipeline_Warning;
-				CurrentPipeline.Error -= CurrentPipeline_Error;
+				CurrentPipeline.ProcessorModified -= PipelineModification;
+				CurrentPipeline.Warning -= PipelineWarning;
+				CurrentPipeline.Error -= PipelineError;
 				CurrentPipeline.Stop();
 			}
 			foreach (ProcessorForm pf in m_ProcessorForms)
@@ -120,9 +120,9 @@ namespace VisualProcessors.Forms
 			{
 				CurrentPipeline.Started += PipelineStarted;
 				CurrentPipeline.Stopped += PipelineStopped;
-				CurrentPipeline.Modified += CurrentPipelineModification;
-				CurrentPipeline.Warning += CurrentPipeline_Warning;
-				CurrentPipeline.Error += CurrentPipeline_Error;
+				CurrentPipeline.ProcessorModified += PipelineModification;
+				CurrentPipeline.Warning += PipelineWarning;
+				CurrentPipeline.Error += PipelineError;
 				CurrentPipeline.Stop();
 				foreach (string name in pipeline.GetListOfNames())
 				{
@@ -186,23 +186,6 @@ namespace VisualProcessors.Forms
 			return result;
 		}
 
-		private void CurrentPipeline_Error(Processor arg1, string arg2)
-		{
-			ShowProcessor(arg1.Name);
-			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-			ErrorIcon.Icon = SystemIcons.Error;
-		}
-
-		private void CurrentPipeline_Warning(Processor arg1, string arg2)
-		{
-			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-			ErrorIcon.Icon = SystemIcons.Warning;
-		}
-
-		private void CurrentPipelineModification(object sender, EventArgs e)
-		{
-			IsSaved = false;
-		}
 
 		#endregion Methods
 
@@ -563,6 +546,29 @@ namespace VisualProcessors.Forms
 			runToolStripMenuItem.Checked = false;
 			SimulationStatusLabel.Text = "Edit-mode";
 			MdiClient.Invalidate();
+		}
+
+
+		private void PipelineError(Processor arg1, string arg2)
+		{
+			ShowProcessor(arg1.Name);
+			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+			ErrorIcon.Icon = SystemIcons.Error;
+		}
+
+		private void PipelineWarning(Processor arg1, string arg2)
+		{
+			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+			ErrorIcon.Icon = SystemIcons.Warning;
+		}
+
+		private void PipelineModification(object sender, ProcessorModifiedEventArgs e)
+		{
+			IsSaved = false;
+			if (e.ShouldHalt)
+			{
+				CurrentPipeline.Stop();
+			}
 		}
 
 		#endregion EventHandlers

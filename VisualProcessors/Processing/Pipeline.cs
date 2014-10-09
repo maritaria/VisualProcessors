@@ -82,13 +82,7 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
-				p.InputChannelAdded += ProcessorModified;
-				p.InputChannelRemoved += ProcessorModified;
-				p.OutputChannelAdded += ProcessorModified;
-				p.OutputChannelRemoved += ProcessorModified;
-				p.LinkAdded += ProcessorModified;
-				p.LinkRemoved += ProcessorModified;
-				p.NameChanged += delegate(Processor pr, string o, string n) { OnModified(); };
+				p.Modified += ProcessorModified;
 				p.Error += OnError;
 				p.Warning += OnWarning;
 				if (GetByName(p.Name) == null)
@@ -96,8 +90,9 @@ namespace VisualProcessors.Processing
 					m_Processors.Add(p);
 				}
 			}
-			OnModified();
+			OnProcessorAdded(p);
 		}
+
 
 		public Processor GetByName(string name)
 		{
@@ -143,18 +138,14 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
-				p.InputChannelAdded -= ProcessorModified;
-				p.InputChannelRemoved -= ProcessorModified;
-				p.OutputChannelAdded -= ProcessorModified;
-				p.OutputChannelRemoved -= ProcessorModified;
-				p.LinkAdded -= ProcessorModified;
-				p.LinkRemoved -= ProcessorModified;
+				
+				p.Modified -= ProcessorModified;
 				if (GetByName(p.Name) == p)
 				{
 					p.Dispose();
 				}
 				m_Processors.Remove(p);
-				OnModified();
+				OnProcessorRemoved(p);
 			}
 		}
 
@@ -252,18 +243,45 @@ namespace VisualProcessors.Processing
 		///  Invoked when a Processor indicates an error
 		/// </summary>
 		public event Action<Processor, string> Error;
-
-		public event EventHandler Modified;
-
+		/// <summary>
+		/// Invoked whenever a Processor invokes their Modified event.
+		/// </summary>
+		public event EventHandler<ProcessorModifiedEventArgs> ProcessorModified;
+		/// <summary>
+		/// Invoked just after a processor has been added to the pipeline
+		/// </summary>
+		public event Action<Processor> ProcessorAdded;
+		/// <summary>
+		/// Invoked just after a processor is removed from the pipeline.
+		/// </summary>
+		public event Action<Processor> ProcessorRemoved;
+		/// <summary>
+		/// Invoked when the pipeline succesfully started a simulation.
+		/// </summary>
 		public event EventHandler Started;
-
+		/// <summary>
+		/// Invoked when the pipelien stopped a running simulation, also is invoked if the startup sequence of a simulation fails.
+		/// </summary>
 		public event EventHandler Stopped;
 
 		/// <summary>
 		///  Invoked when a Processor indicates a warning
 		/// </summary>
 		public event Action<Processor, string> Warning;
-
+		private void OnProcessorAdded(Processor p)
+		{
+			if (ProcessorAdded!=null)
+			{
+				ProcessorAdded(p);
+			}
+		}
+		private void OnProcessorRemoved(Processor p)
+		{
+			if (ProcessorRemoved!=null)
+			{
+				ProcessorRemoved(p);
+			}
+		}
 		private void OnError(Processor p, string s)
 		{
 			if (Error != null)
@@ -272,11 +290,11 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		private void OnModified()
+		private void OnModified(ProcessorModifiedEventArgs e)
 		{
-			if (Modified != null)
+			if (ProcessorModified != null)
 			{
-				Modified(this, EventArgs.Empty);
+				ProcessorModified(this,e);
 			}
 		}
 
@@ -312,16 +330,7 @@ namespace VisualProcessors.Processing
 		{
 			Stop();
 		}
-
-		private void ProcessorModified(object sender, EventArgs e)
-		{
-			if (IsRunning && BreakOnModification)
-			{
-				Stop();
-			}
-			OnModified();
-		}
-
+		
 		#endregion Event Handlers
 
 		#region IXmlSerializable Members

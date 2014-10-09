@@ -30,6 +30,7 @@ namespace VisualProcessors.Processing
 			set
 			{
 				Options.SetOption("FilePath", value);
+				OnModified(false);
 			}
 		}
 
