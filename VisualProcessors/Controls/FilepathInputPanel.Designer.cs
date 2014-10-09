@@ -50,6 +50,7 @@
 			this.InputTextBox.Name = "InputTextBox";
 			this.InputTextBox.Size = new System.Drawing.Size(190, 20);
 			this.InputTextBox.TabIndex = 3;
+			this.InputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputTextBox_KeyDown);
 			// 
 			// BrowseButton
 			// 

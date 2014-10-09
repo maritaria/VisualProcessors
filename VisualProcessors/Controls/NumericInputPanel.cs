@@ -49,19 +49,7 @@ namespace VisualProcessors.Controls
 				InputNumeric.Width = oldright - InputNumeric.Left;
 			}
 		}
-
-		public bool InputArrowsOnly
-		{
-			get
-			{
-				return InputNumeric.ReadOnly;
-			}
-			set
-			{
-				InputNumeric.ReadOnly = value;
-			}
-		}
-
+		
 		public decimal InputMinimum
 		{
 			get
@@ -148,23 +136,21 @@ namespace VisualProcessors.Controls
 
 		#region Event Handlers
 
-		private void InputTextBox_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.Enter)
-			{
-				e.SuppressKeyPress = true;
-				if (!m_Changing && IsInputValid)
-				{
-					OnInputCompleted();
-				}
-			}
-		}
 		private void InputNumeric_ValueChanged(object sender, EventArgs e)
 		{
 			if (!m_Changing)
 			{
 				IsInputValid = OnRequestValidation();
 				InputNumeric.BackColor = IsInputValid ? Color.White : Color.Red;
+				if (IsInputValid)
+				{
+					InputNumeric.BackColor = Color.White;
+					OnInputCompleted();
+				}
+				else
+				{
+					InputNumeric.BackColor =  Color.Red;
+				}
 			}
 		}
 

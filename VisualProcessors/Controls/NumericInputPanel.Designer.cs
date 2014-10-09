@@ -48,6 +48,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.InputNumeric.Location = new System.Drawing.Point(47, 3);
 			this.InputNumeric.Name = "InputNumeric";
+			this.InputNumeric.ReadOnly = true;
 			this.InputNumeric.Size = new System.Drawing.Size(168, 20);
 			this.InputNumeric.TabIndex = 2;
 			this.InputNumeric.ValueChanged += new System.EventHandler(this.InputNumeric_ValueChanged);
