@@ -137,18 +137,18 @@ namespace VisualProcessors.Processing
 			inputNumeric.Minimum = 1;
 			inputNumeric.ValueChanged += delegate(object sender, EventArgs e)
 			{
-				string[] names = GetInputChannelNames();
-				while (names.Length > inputNumeric.Value)
+				int count = InputChannelCount;
+				while (count > inputNumeric.Value)
 				{
-					RemoveInputChannel(GetInputChannel(GetInputChannelNames().Last()));
-					names = GetInputChannelNames();
+					RemoveInputChannel(GetInputChannel(count.ToString()));
+					count = InputChannelCount;
 				}
-				while (names.Length < inputNumeric.Value)
+				while (count < inputNumeric.Value)
 				{
-					AddInputChannel((names.Length + 1).ToString(), false);
-					names = GetInputChannelNames();
+					AddInputChannel((count + 1).ToString(), false);
+					count = InputChannelCount;
 				}
-				m_ChannelCount = names.Length;
+				m_ChannelCount = InputChannelCount;
 			};
 
 			base.GetUserInterface(panel);
