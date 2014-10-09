@@ -59,7 +59,7 @@ namespace VisualProcessors.Processing
 
 		public override void GetUserInterface(Panel panel)
 		{
-			CodePanel cpanel = new CodePanel(this, this.Code);
+			CodePanel cpanel = new CodePanel(this);
 			cpanel.Dock = DockStyle.Fill;
 			panel.Controls.Add(cpanel);
 			base.GetUserInterface(panel);

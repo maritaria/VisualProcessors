@@ -20,8 +20,19 @@ namespace VisualProcessors.Controls
 		private bool m_Applied = false;
 		private bool m_CodeChanged = false;
 		private UserCodeContext m_UserCodeContext;
-
-		public CodeProcessor CodeProcessor { get; set; }
+		private CodeProcessor m_CodeProcessor;
+		public CodeProcessor CodeProcessor
+		{
+			get
+			{
+				return m_CodeProcessor;
+			}
+			set
+			{
+				m_CodeProcessor = value;
+				CodeBox.Text = m_CodeProcessor.Code;
+			}
+		}
 
 		#endregion Properties
 
@@ -32,15 +43,13 @@ namespace VisualProcessors.Controls
 			InitializeComponent();
 			SaveCodeDialog.InitialDirectory = Application.StartupPath;
 			LoadCodeDialog.InitialDirectory = Application.StartupPath;
+			m_UserCodeContext = new UserCodeContext();
 		}
 
-		public CodePanel(CodeProcessor cp, string usercode)
+		public CodePanel(CodeProcessor cp)
 			: this()
 		{
 			CodeProcessor = cp;
-			CodeBox.Text = cp.Code;
-			m_UserCodeContext = new UserCodeContext();
-			CodeBox.Text = usercode;
 		}
 
 		#endregion Constructor
