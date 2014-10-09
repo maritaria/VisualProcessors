@@ -63,6 +63,10 @@ namespace VisualProcessors.Controls
 			IsInputValid = false;
 			m_Changing = false;
 		}
+		public StringInputPanel(string title) : this()
+		{
+			InputTitle = title;
+		}
 
 		#endregion Contructor
 
