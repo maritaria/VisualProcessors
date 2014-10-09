@@ -44,7 +44,9 @@
 			// 
 			// InputNumeric
 			// 
-			this.InputNumeric.Location = new System.Drawing.Point(47, 4);
+			this.InputNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.InputNumeric.Location = new System.Drawing.Point(47, 3);
 			this.InputNumeric.Name = "InputNumeric";
 			this.InputNumeric.Size = new System.Drawing.Size(168, 20);
 			this.InputNumeric.TabIndex = 2;

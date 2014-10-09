@@ -65,20 +65,21 @@ namespace VisualProcessors.Processing
 
 		public override void GetUserInterface(Panel panel)
 		{
+
+			NumericInputPanel channelInput = new NumericInputPanel();
+			channelInput.Dock = DockStyle.Top;
+			channelInput.InputTitle = "Columns:";
+			channelInput.InputMinimum = 1;
+			channelInput.InputMaximum = 100;
+			channelInput.InputIncrement = 1;
+			channelInput.InputCompleted += channelCountInput_InputCompleted;
+
+			panel.Controls.Add(channelInput);
+
 			Panel filePanel = new Panel();
 			TextBox fileTextBox = new TextBox();
 			Button fileBrowseButton = new Button();
 			Button fileUnsetButton = new Button();
-
-			Panel inputPanel = new Panel();
-			Label inputTitle = new Label();
-			NumericUpDown inputNumeric = new NumericUpDown();
-
-			panel.Controls.Add(inputPanel);
-			inputPanel.Controls.Add(inputNumeric);
-			inputPanel.Controls.Add(inputTitle);
-
-			panel.Controls.Add(filePanel);
 			filePanel.Controls.Add(fileBrowseButton);
 			filePanel.Controls.Add(fileUnsetButton);
 			filePanel.Controls.Add(fileTextBox);
@@ -95,7 +96,6 @@ namespace VisualProcessors.Processing
 			fileUnsetButton.Enabled = false;
 			fileTextBox.Width = fileBrowseButton.Left - fileTextBox.Left - 2;
 			fileTextBox.Location = new Point(fileTextBox.Left, 2);
-
 			fileBrowseButton.Click += delegate(object sender, EventArgs e)
 			{
 				SaveFileDialog sfd = new SaveFileDialog();
@@ -119,39 +119,26 @@ namespace VisualProcessors.Processing
 				m_OutputSet = false;
 				fileUnsetButton.Enabled = false;
 			};
-
-			inputPanel.Dock = DockStyle.Top;
-			inputPanel.Height = 26;
-			inputTitle.Dock = DockStyle.Left;
-			inputTitle.TextAlign = ContentAlignment.MiddleLeft;
-			inputTitle.Text = "Number of channels:";
-			inputTitle.Width = inputTitle.PreferredWidth;
-
-			int center = inputPanel.Height / 2;
-			inputNumeric.Location = new Point(inputTitle.Right, (inputPanel.Height - inputNumeric.Height) / 2);
-			inputNumeric.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
-			inputNumeric.Width = 70;
-			inputNumeric.ReadOnly = true;
-			inputNumeric.Increment = 1;
-			inputNumeric.Value = 1;
-			inputNumeric.Minimum = 1;
-			inputNumeric.ValueChanged += delegate(object sender, EventArgs e)
-			{
-				int count = InputChannelCount;
-				while (count > inputNumeric.Value)
-				{
-					RemoveInputChannel(GetInputChannel(count.ToString()));
-					count = InputChannelCount;
-				}
-				while (count < inputNumeric.Value)
-				{
-					AddInputChannel((count + 1).ToString(), false);
-					count = InputChannelCount;
-				}
-				m_ChannelCount = InputChannelCount;
-			};
-
+			panel.Controls.Add(filePanel);
+		
 			base.GetUserInterface(panel);
+		}
+
+		void channelCountInput_InputCompleted(object sender, EventArgs e)
+		{
+			int wanted = (int)(sender as NumericInputPanel).InputValue;
+			int count = InputChannelCount;
+			while (count > wanted)
+			{
+				RemoveInputChannel(GetInputChannel(count.ToString()));
+				count = InputChannelCount;
+			}
+			while (count < wanted)
+			{
+				AddInputChannel((count + 1).ToString(), false);
+				count = InputChannelCount;
+			}
+			m_ChannelCount = InputChannelCount;
 		}
 
 		public override void Start()

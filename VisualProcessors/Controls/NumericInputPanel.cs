@@ -62,6 +62,40 @@ namespace VisualProcessors.Controls
 			}
 		}
 
+		public decimal InputMinimum
+		{
+			get
+			{
+				return InputNumeric.Minimum;
+			}
+			set
+			{
+				InputNumeric.Minimum = value;
+			}
+		}
+		public decimal InputMaximum
+		{
+			get
+			{
+				return InputNumeric.Maximum;
+			}
+			set
+			{
+				InputNumeric.Maximum = value;
+			}
+		}
+
+		public decimal InputIncrement
+		{
+			get
+			{
+				return InputNumeric.Increment;
+			}
+			set
+			{
+				InputNumeric.Increment = value;
+			}
+		}
 		public bool IsInputValid { get; private set; }
 
 		#endregion Properties
