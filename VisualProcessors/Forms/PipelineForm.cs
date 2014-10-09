@@ -320,35 +320,56 @@ namespace VisualProcessors.Forms
 		/// <param name="second">The ProcessorForm that contains the endpoint of the link</param>
 		public void CompleteLinkMode(ProcessorForm second)
 		{
-			ChannelSelectionBox csbox = new ChannelSelectionBox((m_LinkMode == LinkMode.InputFirst) ? ChannelType.OutputChannel : ChannelType.InputChannel, second.Processor);
-			if (csbox.ShowDialog(this).HasFlag(DialogResult.OK))
+			try
 			{
+				string cname = null;
+				if (m_LinkMode==LinkMode.InputFirst && second.Processor.OutputChannelCount == 1)
+				{
+					cname = second.Processor.GetOutputChannelNames()[0];
+				}
+				else if (m_LinkMode==LinkMode.OutputFirst && second.Processor.InputChannelCount == 1)
+				{
+					cname = second.Processor.GetInputChannelNames()[0];
+				}
+				else
+				{
+					ChannelSelectionBox csbox = new ChannelSelectionBox((m_LinkMode == LinkMode.InputFirst) ? ChannelType.OutputChannel : ChannelType.InputChannel, second.Processor);
+					if (csbox.ShowDialog(this) == DialogResult.Cancel)
+					{
+						return;
+					}
+					cname = csbox.Choice;
+				}
 				InputChannel input = null;
 				OutputChannel output = null;
 				if (m_LinkMode == LinkMode.InputFirst)
 				{
 					input = m_LinkStart.Processor.GetInputChannel(m_LinkChannelName);
-					output = second.Processor.GetOutputChannel(csbox.Choice);
+					output = second.Processor.GetOutputChannel(cname);
 				}
 				else
 				{
-					input = second.Processor.GetInputChannel(csbox.Choice);
+					input = second.Processor.GetInputChannel(cname);
 					output = m_LinkStart.Processor.GetOutputChannel(m_LinkChannelName);
 				}
 				if (input == null)
 				{
-					MessageBox.Show("Error: The InputChannel was not found!");
+					MessageBox.Show("The InputChannel was not found!","Link error",MessageBoxButtons.OK);
 					return;
 				}
 				if (output == null)
 				{
-					MessageBox.Show("Error: The InputChannel was not found!");
+					MessageBox.Show("The OutputChannel was not found!", "Link error", MessageBoxButtons.OK);
 					return;
 				}
 				output.Link(input);
+				
 			}
-			ResetLinkMode();
-			MdiClient.Invalidate();
+			finally
+			{
+				ResetLinkMode();
+				MdiClient.Invalidate();
+			}
 		}
 
 		/// <summary>
