@@ -72,7 +72,7 @@ namespace VisualProcessors.Forms
 			foreach (string cname in col)
 			{
 				int i = ChannelComboBox.Items.Add(cname);
-				if (cname==def)
+				if (cname == def)
 				{
 					index = i;
 				}

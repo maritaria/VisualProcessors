@@ -79,7 +79,7 @@ namespace VisualProcessors
 				Console.WriteLine("\t" + processorAssembly.GetName().Name);
 				ProcessorAssemblies.Add(processorAssembly);
 			}
-			
+
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new PipelineForm());

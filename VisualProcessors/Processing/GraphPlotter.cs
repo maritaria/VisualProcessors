@@ -79,11 +79,6 @@ namespace VisualProcessors.Processing
 			base.Start();
 		}
 
-		protected override void Prepare()
-		{
-			m_StartTimestamp = DateTime.Now;
-			base.Prepare();
-		}
 		public override void Stop()
 		{
 			if (m_RenderThread != null)
@@ -96,6 +91,12 @@ namespace VisualProcessors.Processing
 				m_RenderThread = null;
 			}
 			base.Stop();
+		}
+
+		protected override void Prepare()
+		{
+			m_StartTimestamp = DateTime.Now;
+			base.Prepare();
 		}
 
 		protected override void Process()

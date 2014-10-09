@@ -25,7 +25,6 @@ namespace VisualProcessors.Forms
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
 
-
 		public Pipeline CurrentPipeline
 		{
 			get
@@ -151,19 +150,6 @@ namespace VisualProcessors.Forms
 			}
 		}
 
-		void CurrentPipeline_Error(Processor arg1, string arg2)
-		{
-			ShowProcessor(arg1.Name);
-			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-			ErrorIcon.Icon = SystemIcons.Error;
-		}
-
-		void CurrentPipeline_Warning(Processor arg1, string arg2)
-		{
-			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-			ErrorIcon.Icon = SystemIcons.Warning;
-		}
-
 		private Point CalculateChannelLink(Form a, Point end)
 		{
 			Point result = new Point();
@@ -198,6 +184,19 @@ namespace VisualProcessors.Forms
 			}
 
 			return result;
+		}
+
+		private void CurrentPipeline_Error(Processor arg1, string arg2)
+		{
+			ShowProcessor(arg1.Name);
+			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+			ErrorIcon.Icon = SystemIcons.Error;
+		}
+
+		private void CurrentPipeline_Warning(Processor arg1, string arg2)
+		{
+			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+			ErrorIcon.Icon = SystemIcons.Warning;
 		}
 
 		private void CurrentPipelineModification(object sender, EventArgs e)
@@ -490,7 +489,7 @@ namespace VisualProcessors.Forms
 			m_IsDragging = false;
 			Cursor = Cursors.Default;
 		}
-		
+
 		private void MdiClientPaintLinks(object sender, PaintEventArgs e)
 		{
 #warning Optimization needed
@@ -573,8 +572,8 @@ namespace VisualProcessors.Forms
 		#region Menu: File
 
 		private string m_CurrentFilepath = "";
-		
-		public string  CurrentFilepath
+
+		public string CurrentFilepath
 		{
 			get
 			{
@@ -703,7 +702,7 @@ namespace VisualProcessors.Forms
 
 		private void resetToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if(m_RunCheckedChanging)
+			if (m_RunCheckedChanging)
 			{
 				return;
 			}

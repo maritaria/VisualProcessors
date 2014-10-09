@@ -20,25 +20,10 @@ namespace VisualProcessors.Processing
 		protected int m_ThreadSleep = 1;
 		private Point m_Location = new Point(0, 0);
 		private string m_Name = "Undefined";
+		private ProcessorOptions m_Options = new ProcessorOptions();
+		private Pipeline m_Pipeline;
 		private Size m_Size = new Size(0, 0);
 		private Thread m_WorkerThread;
-		private Pipeline m_Pipeline;
-		private ProcessorOptions m_Options = new ProcessorOptions();
-		public ProcessorOptions Options
-		{
-			get
-			{
-				return m_Options;
-			}
-		}
-		public Pipeline Pipeline
-		{
-			get
-			{
-				return m_Pipeline;
-			}
-		}
-
 
 		public bool IsPrepared { get; protected set; }
 
@@ -64,6 +49,22 @@ namespace VisualProcessors.Processing
 				string old = m_Name;
 				m_Name = value;
 				OnNameChanged(old, value);
+			}
+		}
+
+		public ProcessorOptions Options
+		{
+			get
+			{
+				return m_Options;
+			}
+		}
+
+		public Pipeline Pipeline
+		{
+			get
+			{
+				return m_Pipeline;
 			}
 		}
 
@@ -99,6 +100,7 @@ namespace VisualProcessors.Processing
 				OnLocationChanged();
 			}
 		}
+
 		/// <summary>
 		///  Gets or sets the size of the processor's form in the model
 		/// </summary>
@@ -160,7 +162,8 @@ namespace VisualProcessors.Processing
 				Location = new Point(Location.X, value);
 			}
 		}
-		#endregion
+
+		#endregion ProcessorForm
 
 		#region Meta
 
@@ -340,6 +343,7 @@ namespace VisualProcessors.Processing
 			input.Dock = DockStyle.Top;
 			panel.Controls.Add(input);
 		}
+
 		public void Reset()
 		{
 			if (IsRunning)
@@ -348,6 +352,7 @@ namespace VisualProcessors.Processing
 			}
 			IsPrepared = false;
 		}
+
 		public virtual void Start()
 		{
 			if (m_WorkerThread != null)
@@ -593,6 +598,8 @@ namespace VisualProcessors.Processing
 
 		#region Events
 
+		public event Action<Processor, string> Error;
+
 		/// <summary>
 		///  Invoked after an InputChannel has been added
 		/// </summary>
@@ -637,14 +644,21 @@ namespace VisualProcessors.Processing
 		///  Invoked after an OutputChannel has safely removed
 		/// </summary>
 		public event EventHandler OutputChannelRemoved;
-		
+
 		/// <summary>
 		///  Invoked when the size of the processor has been changed
 		/// </summary>
 		public event EventHandler SizeChanged;
 
-		public event Action<Processor,string> Warning;
-		public event Action<Processor, string> Error;
+		public event Action<Processor, string> Warning;
+
+		protected void OnError(string message)
+		{
+			if (Error != null)
+			{
+				Error(this, message);
+			}
+		}
 
 		protected void OnModified()
 		{
@@ -656,16 +670,9 @@ namespace VisualProcessors.Processing
 
 		protected void OnWarning(string message)
 		{
-			if (Warning!=null)
+			if (Warning != null)
 			{
 				Warning(this, message);
-			}
-		}
-		protected void OnError(string message)
-		{
-			if (Error!=null)
-			{
-				Error(this, message);
 			}
 		}
 

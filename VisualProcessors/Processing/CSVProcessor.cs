@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualProcessors.Controls;
-using System.Drawing;
-using System.IO;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies","Writes the input to a .csv file","Value1","WritePulse",
-		HideOutputTab=true,DefaultInput="1")]
+	[ProcessorAttribute("Bram Kamies", "Writes the input to a .csv file", "Value1", "WritePulse",
+		HideOutputTab = true, DefaultInput = "1")]
 	public class CSVProcessor : Processor
 	{
 		#region Properties
-		private bool m_OutputSet = false;
+
 		private int m_ChannelCount = 1;
 		private StreamWriter m_FileWriter;
+		private bool m_OutputSet = false;
 		private bool m_Overwrite = true;
+
 		public string FilePath
 		{
 			get
@@ -30,17 +32,35 @@ namespace VisualProcessors.Processing
 				Options.SetOption("FilePath", value);
 			}
 		}
-		#endregion
+
+		#endregion Properties
+
 		#region Constructor
-		public CSVProcessor() : base() { }
+
+		public CSVProcessor()
+			: base()
+		{
+		}
 
 		public CSVProcessor(Pipeline pipeline, string name)
 			: base(pipeline, name)
 		{
 			AddInputChannel("1", false);
 		}
-		#endregion
+
+		#endregion Constructor
+
 		#region Methods
+
+		public override void Dispose()
+		{
+			base.Dispose();
+			if (m_FileWriter != null)
+			{
+				m_FileWriter.Dispose();
+				m_FileWriter = null;
+			}
+		}
 
 		public override void GetUserInterface(Panel panel)
 		{
@@ -122,7 +142,7 @@ namespace VisualProcessors.Processing
 					RemoveInputChannel(GetInputChannel(GetInputChannelNames().Last()));
 					names = GetInputChannelNames();
 				}
-				while(names.Length < inputNumeric.Value)
+				while (names.Length < inputNumeric.Value)
 				{
 					AddInputChannel((names.Length + 1).ToString(), false);
 					names = GetInputChannelNames();
@@ -132,6 +152,7 @@ namespace VisualProcessors.Processing
 
 			base.GetUserInterface(panel);
 		}
+
 		public override void Start()
 		{
 			base.Start();
@@ -140,7 +161,14 @@ namespace VisualProcessors.Processing
 			{
 				mode = FileMode.Create;
 			}
-			m_FileWriter = new StreamWriter(new FileStream(FilePath,mode));
+			m_FileWriter = new StreamWriter(new FileStream(FilePath, mode));
+		}
+
+		public override void Stop()
+		{
+			base.Stop();
+			DisposeFileWriter();
+			m_Overwrite = false;
 		}
 
 		protected override void Prepare()
@@ -150,10 +178,11 @@ namespace VisualProcessors.Processing
 				m_Overwrite = true;
 			}
 		}
+
 		protected override void Process()
 		{
 			double[] vals = new double[m_ChannelCount];
-			for(int i = 0;i<m_ChannelCount;i++)
+			for (int i = 0; i < m_ChannelCount; i++)
 			{
 				m_FileWriter.Write(GetInputChannel((i + 1).ToString()).GetValue());
 				if (i < m_ChannelCount - 1)
@@ -162,13 +191,6 @@ namespace VisualProcessors.Processing
 				}
 			}
 			m_FileWriter.WriteLine();
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
-			DisposeFileWriter();
-			m_Overwrite = false;
 		}
 
 		private void DisposeFileWriter()
@@ -180,16 +202,6 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		public override void Dispose()
-		{
-			base.Dispose();
-			if (m_FileWriter!=null)
-			{
-				m_FileWriter.Dispose();
-				m_FileWriter = null;
-			}
-		}
-
-		#endregion
+		#endregion Methods
 	}
 }

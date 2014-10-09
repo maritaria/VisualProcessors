@@ -1594,8 +1594,8 @@ namespace ZedGraph
 				///      number (e.g.,
 				///  4) </description></item><item><term>&amp;dd</term><description>padded day
 				///     number (e.g.,
-				///     09)</description></item><item><term>&amp;d</term><description>non-padded day
-				///     number (e.g.,
+				///  09) </description></item><item><term>&amp;d</term><description>non-padded day
+				///      number (e.g.,
 				///  9) </description></item><item><term>&amp;yyyy</term><description>4 digit year
 				///     number (e.g.,
 				///  1995) </description></item><item><term>&amp;yy</term><description>two digit
@@ -1612,9 +1612,9 @@ namespace ZedGraph
 				///     value (e.g.,
 				///  03) </description></item><item><term>&amp;s</term><description>non-padded
 				///      second value (e.g.,
-				///      3)</description></item><item><term>&amp;a</term><description>"am" or
-				///      "pm"</description></item><item><term>&amp;wwww</term><description>day of
-				///      week (e.g.,
+				///  3) </description></item><item><term>&amp;a</term><description>"am" or
+				///     "pm"</description></item><item><term>&amp;wwww</term><description>day of
+				///     week (e.g.,
 				///  Wednesday) </description></item><item><term>&amp;www</term><description>day of
 				///             week abbreviation (e.g., Wed)</description></item></list>
 				/// </param>
@@ -1648,8 +1648,8 @@ namespace ZedGraph
 				///      number (e.g.,
 				///  4) </description></item><item><term>&amp;dd</term><description>padded day
 				///     number (e.g.,
-				///     09)</description></item><item><term>&amp;d</term><description>non-padded day
-				///     number (e.g.,
+				///  09) </description></item><item><term>&amp;d</term><description>non-padded day
+				///      number (e.g.,
 				///  9) </description></item><item><term>&amp;yyyy</term><description>4 digit year
 				///     number (e.g.,
 				///  1995) </description></item><item><term>&amp;yy</term><description>two digit
@@ -1666,9 +1666,9 @@ namespace ZedGraph
 				///     value (e.g.,
 				///  03) </description></item><item><term>&amp;s</term><description>non-padded
 				///      second value (e.g.,
-				///      3)</description></item><item><term>&amp;a</term><description>"am" or
-				///      "pm"</description></item><item><term>&amp;wwww</term><description>day of
-				///      week (e.g.,
+				///  3) </description></item><item><term>&amp;a</term><description>"am" or
+				///     "pm"</description></item><item><term>&amp;wwww</term><description>day of
+				///     week (e.g.,
 				///  Wednesday) </description></item><item><term>&amp;www</term><description>day of
 				///             week abbreviation (e.g., Wed)</description></item></list>
 				/// </param>

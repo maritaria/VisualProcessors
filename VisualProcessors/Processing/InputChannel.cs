@@ -29,7 +29,13 @@ namespace VisualProcessors.Processing
 		private OutputChannel m_Source;
 
 		/// <summary>
-		/// Gets whether the InputChannel is connected to an OutputChannel
+		///  Gets or sets the value of the InputChannel if IsConstant is true. This property is
+		///  automaticly set to false when another processor's output is linked to the InputChannel
+		/// </summary>
+		public double ConstantValue { get; set; }
+
+		/// <summary>
+		///  Gets whether the InputChannel is connected to an OutputChannel
 		/// </summary>
 		public bool IsConnected
 		{
@@ -38,12 +44,6 @@ namespace VisualProcessors.Processing
 				return Source != null;
 			}
 		}
-
-		/// <summary>
-		///  Gets or sets the value of the InputChannel if IsConstant is true. This property is
-		///  automaticly set to false when another processor's output is linked to the InputChannel
-		/// </summary>
-		public double ConstantValue { get; set; }
 
 		/// <summary>
 		///  Gets or sets whether the InputChannel is a constant value, the processor will always be

@@ -19,8 +19,9 @@ namespace VisualProcessors.Controls
 
 		private bool m_Applied = false;
 		private bool m_CodeChanged = false;
-		private UserCodeContext m_UserCodeContext;
 		private CodeProcessor m_CodeProcessor;
+		private UserCodeContext m_UserCodeContext;
+
 		public CodeProcessor CodeProcessor
 		{
 			get

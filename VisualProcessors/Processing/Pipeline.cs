@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using System.Windows.Forms;
 
 namespace VisualProcessors.Processing
 {
@@ -202,7 +202,7 @@ namespace VisualProcessors.Processing
 					{
 						p.Start();
 					}
-					catch(Exception e)
+					catch (Exception e)
 					{
 						fail = true;
 						OnError(p, e.Message);
@@ -248,27 +248,21 @@ namespace VisualProcessors.Processing
 
 		#region Events
 
+		/// <summary>
+		///  Invoked when a Processor indicates an error
+		/// </summary>
+		public event Action<Processor, string> Error;
+
 		public event EventHandler Modified;
 
 		public event EventHandler Started;
 
 		public event EventHandler Stopped;
+
 		/// <summary>
-		/// Invoked when a Processor indicates a warning
+		///  Invoked when a Processor indicates a warning
 		/// </summary>
 		public event Action<Processor, string> Warning;
-		/// <summary>
-		/// Invoked when a Processor indicates an error
-		/// </summary>
-		public event Action<Processor, string> Error;
-
-		private void OnWarning(Processor p, string s)
-		{
-			if (Warning != null)
-			{
-				Warning(p, s);
-			}
-		}
 
 		private void OnError(Processor p, string s)
 		{
@@ -299,6 +293,14 @@ namespace VisualProcessors.Processing
 			if (Stopped != null)
 			{
 				Stopped(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnWarning(Processor p, string s)
+		{
+			if (Warning != null)
+			{
+				Warning(p, s);
 			}
 		}
 

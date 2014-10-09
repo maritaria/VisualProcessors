@@ -12,7 +12,9 @@ namespace VisualProcessors.Processing
 	public class ProcessorOptions : IXmlSerializable
 	{
 		#region Properties
+
 		private List<Option> m_Options = new List<Option>();
+
 		#endregion Properties
 
 		#region Constructor
@@ -24,29 +26,7 @@ namespace VisualProcessors.Processing
 		#endregion Constructor
 
 		#region Options
-		public void SetOption(string key, string value)
-		{
-			foreach(Option o in m_Options)
-			{
-				if (o.Key==key)
-				{
-					o.Value = value;
-					return;
-				}
-			}
-			m_Options.Add(new Option(key, value));
-		}
-		public string GetOption(string key)
-		{
-			foreach(Option o in m_Options)
-			{
-				if (o.Key==key)
-				{
-					return o.Value;
-				}
-			}
-			return null;
-		}
+
 		public string this[string key]
 		{
 			get
@@ -58,9 +38,33 @@ namespace VisualProcessors.Processing
 				SetOption(key, value);
 			}
 		}
+
+		public string GetOption(string key)
+		{
+			foreach (Option o in m_Options)
+			{
+				if (o.Key == key)
+				{
+					return o.Value;
+				}
+			}
+			return null;
+		}
+
+		public void SetOption(string key, string value)
+		{
+			foreach (Option o in m_Options)
+			{
+				if (o.Key == key)
+				{
+					o.Value = value;
+					return;
+				}
+			}
+			m_Options.Add(new Option(key, value));
+		}
+
 		#endregion Options
-
-
 
 		#region IXmlSerializable Members
 
@@ -87,7 +91,7 @@ namespace VisualProcessors.Processing
 
 		public void WriteXml(XmlWriter writer)
 		{
-			foreach(Option o in m_Options)
+			foreach (Option o in m_Options)
 			{
 				writer.WriteStartElement("Option");
 				writer.WriteAttributeString("Key", StringSerialize(o.Key));
@@ -95,6 +99,7 @@ namespace VisualProcessors.Processing
 				writer.WriteEndElement();
 			}
 		}
+
 		private XmlAttributeOverrides GetOverrides(Type t, string name)
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
@@ -104,28 +109,33 @@ namespace VisualProcessors.Processing
 			overrides.Add(t, attribute);
 			return overrides;
 		}
-		private string StringSerialize(string source)
-		{
-			return source.Replace("\\", "\\\\").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\t", "\\t");
-		}
+
 		private string StringDeserialize(string source)
 		{
 			return source.Replace("\\\\", "\\").Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
 		}
 
-		#endregion
+		private string StringSerialize(string source)
+		{
+			return source.Replace("\\", "\\\\").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\t", "\\t");
+		}
+
+		#endregion IXmlSerializable Members
 
 		#region Option Helper Class
+
 		private class Option
 		{
 			public string Key;
 			public string Value;
+
 			public Option(string k, string v)
 			{
 				Key = k;
 				Value = v;
 			}
 		}
-		#endregion
+
+		#endregion Option Helper Class
 	}
 }
