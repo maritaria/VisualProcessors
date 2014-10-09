@@ -178,12 +178,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.AllowOptionalInputs;
+				return Meta.AllowOptionalInputs;
 			}
 		}
 
@@ -191,12 +186,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return true;
-				}
-				return attr.AllowUserSpawn;
+				return Meta.AllowUserSpawn;
 			}
 		}
 
@@ -204,12 +194,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return null;
-				}
-				return attr.Author;
+				return Meta.Author;
 			}
 		}
 
@@ -217,12 +202,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return null;
-				}
-				return attr.DefaultInput;
+				return Meta.DefaultInput;
 			}
 		}
 
@@ -230,12 +210,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return null;
-				}
-				return attr.DefaultOutput;
+				return Meta.DefaultOutput;
 			}
 		}
 
@@ -243,12 +218,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return null;
-				}
-				return attr.Description;
+				return Meta.Description;
 			}
 		}
 
@@ -264,12 +234,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.HideInputTab;
+				return Meta.HideInputTab;
 			}
 		}
 
@@ -277,12 +242,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.HideOutputTab;
+				return Meta.HideOutputTab;
 			}
 		}
 
@@ -290,12 +250,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				ProcessorAttribute attr = Meta;
-				if (attr == null)
-				{
-					return false;
-				}
-				return attr.HideSettingsTab;
+				return Meta.HideSettingsTab;
 			}
 		}
 
