@@ -87,6 +87,7 @@
     <Compile Include="Forms\BranchOperation.cs" />
     <Compile Include="Processing\CSVProcessor.cs" />
     <Compile Include="Processing\EmptyProcessor.cs" />
+    <Compile Include="Processing\ProcessorOptions.cs" />
     <Compile Include="Processing\UserCodeContext.cs" />
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>

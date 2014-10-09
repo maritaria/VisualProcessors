@@ -24,7 +24,6 @@ namespace VisualProcessors.Forms
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
-		private bool m_PipelineStatusChanging = false;
 
 
 		public Pipeline CurrentPipeline
