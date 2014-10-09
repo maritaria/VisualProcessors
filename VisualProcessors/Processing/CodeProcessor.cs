@@ -41,7 +41,17 @@ namespace VisualProcessors.Processing
 			Code = DefaultCode;
 		}
 
-		public string Code { get; set; }
+		public string Code
+		{
+			get
+			{
+				return Options.GetOption("Code");
+			}
+			set
+			{
+				Options.SetOption("Code", value);
+			}
+		}
 
 		public Action<CodeProcessor> PrepareFunction { get; set; }
 
@@ -85,21 +95,5 @@ namespace VisualProcessors.Processing
 				}
 			}
 		}
-
-		#region IXmlSerializable Members
-
-		public override void ReadXml(XmlReader reader)
-		{
-			Code = reader.GetAttribute("Code").Replace("\\t", "\t");
-			base.ReadXml(reader);
-		}
-
-		public override void WriteXml(XmlWriter writer)
-		{
-			writer.WriteAttributeString("Code", Code.Replace("\t", "\\t"));
-			base.WriteXml(writer);
-		}
-
-		#endregion IXmlSerializable Members
 	}
 }
