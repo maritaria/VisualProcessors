@@ -24,9 +24,13 @@ namespace VisualProcessors.Processing
 		private Pipeline m_Pipeline;
 		private Size m_Size = new Size(0, 0);
 		private Thread m_WorkerThread;
-
+		/// <summary>
+		/// Gets whether the processor is prepared for processing, if this value is false, the Prepare() function will run when the processor is started.
+		/// </summary>
 		public bool IsPrepared { get; protected set; }
-
+		/// <summary>
+		/// Gets whether the processor has a thread running for processing data.
+		/// </summary>
 		public bool IsRunning
 		{
 			get
@@ -51,15 +55,19 @@ namespace VisualProcessors.Processing
 				OnNameChanged(old, value);
 			}
 		}
-
-		public ProcessorOptions Options
+		/// <summary>
+		/// Gets the options collection for storing data
+		/// </summary>
+		protected ProcessorOptions Options
 		{
 			get
 			{
 				return m_Options;
 			}
 		}
-
+		/// <summary>
+		/// Gets the pipeline the processor belongs to.
+		/// </summary>
 		public Pipeline Pipeline
 		{
 			get
@@ -317,8 +325,9 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Creates a new processor
 		/// </summary>
+		/// <param name="pipeline">The pipeline the processor belongs to</param>
 		/// <param name="name">
-		///  The name of the processor, must be unique within the pipeline the processor belongs to.
+		///  The name of the processor, must be unique within the pipeline
 		/// </param>
 		public Processor(Pipeline pipeline, string name)
 		{
@@ -343,7 +352,9 @@ namespace VisualProcessors.Processing
 			input.Dock = DockStyle.Top;
 			panel.Controls.Add(input);
 		}
-
+		/// <summary>
+		/// Stops the processor if its running, and sets IsPrepared to false, this will cause the processor to clear its buffer on the next Start() call.
+		/// </summary>
 		public void Reset()
 		{
 			if (IsRunning)
@@ -352,7 +363,9 @@ namespace VisualProcessors.Processing
 			}
 			IsPrepared = false;
 		}
-
+		/// <summary>
+		/// Starts the processors worker thread, also runs Prepare() if IsPrepared is false. If the processor is already running, it calls Stop() and then starts a new workerthread
+		/// </summary>
 		public virtual void Start()
 		{
 			if (m_WorkerThread != null)
@@ -368,7 +381,9 @@ namespace VisualProcessors.Processing
 			m_WorkerThread.IsBackground = true;
 			m_WorkerThread.Start();
 		}
-
+		/// <summary>
+		/// Stops the execution of the processor (if its running). Blocks until the workerthread has terminated.
+		/// </summary>
 		public virtual void Stop()
 		{
 			if (m_WorkerThread == null)
@@ -382,7 +397,9 @@ namespace VisualProcessors.Processing
 			}
 			m_WorkerThread = null;
 		}
-
+		/// <summary>
+		/// Sets the processor to a new/cleared state. On base class: clears InputChannels of remaining values.
+		/// </summary>
 		protected virtual void Prepare()
 		{
 			if (IsRunning)
@@ -394,7 +411,6 @@ namespace VisualProcessors.Processing
 				channel.Clear();
 			}
 		}
-
 		protected virtual void Process()
 		{
 			//Read
@@ -427,7 +443,11 @@ namespace VisualProcessors.Processing
 		#region InputChannels
 
 		private List<InputChannel> m_InputChannels = new List<InputChannel>();
-
+		/// <summary>
+		/// Gets an InputChannel of the Processor by its name, returns null if no InputChannel with that name exists.
+		/// </summary>
+		/// <param name="name">The name of the InputChannel</param>
+		/// <returns>The InputChannel whose Name property is equal to the given name argument. Returns null if no InputChannel was found for the given name</returns>
 		public InputChannel GetInputChannel(string name)
 		{
 			foreach (InputChannel channel in m_InputChannels)
@@ -439,9 +459,13 @@ namespace VisualProcessors.Processing
 			}
 			return null;
 		}
-
+		/// <summary>
+		/// Gets an array of strings containing the names of the InputChannels that the Processor has.
+		/// </summary>
+		/// <returns></returns>
 		public string[] GetInputChannelNames()
 		{
+			//Consider: yield return
 			List<string> names = new List<string>();
 			foreach (InputChannel channel in m_InputChannels)
 			{
@@ -449,7 +473,11 @@ namespace VisualProcessors.Processing
 			}
 			return names.ToArray();
 		}
-
+		/// <summary>
+		/// Adds a new InputChannel to the processor.
+		/// </summary>
+		/// <param name="name">The name of the InputChannel, used for retrieving it with GetInputChannel(name).</param>
+		/// <param name="optional">Whether the InputChannel is optional, can be changed with the IsOptional property.</param>
 		protected void AddInputChannel(string name, bool optional)
 		{
 			if (IsRunning)
@@ -461,7 +489,10 @@ namespace VisualProcessors.Processing
 				AddInputChannel(new InputChannel(this, name, optional));
 			}
 		}
-
+		/// <summary>
+		/// Removes an existing InputChannel from the Processor, unlinks it properly first.
+		/// </summary>
+		/// <param name="channel">The InputChannel instance to remove.</param>
 		protected void RemoveInputChannel(InputChannel channel)
 		{
 			if (IsRunning)
@@ -497,6 +528,11 @@ namespace VisualProcessors.Processing
 
 		private List<OutputChannel> m_OutputChannels = new List<OutputChannel>();
 
+		/// <summary>
+		/// Gets an OutputChannel of the Processor by its name, returns null if no OutputChannel with that name exists.
+		/// </summary>
+		/// <param name="name">The name of the OutputChannel</param>
+		/// <returns>The OutputChannel whose Name property is equal to the given name argument. Returns null if no OutputChannel was found for the given name</returns>
 		public OutputChannel GetOutputChannel(string name)
 		{
 			foreach (OutputChannel channel in m_OutputChannels)
@@ -509,6 +545,10 @@ namespace VisualProcessors.Processing
 			return null;
 		}
 
+		/// <summary>
+		/// Gets an array of strings containing the names of the OutputChannel that the Processor has.
+		/// </summary>
+		/// <returns></returns>
 		public string[] GetOutputChannelNames()
 		{
 			List<string> names = new List<string>();
@@ -519,6 +559,10 @@ namespace VisualProcessors.Processing
 			return names.ToArray();
 		}
 
+		/// <summary>
+		/// Adds a new OutputChannel to the processor.
+		/// </summary>
+		/// <param name="name">The name of the InputChannel, used for retrieving it with GetOutputChannel(name).</param>
 		protected void AddOutputChannel(string name)
 		{
 			if (IsRunning)
@@ -531,6 +575,10 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		/// <summary>
+		/// Removes an existing OutputChannel from the Processor, unlinks it properly first.
+		/// </summary>
+		/// <param name="channel">The OutputChannel instance to remove.</param>
 		protected void RemoveOutputChannel(OutputChannel channel)
 		{
 			if (IsRunning)
@@ -566,7 +614,10 @@ namespace VisualProcessors.Processing
 
 		private List<InputChannel> m_RawInput = new List<InputChannel>();
 		private List<OutputChannel> m_RawOutput = new List<OutputChannel>();
-
+		/// <summary>
+		/// Initializes all Input/OutputChannels that were deserialized from XML.
+		/// </summary>
+		/// <param name="pipeline"></param>
 		internal void Build(Pipeline pipeline)
 		{
 			m_Pipeline = pipeline;
@@ -585,7 +636,10 @@ namespace VisualProcessors.Processing
 			}
 			m_RawOutput.Clear();
 		}
-
+		/// <summary>
+		/// Should be called directly after Build(), links the OutputChannels to their targers. This is called after Build because all the Processors in the Pipeline first need to have initialized(Build) their InputChannels.
+		/// </summary>
+		/// <param name="pipeline"></param>
 		internal void BuildLinks(Pipeline pipeline)
 		{
 			foreach (OutputChannel channel in m_OutputChannels)
@@ -597,7 +651,9 @@ namespace VisualProcessors.Processing
 		#endregion Build
 
 		#region Events
-
+		/// <summary>
+		/// Invoked when the processor wants to indicate an error.
+		/// </summary>
 		public event Action<Processor, string> Error;
 
 		/// <summary>
@@ -631,27 +687,32 @@ namespace VisualProcessors.Processing
 		public event EventHandler Modified;
 
 		/// <summary>
-		///  Invoked just after the name of the processor has changed
+		///  Invoked just after the name of the processor has changed.
 		/// </summary>
 		public event ProcessorNameChanged NameChanged;
 
 		/// <summary>
-		///  Invoked after an OutputChannel has been added
+		///  Invoked after an OutputChannel has been added.
 		/// </summary>
 		public event EventHandler OutputChannelAdded;
 
 		/// <summary>
-		///  Invoked after an OutputChannel has safely removed
+		///  Invoked after an OutputChannel has safely removed.
 		/// </summary>
 		public event EventHandler OutputChannelRemoved;
 
 		/// <summary>
-		///  Invoked when the size of the processor has been changed
+		///  Invoked when the size of the processor has been changed.
 		/// </summary>
 		public event EventHandler SizeChanged;
-
+		/// <summary>
+		/// Invoked when the processor wants to indicate a warning.
+		/// </summary>
 		public event Action<Processor, string> Warning;
-
+		/// <summary>
+		/// Invokes the Error event
+		/// </summary>
+		/// <param name="message">The message that describes the error</param>
 		protected void OnError(string message)
 		{
 			if (Error != null)
@@ -659,7 +720,9 @@ namespace VisualProcessors.Processing
 				Error(this, message);
 			}
 		}
-
+		/// <summary>
+		/// Invokes the Modified event
+		/// </summary>
 		protected void OnModified()
 		{
 			if (Modified != null)
@@ -667,7 +730,10 @@ namespace VisualProcessors.Processing
 				Modified(this, EventArgs.Empty);
 			}
 		}
-
+		/// <summary>
+		/// Invokes the Warning event
+		/// </summary>
+		/// <param name="message">The message that describes the warning</param>
 		protected void OnWarning(string message)
 		{
 			if (Warning != null)
