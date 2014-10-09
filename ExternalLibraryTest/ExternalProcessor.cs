@@ -14,8 +14,8 @@ namespace ExternalLibraryTest
 		{
 		}
 
-		public ExternalProcessor(string name)
-			: base(name)
+		public ExternalProcessor(Pipeline p, string name)
+			: base(p,name)
 		{
 			AddInputChannel("Input", false);
 			AddOutputChannel("Output");
