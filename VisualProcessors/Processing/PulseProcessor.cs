@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Drawing;
 using System.Windows.Forms;
 using VisualProcessors.Controls;
 
@@ -31,6 +31,7 @@ namespace VisualProcessors.Processing
 				Options.SetOption("Frequency", value.ToString());
 			}
 		}
+
 		public int Value
 		{
 			get
@@ -93,23 +94,23 @@ namespace VisualProcessors.Processing
 			base.GetUserInterface(panel);
 		}
 
-		void valueInput_InputCompleted(object sender, EventArgs e)
-		{
-			Value = (int)(sender as NumericInputPanel).InputValue;
-		}
-
-		void freqInput_InputCompleted(object sender, EventArgs e)
-		{
-			Frequency = (int)(sender as NumericInputPanel).InputValue;
-		}
-
 		protected override void WorkerMethod()
 		{
-			while(true)
+			while (true)
 			{
 				GetOutputChannel("Output").WriteValue(Value);
 				Thread.Sleep(1 / Frequency);
 			}
+		}
+
+		private void freqInput_InputCompleted(object sender, EventArgs e)
+		{
+			Frequency = (int)(sender as NumericInputPanel).InputValue;
+		}
+
+		private void valueInput_InputCompleted(object sender, EventArgs e)
+		{
+			Value = (int)(sender as NumericInputPanel).InputValue;
 		}
 
 		#endregion Methods

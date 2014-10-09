@@ -14,7 +14,7 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
-		#endregion
+		#endregion Properties
 
 		#region Constructor
 
@@ -30,9 +30,10 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output");
 		}
 
-		#endregion
+		#endregion Constructor
 
 		#region Methods
+
 		protected override void Process()
 		{
 			double a = GetInputChannel("A").GetValue();
@@ -40,6 +41,6 @@ namespace VisualProcessors.Processing
 			GetOutputChannel("Output").WriteValue(a + b);
 		}
 
-		#endregion
+		#endregion Methods
 	}
 }

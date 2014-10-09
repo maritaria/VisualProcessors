@@ -186,7 +186,6 @@ namespace VisualProcessors.Forms
 			return result;
 		}
 
-
 		#endregion Methods
 
 		#region ProcessorForm Control
@@ -323,11 +322,11 @@ namespace VisualProcessors.Forms
 			try
 			{
 				string cname = null;
-				if (m_LinkMode==LinkMode.InputFirst && second.Processor.OutputChannelCount == 1)
+				if (m_LinkMode == LinkMode.InputFirst && second.Processor.OutputChannelCount == 1)
 				{
 					cname = second.Processor.GetOutputChannelNames()[0];
 				}
-				else if (m_LinkMode==LinkMode.OutputFirst && second.Processor.InputChannelCount == 1)
+				else if (m_LinkMode == LinkMode.OutputFirst && second.Processor.InputChannelCount == 1)
 				{
 					cname = second.Processor.GetInputChannelNames()[0];
 				}
@@ -354,7 +353,7 @@ namespace VisualProcessors.Forms
 				}
 				if (input == null)
 				{
-					MessageBox.Show("The InputChannel was not found!","Link error",MessageBoxButtons.OK);
+					MessageBox.Show("The InputChannel was not found!", "Link error", MessageBoxButtons.OK);
 					return;
 				}
 				if (output == null)
@@ -363,7 +362,6 @@ namespace VisualProcessors.Forms
 					return;
 				}
 				output.Link(input);
-				
 			}
 			finally
 			{
@@ -555,6 +553,22 @@ namespace VisualProcessors.Forms
 			myBuffer.Dispose();
 		}
 
+		private void PipelineError(Processor arg1, string arg2)
+		{
+			ShowProcessor(arg1.Name);
+			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+			ErrorIcon.Icon = SystemIcons.Error;
+		}
+
+		private void PipelineModification(object sender, ProcessorModifiedEventArgs e)
+		{
+			IsSaved = false;
+			if (e.ShouldHalt)
+			{
+				CurrentPipeline.Stop();
+			}
+		}
+
 		private void PipelineStarted(object sender, EventArgs e)
 		{
 			runToolStripMenuItem.Checked = true;
@@ -569,14 +583,6 @@ namespace VisualProcessors.Forms
 			MdiClient.Invalidate();
 		}
 
-
-		private void PipelineError(Processor arg1, string arg2)
-		{
-			ShowProcessor(arg1.Name);
-			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-			ErrorIcon.Icon = SystemIcons.Error;
-		}
-
 		private void PipelineWarning(Processor arg1, string arg2)
 		{
 			MethodInvoker action = delegate
@@ -585,15 +591,6 @@ namespace VisualProcessors.Forms
 				ErrorIcon.Icon = SystemIcons.Warning;
 			};
 			this.BeginInvoke(action);
-		}
-
-		private void PipelineModification(object sender, ProcessorModifiedEventArgs e)
-		{
-			IsSaved = false;
-			if (e.ShouldHalt)
-			{
-				CurrentPipeline.Stop();
-			}
 		}
 
 		#endregion EventHandlers
@@ -647,10 +644,6 @@ namespace VisualProcessors.Forms
 				m_CurrentFilepath = SaveFileAs();
 			}
 		}
-		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			Application.Exit();
-		}
 
 		public string SaveFileAs()
 		{
@@ -692,6 +685,11 @@ namespace VisualProcessors.Forms
 					return true;
 			}
 			return true;
+		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
 		}
 
 		private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -781,7 +779,6 @@ namespace VisualProcessors.Forms
 		}
 
 		#endregion Menu: Tools
-
 
 		#endregion MenuStrip Implementation
 

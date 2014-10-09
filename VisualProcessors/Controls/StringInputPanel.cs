@@ -84,7 +84,7 @@ namespace VisualProcessors.Controls
 			}
 		}
 
-		#endregion
+		#endregion Methods
 
 		#region Event
 

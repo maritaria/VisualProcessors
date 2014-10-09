@@ -26,8 +26,9 @@ namespace VisualProcessors.Processing
 		#endregion Constructor
 
 		#region Options
+
 		/// <summary>
-		/// Gets or sets an option stored by the instance, wraps GetOption() and SetOption()
+		///  Gets or sets an option stored by the instance, wraps GetOption() and SetOption()
 		/// </summary>
 		/// <param name="key">The key to access the option by</param>
 		/// <returns></returns>
@@ -42,8 +43,9 @@ namespace VisualProcessors.Processing
 				SetOption(key, value);
 			}
 		}
+
 		/// <summary>
-		/// Gets the value of a stored option
+		///  Gets the value of a stored option
 		/// </summary>
 		/// <param name="key">The key to access the option by</param>
 		/// <returns>The value of the option, or null if the option is not set</returns>
@@ -58,10 +60,12 @@ namespace VisualProcessors.Processing
 			}
 			return null;
 		}
+
 		/// <summary>
-		/// Sets an option to a given value, creates a new option if it doesn't exist yet, overwrites it if it does.
+		///  Sets an option to a given value, creates a new option if it doesn't exist yet,
+		///  overwrites it if it does.
 		/// </summary>
-		/// <param name="key">The key to access the option by</param>
+		/// <param name="key">  The key to access the option by</param>
 		/// <param name="value">The value to set the option to</param>
 		public void SetOption(string key, string value)
 		{

@@ -14,11 +14,11 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
-		private double m_LastValue = 0;
 		private bool m_FirstMoment = true;
 		private DateTime m_LastMoment = DateTime.Now;
+		private double m_LastValue = 0;
 
-		#endregion
+		#endregion Properties
 
 		#region Constructor
 
@@ -34,9 +34,21 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("TimeDelta");
 		}
 
-		#endregion
+		#endregion Constructor
 
 		#region Methods
+
+		public override void Start()
+		{
+			base.Start();
+			m_LastMoment = DateTime.Now;
+		}
+
+		protected override void Prepare()
+		{
+			base.Prepare();
+			m_FirstMoment = true;
+		}
 
 		protected override void Process()
 		{
@@ -55,17 +67,6 @@ namespace VisualProcessors.Processing
 			m_LastMoment = now;
 		}
 
-		protected override void Prepare()
-		{
-			base.Prepare();
-			m_FirstMoment = true;
-		}
-		public override void Start()
-		{
-			base.Start();
-			m_LastMoment = DateTime.Now;
-		}
-
-		#endregion
+		#endregion Methods
 	}
 }

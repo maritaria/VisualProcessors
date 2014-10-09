@@ -9,15 +9,21 @@ namespace VisualProcessors.Processing
 	public class ProcessorModifiedEventArgs : EventArgs
 	{
 		#region Properties
+
 		public bool ShouldHalt { get; private set; }
+
 		public Processor Source { get; private set; }
-		#endregion
+
+		#endregion Properties
+
 		#region Constructor
+
 		public ProcessorModifiedEventArgs(Processor source, bool shouldHalt)
 		{
 			Source = source;
 			ShouldHalt = shouldHalt;
 		}
-		#endregion
+
+		#endregion Constructor
 	}
 }

@@ -93,7 +93,6 @@ namespace VisualProcessors.Processing
 			OnProcessorAdded(p);
 		}
 
-
 		public Processor GetByName(string name)
 		{
 			foreach (Processor p in m_Processors)
@@ -138,7 +137,7 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
-				
+
 				p.Modified -= ProcessorModified;
 				if (GetByName(p.Name) == p)
 				{
@@ -243,24 +242,30 @@ namespace VisualProcessors.Processing
 		///  Invoked when a Processor indicates an error
 		/// </summary>
 		public event Action<Processor, string> Error;
+
 		/// <summary>
-		/// Invoked whenever a Processor invokes their Modified event.
-		/// </summary>
-		public event EventHandler<ProcessorModifiedEventArgs> ProcessorModified;
-		/// <summary>
-		/// Invoked just after a processor has been added to the pipeline
+		///  Invoked just after a processor has been added to the pipeline
 		/// </summary>
 		public event Action<Processor> ProcessorAdded;
+
 		/// <summary>
-		/// Invoked just after a processor is removed from the pipeline.
+		///  Invoked whenever a Processor invokes their Modified event.
+		/// </summary>
+		public event EventHandler<ProcessorModifiedEventArgs> ProcessorModified;
+
+		/// <summary>
+		///  Invoked just after a processor is removed from the pipeline.
 		/// </summary>
 		public event Action<Processor> ProcessorRemoved;
+
 		/// <summary>
-		/// Invoked when the pipeline succesfully started a simulation.
+		///  Invoked when the pipeline succesfully started a simulation.
 		/// </summary>
 		public event EventHandler Started;
+
 		/// <summary>
-		/// Invoked when the pipelien stopped a running simulation, also is invoked if the startup sequence of a simulation fails.
+		///  Invoked when the pipelien stopped a running simulation, also is invoked if the startup
+		///  sequence of a simulation fails.
 		/// </summary>
 		public event EventHandler Stopped;
 
@@ -268,20 +273,7 @@ namespace VisualProcessors.Processing
 		///  Invoked when a Processor indicates a warning
 		/// </summary>
 		public event Action<Processor, string> Warning;
-		private void OnProcessorAdded(Processor p)
-		{
-			if (ProcessorAdded!=null)
-			{
-				ProcessorAdded(p);
-			}
-		}
-		private void OnProcessorRemoved(Processor p)
-		{
-			if (ProcessorRemoved!=null)
-			{
-				ProcessorRemoved(p);
-			}
-		}
+
 		private void OnError(Processor p, string s)
 		{
 			if (Error != null)
@@ -294,7 +286,23 @@ namespace VisualProcessors.Processing
 		{
 			if (ProcessorModified != null)
 			{
-				ProcessorModified(this,e);
+				ProcessorModified(this, e);
+			}
+		}
+
+		private void OnProcessorAdded(Processor p)
+		{
+			if (ProcessorAdded != null)
+			{
+				ProcessorAdded(p);
+			}
+		}
+
+		private void OnProcessorRemoved(Processor p)
+		{
+			if (ProcessorRemoved != null)
+			{
+				ProcessorRemoved(p);
 			}
 		}
 
@@ -330,7 +338,7 @@ namespace VisualProcessors.Processing
 		{
 			Stop();
 		}
-		
+
 		#endregion Event Handlers
 
 		#region IXmlSerializable Members

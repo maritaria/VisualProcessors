@@ -15,13 +15,16 @@ namespace VisualProcessors.Processing
 	public class CodeProcessor : Processor
 	{
 		#region Properties
+
 		public static string DefaultCode =
 			"public static void Process(CodeProcessor processor)" + Environment.NewLine +
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine + Environment.NewLine +
 			"public static void Prepare(CodeProcessor processor)" + Environment.NewLine +
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine;
+
 		/// <summary>
-		/// Gets or sets the code stored in the processor. To use the code, compile it into a function and store these in PrepareFunction and ProcessFunction.
+		///  Gets or sets the code stored in the processor. To use the code, compile it into a
+		///  function and store these in PrepareFunction and ProcessFunction.
 		/// </summary>
 		public string Code
 		{
@@ -35,16 +38,22 @@ namespace VisualProcessors.Processing
 				OnModified(true);
 			}
 		}
+
 		/// <summary>
-		/// Gets or sets the function executed when the CodeProcessor needs to prepare for a new simulation
+		///  Gets or sets the function executed when the CodeProcessor needs to prepare for a new
+		///  simulation
 		/// </summary>
 		public Action<CodeProcessor> PrepareFunction { get; set; }
+
 		/// <summary>
-		/// Gets or sets the function executed when the CodeProcessor needs to process data.
+		///  Gets or sets the function executed when the CodeProcessor needs to process data.
 		/// </summary>
 		public Action<CodeProcessor> ProcessFunction { get; set; }
-		#endregion
+
+		#endregion Properties
+
 		#region Constructor
+
 		public CodeProcessor()
 		{
 		}
@@ -65,9 +74,10 @@ namespace VisualProcessors.Processing
 
 			Code = DefaultCode;
 		}
-		#endregion
-		#region Methods
 
+		#endregion Constructor
+
+		#region Methods
 
 		public override void GetUserInterface(Panel panel)
 		{
@@ -107,6 +117,7 @@ namespace VisualProcessors.Processing
 				}
 			}
 		}
-		#endregion
+
+		#endregion Methods
 	}
 }

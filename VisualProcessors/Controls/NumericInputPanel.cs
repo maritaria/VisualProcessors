@@ -20,17 +20,39 @@ namespace VisualProcessors.Controls
 
 		private bool m_Changing = false;
 
-		public decimal InputValue
+		public decimal InputIncrement
 		{
 			get
 			{
-				return InputNumeric.Value;
+				return InputNumeric.Increment;
 			}
 			set
 			{
-				m_Changing = true;
-				InputNumeric.Value = value;
-				m_Changing = false;
+				InputNumeric.Increment = value;
+			}
+		}
+
+		public decimal InputMaximum
+		{
+			get
+			{
+				return InputNumeric.Maximum;
+			}
+			set
+			{
+				InputNumeric.Maximum = value;
+			}
+		}
+
+		public decimal InputMinimum
+		{
+			get
+			{
+				return InputNumeric.Minimum;
+			}
+			set
+			{
+				InputNumeric.Minimum = value;
 			}
 		}
 
@@ -49,41 +71,21 @@ namespace VisualProcessors.Controls
 				InputNumeric.Width = oldright - InputNumeric.Left;
 			}
 		}
-		
-		public decimal InputMinimum
+
+		public decimal InputValue
 		{
 			get
 			{
-				return InputNumeric.Minimum;
+				return InputNumeric.Value;
 			}
 			set
 			{
-				InputNumeric.Minimum = value;
-			}
-		}
-		public decimal InputMaximum
-		{
-			get
-			{
-				return InputNumeric.Maximum;
-			}
-			set
-			{
-				InputNumeric.Maximum = value;
+				m_Changing = true;
+				InputNumeric.Value = value;
+				m_Changing = false;
 			}
 		}
 
-		public decimal InputIncrement
-		{
-			get
-			{
-				return InputNumeric.Increment;
-			}
-			set
-			{
-				InputNumeric.Increment = value;
-			}
-		}
 		public bool IsInputValid { get; private set; }
 
 		#endregion Properties
@@ -149,12 +151,11 @@ namespace VisualProcessors.Controls
 				}
 				else
 				{
-					InputNumeric.BackColor =  Color.Red;
+					InputNumeric.BackColor = Color.Red;
 				}
 			}
 		}
 
 		#endregion Event Handlers
-
 	}
 }

@@ -76,17 +76,6 @@ namespace VisualProcessors.Controls
 
 		public event CancelEventHandler CanBrowse;
 
-		private bool OnCanBrowse()
-		{
-			if (CanBrowse!=null)
-			{
-				CancelEventArgs e = new CancelEventArgs(false);
-				CanBrowse(this, e);
-				return !e.Cancel;
-			}
-			return true;
-		}
-
 		private void OnBrowseComplete(FilepathEventArgs e)
 		{
 			if (BrowseComplete != null)
@@ -106,6 +95,17 @@ namespace VisualProcessors.Controls
 				InputTextBox.BackColor = Color.Orange;
 			}
 			InputTextBox.Text = e.FilePath;
+		}
+
+		private bool OnCanBrowse()
+		{
+			if (CanBrowse != null)
+			{
+				CancelEventArgs e = new CancelEventArgs(false);
+				CanBrowse(this, e);
+				return !e.Cancel;
+			}
+			return true;
 		}
 
 		#endregion Events
@@ -134,9 +134,9 @@ namespace VisualProcessors.Controls
 			AcceptPath = true;
 		}
 
-		public string FilePath { get; private set; }
-
 		public bool AcceptPath { get; set; }
+
+		public string FilePath { get; private set; }
 	}
 
 	#endregion FilepathEventArgs class

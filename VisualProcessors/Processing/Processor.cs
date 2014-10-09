@@ -24,12 +24,15 @@ namespace VisualProcessors.Processing
 		private Pipeline m_Pipeline;
 		private Size m_Size = new Size(0, 0);
 		private Thread m_WorkerThread;
+
 		/// <summary>
-		/// Gets whether the processor is prepared for processing, if this value is false, the Prepare() function will run when the processor is started.
+		///  Gets whether the processor is prepared for processing, if this value is false, the
+		///  Prepare() function will run when the processor is started.
 		/// </summary>
 		public bool IsPrepared { get; protected set; }
+
 		/// <summary>
-		/// Gets whether the processor has a thread running for processing data.
+		///  Gets whether the processor has a thread running for processing data.
 		/// </summary>
 		public bool IsRunning
 		{
@@ -55,24 +58,26 @@ namespace VisualProcessors.Processing
 				OnNameChanged(old, value);
 			}
 		}
+
 		/// <summary>
-		/// Gets the options collection for storing data
-		/// </summary>
-		protected ProcessorOptions Options
-		{
-			get
-			{
-				return m_Options;
-			}
-		}
-		/// <summary>
-		/// Gets the pipeline the processor belongs to.
+		///  Gets the pipeline the processor belongs to.
 		/// </summary>
 		public Pipeline Pipeline
 		{
 			get
 			{
 				return m_Pipeline;
+			}
+		}
+
+		/// <summary>
+		///  Gets the options collection for storing data
+		/// </summary>
+		protected ProcessorOptions Options
+		{
+			get
+			{
+				return m_Options;
 			}
 		}
 
@@ -280,7 +285,7 @@ namespace VisualProcessors.Processing
 		///  Creates a new processor
 		/// </summary>
 		/// <param name="pipeline">The pipeline the processor belongs to</param>
-		/// <param name="name">
+		/// <param name="name">    
 		///  The name of the processor, must be unique within the pipeline
 		/// </param>
 		public Processor(Pipeline pipeline, string name)
@@ -309,24 +314,9 @@ namespace VisualProcessors.Processing
 			panel.Controls.Add(input);
 		}
 
-		void input_RequestValidation(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if (sender is StringInputPanel)
-			{
-				StringInputPanel panel = sender as StringInputPanel;
-				Processor p = Pipeline.GetByName(panel.InputText);
-				if (p==null)
-				{
-					e.Cancel = false;
-				}
-				else
-				{
-					e.Cancel = (this !=p);
-				}
-			}
-		}
 		/// <summary>
-		/// Stops the processor if its running, and sets IsPrepared to false, this will cause the processor to clear its buffer on the next Start() call.
+		///  Stops the processor if its running, and sets IsPrepared to false, this will cause the
+		///  processor to clear its buffer on the next Start() call.
 		/// </summary>
 		public void Reset()
 		{
@@ -336,8 +326,10 @@ namespace VisualProcessors.Processing
 			}
 			IsPrepared = false;
 		}
+
 		/// <summary>
-		/// Starts the processors worker thread, also runs Prepare() if IsPrepared is false. If the processor is already running, it calls Stop() and then starts a new workerthread
+		///  Starts the processors worker thread, also runs Prepare() if IsPrepared is false. If the
+		///  processor is already running, it calls Stop() and then starts a new workerthread
 		/// </summary>
 		public virtual void Start()
 		{
@@ -356,7 +348,8 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		/// Stops the execution of the processor (if its running). Blocks until the workerthread has terminated.
+		///  Stops the execution of the processor (if its running). Blocks until the workerthread
+		///  has terminated.
 		/// </summary>
 		public virtual void Stop()
 		{
@@ -371,8 +364,10 @@ namespace VisualProcessors.Processing
 			}
 			m_WorkerThread = null;
 		}
+
 		/// <summary>
-		/// Sets the processor to a new/cleared state. On base class: clears InputChannels of remaining values.
+		///  Sets the processor to a new/cleared state. On base class: clears InputChannels of
+		///  remaining values.
 		/// </summary>
 		protected virtual void Prepare()
 		{
@@ -385,6 +380,7 @@ namespace VisualProcessors.Processing
 				channel.Clear();
 			}
 		}
+
 		protected virtual void Process()
 		{
 			//Read
@@ -412,16 +408,49 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		private void input_RequestValidation(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (sender is StringInputPanel)
+			{
+				StringInputPanel panel = sender as StringInputPanel;
+				Processor p = Pipeline.GetByName(panel.InputText);
+				if (p == null)
+				{
+					e.Cancel = false;
+				}
+				else
+				{
+					e.Cancel = (this != p);
+				}
+			}
+		}
+
 		#endregion Methods
 
 		#region InputChannels
 
 		private List<InputChannel> m_InputChannels = new List<InputChannel>();
+
 		/// <summary>
-		/// Gets an InputChannel of the Processor by its name, returns null if no InputChannel with that name exists.
+		///  Gets the number of InputChannels the processor has
+		/// </summary>
+		public int InputChannelCount
+		{
+			get
+			{
+				return m_InputChannels.Count;
+			}
+		}
+
+		/// <summary>
+		///  Gets an InputChannel of the Processor by its name, returns null if no InputChannel with
+		///  that name exists.
 		/// </summary>
 		/// <param name="name">The name of the InputChannel</param>
-		/// <returns>The InputChannel whose Name property is equal to the given name argument. Returns null if no InputChannel was found for the given name</returns>
+		/// <returns>
+		///  The InputChannel whose Name property is equal to the given name argument. Returns null
+		///  if no InputChannel was found for the given name
+		/// </returns>
 		public InputChannel GetInputChannel(string name)
 		{
 			foreach (InputChannel channel in m_InputChannels)
@@ -433,18 +462,10 @@ namespace VisualProcessors.Processing
 			}
 			return null;
 		}
+
 		/// <summary>
-		/// Gets the number of InputChannels the processor has
-		/// </summary>
-		public int InputChannelCount
-		{
-			get
-			{
-				return m_InputChannels.Count;
-			}
-		}
-		/// <summary>
-		/// Gets an array of strings containing the names of the InputChannels that the Processor has.
+		///  Gets an array of strings containing the names of the InputChannels that the Processor
+		///  has.
 		/// </summary>
 		/// <returns></returns>
 		public string[] GetInputChannelNames()
@@ -457,11 +478,16 @@ namespace VisualProcessors.Processing
 			}
 			return names.ToArray();
 		}
+
 		/// <summary>
-		/// Adds a new InputChannel to the processor.
+		///  Adds a new InputChannel to the processor.
 		/// </summary>
-		/// <param name="name">The name of the InputChannel, used for retrieving it with GetInputChannel(name).</param>
-		/// <param name="optional">Whether the InputChannel is optional, can be changed with the IsOptional property.</param>
+		/// <param name="name">    
+		///  The name of the InputChannel, used for retrieving it with GetInputChannel(name).
+		/// </param>
+		/// <param name="optional">
+		///  Whether the InputChannel is optional, can be changed with the IsOptional property.
+		/// </param>
 		protected void AddInputChannel(string name, bool optional)
 		{
 			if (IsRunning)
@@ -473,8 +499,9 @@ namespace VisualProcessors.Processing
 				AddInputChannel(new InputChannel(this, name, optional));
 			}
 		}
+
 		/// <summary>
-		/// Removes an existing InputChannel from the Processor, unlinks it properly first.
+		///  Removes an existing InputChannel from the Processor, unlinks it properly first.
 		/// </summary>
 		/// <param name="channel">The InputChannel instance to remove.</param>
 		protected void RemoveInputChannel(InputChannel channel)
@@ -511,8 +538,9 @@ namespace VisualProcessors.Processing
 		#region OutputChannels
 
 		private List<OutputChannel> m_OutputChannels = new List<OutputChannel>();
+
 		/// <summary>
-		/// Gets the number of OutputChannels the processor has
+		///  Gets the number of OutputChannels the processor has
 		/// </summary>
 		public int OutputChannelCount
 		{
@@ -523,10 +551,14 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		/// Gets an OutputChannel of the Processor by its name, returns null if no OutputChannel with that name exists.
+		///  Gets an OutputChannel of the Processor by its name, returns null if no OutputChannel
+		///  with that name exists.
 		/// </summary>
 		/// <param name="name">The name of the OutputChannel</param>
-		/// <returns>The OutputChannel whose Name property is equal to the given name argument. Returns null if no OutputChannel was found for the given name</returns>
+		/// <returns>
+		///  The OutputChannel whose Name property is equal to the given name argument. Returns null
+		///  if no OutputChannel was found for the given name
+		/// </returns>
 		public OutputChannel GetOutputChannel(string name)
 		{
 			foreach (OutputChannel channel in m_OutputChannels)
@@ -540,7 +572,8 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		/// Gets an array of strings containing the names of the OutputChannel that the Processor has.
+		///  Gets an array of strings containing the names of the OutputChannel that the Processor
+		///  has.
 		/// </summary>
 		/// <returns></returns>
 		public string[] GetOutputChannelNames()
@@ -554,9 +587,11 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		/// Adds a new OutputChannel to the processor.
+		///  Adds a new OutputChannel to the processor.
 		/// </summary>
-		/// <param name="name">The name of the InputChannel, used for retrieving it with GetOutputChannel(name).</param>
+		/// <param name="name">
+		///  The name of the InputChannel, used for retrieving it with GetOutputChannel(name).
+		/// </param>
 		protected void AddOutputChannel(string name)
 		{
 			if (IsRunning)
@@ -570,7 +605,7 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		/// Removes an existing OutputChannel from the Processor, unlinks it properly first.
+		///  Removes an existing OutputChannel from the Processor, unlinks it properly first.
 		/// </summary>
 		/// <param name="channel">The OutputChannel instance to remove.</param>
 		protected void RemoveOutputChannel(OutputChannel channel)
@@ -608,8 +643,9 @@ namespace VisualProcessors.Processing
 
 		private List<InputChannel> m_RawInput = new List<InputChannel>();
 		private List<OutputChannel> m_RawOutput = new List<OutputChannel>();
+
 		/// <summary>
-		/// Initializes all Input/OutputChannels that were deserialized from XML.
+		///  Initializes all Input/OutputChannels that were deserialized from XML.
 		/// </summary>
 		/// <param name="pipeline"></param>
 		internal void Build(Pipeline pipeline)
@@ -630,8 +666,11 @@ namespace VisualProcessors.Processing
 			}
 			m_RawOutput.Clear();
 		}
+
 		/// <summary>
-		/// Should be called directly after Build(), links the OutputChannels to their targers. This is called after Build because all the Processors in the Pipeline first need to have initialized(Build) their InputChannels.
+		///  Should be called directly after Build(), links the OutputChannels to their targers.
+		///  This is called after Build because all the Processors in the Pipeline first need to
+		///  have initialized(Build) their InputChannels.
 		/// </summary>
 		/// <param name="pipeline"></param>
 		internal void BuildLinks(Pipeline pipeline)
@@ -645,8 +684,9 @@ namespace VisualProcessors.Processing
 		#endregion Build
 
 		#region Events
+
 		/// <summary>
-		/// Invoked when the processor wants to indicate an error.
+		///  Invoked when the processor wants to indicate an error.
 		/// </summary>
 		public event Action<Processor, string> Error;
 
@@ -699,12 +739,14 @@ namespace VisualProcessors.Processing
 		///  Invoked when the size of the processor has been changed.
 		/// </summary>
 		public event EventHandler SizeChanged;
+
 		/// <summary>
-		/// Invoked when the processor wants to indicate a warning.
+		///  Invoked when the processor wants to indicate a warning.
 		/// </summary>
 		public event Action<Processor, string> Warning;
+
 		/// <summary>
-		/// Invokes the Error event
+		///  Invokes the Error event
 		/// </summary>
 		/// <param name="message">The message that describes the error</param>
 		protected void OnError(string message)
@@ -714,18 +756,20 @@ namespace VisualProcessors.Processing
 				Error(this, message);
 			}
 		}
+
 		/// <summary>
-		/// Invokes the Modified event
+		///  Invokes the Modified event
 		/// </summary>
 		protected void OnModified(bool shouldHalt)
 		{
 			if (Modified != null)
 			{
-				Modified(this, new ProcessorModifiedEventArgs(this,shouldHalt));
+				Modified(this, new ProcessorModifiedEventArgs(this, shouldHalt));
 			}
 		}
+
 		/// <summary>
-		/// Invokes the Warning event
+		///  Invokes the Warning event
 		/// </summary>
 		/// <param name="message">The message that describes the warning</param>
 		protected void OnWarning(string message)
