@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
@@ -16,6 +17,7 @@ namespace VisualProcessors.Processing
 	{
 		public DirectInputProcessor()
 		{
+			Value = 0;
 		}
 
 		public DirectInputProcessor(Pipeline pipeline, string name)
@@ -23,6 +25,23 @@ namespace VisualProcessors.Processing
 		{
 			AddInputChannel("DNC", false);
 			AddOutputChannel("Output");
+			Value = 0;
+		}
+
+		public int Value
+		{
+			get
+			{
+				return int.Parse(Options.GetOption("Value"));
+			}
+			set
+			{
+				if (value < 0)
+				{
+					throw new ArgumentOutOfRangeException("value", "Cannot be lower or equal to zero");
+				}
+				Options.SetOption("Value", value.ToString());
+			}
 		}
 
 		public override void GetUserInterface(Panel panel)
@@ -32,18 +51,28 @@ namespace VisualProcessors.Processing
 			button.Click += button_Click;
 			button.Location = new Point((panel.Width - button.Width) / 2, (panel.Height - button.Height) / 2);
 			button.Anchor = AnchorStyles.None;
+
+			NumericInputPanel valueInput = new NumericInputPanel();
+			valueInput.Dock = DockStyle.Top;
+			valueInput.InputTitle = "Output value:";
+			valueInput.InputMinimum = -10;
+			valueInput.InputMaximum = 10;
+			valueInput.InputCompleted += valueInput_InputCompleted;
+			valueInput.InputIncrement = 1;
+
+			panel.Controls.Add(valueInput);
 			panel.Controls.Add(button);
 			base.GetUserInterface(panel);
 		}
 
-		protected override void Process()
-		{
-			GetOutputChannel("Output").WriteValue(0);
-		}
-
 		private void button_Click(object sender, EventArgs e)
 		{
-			Process();
+			GetOutputChannel("Output").WriteValue(Value);
+		}
+
+		private void valueInput_InputCompleted(object sender, EventArgs e)
+		{
+			Value = (int)(sender as NumericInputPanel).InputValue;
 		}
 	}
 }

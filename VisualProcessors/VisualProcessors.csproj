@@ -102,6 +102,7 @@
     <Compile Include="Processing\EmptyProcessor.cs" />
     <Compile Include="Processing\ProcessorModifiedEventArgs.cs" />
     <Compile Include="Processing\ProcessorOptions.cs" />
+    <Compile Include="Processing\PulseProcessor.cs" />
     <Compile Include="Processing\UserCodeContext.cs" />
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>
