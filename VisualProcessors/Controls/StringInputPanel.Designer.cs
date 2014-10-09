@@ -42,6 +42,7 @@
 			this.InputTextBox.TabIndex = 0;
 			this.InputTextBox.TextChanged += new System.EventHandler(this.InputTextBox_TextChanged);
 			this.InputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputTextBox_KeyDown);
+			this.InputTextBox.Leave += new System.EventHandler(this.InputTextBox_Leave);
 			// 
 			// InputLabel
 			// 

@@ -72,6 +72,20 @@ namespace VisualProcessors.Controls
 
 		#endregion Contructor
 
+		#region Methods
+
+		private void Complete()
+		{
+			OnRequestValidation();
+			if (!m_Changing && IsInputValid)
+			{
+				InputTextBox.BackColor = Color.White;
+				OnInputCompleted();
+			}
+		}
+
+		#endregion
+
 		#region Event
 
 		/// <summary>
@@ -120,11 +134,7 @@ namespace VisualProcessors.Controls
 			if (e.KeyCode == Keys.Enter)
 			{
 				e.SuppressKeyPress = true;
-				if (!m_Changing && IsInputValid)
-				{
-					InputTextBox.BackColor = Color.White;
-					OnInputCompleted();
-				}
+				Complete();
 			}
 			else
 			{
@@ -141,5 +151,10 @@ namespace VisualProcessors.Controls
 		}
 
 		#endregion Event Handlers
+
+		private void InputTextBox_Leave(object sender, EventArgs e)
+		{
+			Complete();
+		}
 	}
 }
