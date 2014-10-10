@@ -67,7 +67,6 @@ namespace VisualProcessors.Forms
 
 			//Initialize values
 			m_PipelineForm = pipelineform;
-			m_PreviousTab = Tabs.SelectedTab;
 
 			//Processor
 			m_Processor = processor;
@@ -198,18 +197,12 @@ namespace VisualProcessors.Forms
 
 		private void ProcessorForm_LocationChanged(object sender, EventArgs e)
 		{
-			if (!MinimalViewEnabled)
-			{
-				Processor.Location = this.Location;
-			}
+			Processor.Location = this.Location;
 		}
 
 		private void ProcessorForm_SizeChanged(object sender, EventArgs e)
 		{
-			if (!MinimalViewEnabled)
-			{
-				this.Processor.Size = this.Size;
-			}
+			this.Processor.Size = this.Size;
 		}
 
 		private void ProcessorLocationChanged(object sender, EventArgs e)
@@ -240,80 +233,5 @@ namespace VisualProcessors.Forms
 		}
 
 		#endregion Event Handlers
-
-		#region Minimal View
-
-		private FormBorderStyle m_PreviousFormBorderStyle;
-		private Size m_PreviousSize;
-		private TabPage m_PreviousTab;
-
-		/// <summary>
-		///  Whether to use minimalview on this form, switches to the 'Minimal' tab automaticly if
-		///  required.
-		/// </summary>
-		public bool MinimalViewEnabled
-		{
-			get
-			{
-				return Tabs.SelectedTab == MinimalTab;
-			}
-			set
-			{
-				if (value != MinimalViewEnabled)
-				{
-					ToggleMinimalView();
-				}
-			}
-		}
-
-		/// <summary>
-		///  Toggles the minimalviewmode
-		/// </summary>
-		public void ToggleMinimalView()
-		{
-			if (Tabs.SelectedTab != MinimalTab)
-			{
-				Tabs.SelectedTab = MinimalTab;
-			}
-			else
-			{
-				Tabs.SelectedTab = m_PreviousTab;
-			}
-		}
-
-		private void Tabs_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			Point oldcenter = this.GetCenter();
-			bool modified = false;
-			if (Tabs.SelectedTab == MinimalTab)
-			{
-				//Save state
-				m_PreviousFormBorderStyle = this.FormBorderStyle;
-				m_PreviousSize = this.Size;
-
-				//Switch to minimal mode
-				this.FormBorderStyle = FormBorderStyle.None;
-				this.Size = new Size(250, 200);
-				modified = true;
-			}
-			else if (m_PreviousTab == MinimalTab)
-			{
-				//Switch from minimal mode
-				this.FormBorderStyle = m_PreviousFormBorderStyle;
-				this.Size = m_PreviousSize;
-				modified = true;
-			}
-			if (modified)
-			{
-				Point newcenter = this.GetCenter();
-				Point offset = new Point(oldcenter.X - newcenter.X, oldcenter.Y - newcenter.Y);
-				Point newpos = this.Location;
-				newpos.Offset(offset);
-				this.Location = newpos;
-			}
-			m_PreviousTab = Tabs.SelectedTab;
-		}
-
-		#endregion Minimal View
 	}
 }
