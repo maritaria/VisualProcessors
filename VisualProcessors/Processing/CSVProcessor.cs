@@ -30,7 +30,7 @@ namespace VisualProcessors.Processing
 			set
 			{
 				Options.SetOption("FilePath", value);
-				OnModified(true);
+				OnModified(HaltTypes.ShouldHalt);
 			}
 		}
 
@@ -43,7 +43,7 @@ namespace VisualProcessors.Processing
 			set
 			{
 				Options.SetOption("Seperator", value);
-				OnModified(false);
+				OnModified(HaltTypes.AskHalt);
 			}
 		}
 

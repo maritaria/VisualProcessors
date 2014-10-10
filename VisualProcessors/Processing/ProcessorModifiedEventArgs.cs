@@ -10,23 +10,27 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
-		public bool ShouldHalt { get; private set; }
+		public HaltTypes HaltType { get; private set; }
 
 		public Processor Source { get; private set; }
 
-		public bool AskConfirmation { get; private set; }
 
 		#endregion Properties
 
 		#region Constructor
 
-		public ProcessorModifiedEventArgs(Processor source, bool shouldHalt, bool askConfirmation)
+		public ProcessorModifiedEventArgs(Processor source, HaltTypes haltType)
 		{
 			Source = source;
-			ShouldHalt = shouldHalt;
-			AskConfirmation = askConfirmation;
+			HaltType = haltType;
 		}
 
 		#endregion Constructor
+	}
+	public enum HaltTypes
+	{
+		None,
+		ShouldHalt,
+		AskHalt,
 	}
 }

@@ -789,13 +789,14 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		///  Invokes the Modified event
+		///  Invokes the Modified event, tells the pipeline that a simulation should/shouldn't be halted due to the modification
 		/// </summary>
-		protected void OnModified(bool shouldHalt)
+		/// <param name="haltType">Whether and or how to halt the simulation</param>
+		protected void OnModified(HaltTypes haltType)
 		{
 			if (Modified != null)
 			{
-				Modified(this, new ProcessorModifiedEventArgs(this, shouldHalt));
+				Modified(this, new ProcessorModifiedEventArgs(this, haltType));
 			}
 		}
 
@@ -817,7 +818,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelAdded(this, EventArgs.Empty);
 			}
-			OnModified(true);
+			OnModified(HaltTypes.AskHalt);
 		}
 
 		private void OnInputChannelRemoved()
@@ -826,7 +827,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelRemoved(this, EventArgs.Empty);
 			}
-			OnModified(true);
+			OnModified(HaltTypes.AskHalt);
 		}
 
 		private void OnLinkAdded()
@@ -835,7 +836,7 @@ namespace VisualProcessors.Processing
 			{
 				LinkAdded(this, EventArgs.Empty);
 			}
-			OnModified(true);
+			OnModified(HaltTypes.ShouldHalt);
 		}
 
 		private void OnLinkRemoved()
@@ -844,7 +845,7 @@ namespace VisualProcessors.Processing
 			{
 				LinkRemoved(this, EventArgs.Empty);
 			}
-			OnModified(true);
+			OnModified(HaltTypes.ShouldHalt);
 		}
 
 		private void OnLocationChanged()
@@ -853,7 +854,7 @@ namespace VisualProcessors.Processing
 			{
 				LocationChanged(this, EventArgs.Empty);
 			}
-			OnModified(false);
+			OnModified(HaltTypes.None);
 		}
 
 		private void OnNameChanged(string oldname, string newname)
@@ -862,7 +863,7 @@ namespace VisualProcessors.Processing
 			{
 				NameChanged(this, oldname, newname);
 			}
-			OnModified(false);
+			OnModified(HaltTypes.None);
 		}
 
 		private void OnOutputChannelAdded()
@@ -871,7 +872,7 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelAdded(this, EventArgs.Empty);
 			}
-			OnModified(true);
+			OnModified(HaltTypes.AskHalt);
 		}
 
 		private void OnOutputChannelRemoved()
@@ -880,7 +881,7 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelRemoved(this, EventArgs.Empty);
 			}
-			OnModified(true);
+			OnModified(HaltTypes.AskHalt);
 		}
 
 		private void OnSizeChanged()
@@ -889,7 +890,7 @@ namespace VisualProcessors.Processing
 			{
 				SizeChanged(this, EventArgs.Empty);
 			}
-			OnModified(false);
+			OnModified(HaltTypes.None);
 		}
 
 		#endregion Events
