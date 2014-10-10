@@ -161,7 +161,6 @@
 			this.Tabs.SelectedIndex = 0;
 			this.Tabs.Size = new System.Drawing.Size(398, 200);
 			this.Tabs.TabIndex = 0;
-			this.Tabs.SelectedIndexChanged += new System.EventHandler(this.Tabs_SelectedIndexChanged);
 			// 
 			// ProcessorForm
 			// 
