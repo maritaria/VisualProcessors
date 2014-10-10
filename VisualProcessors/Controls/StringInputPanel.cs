@@ -34,6 +34,19 @@ namespace VisualProcessors.Controls
 			}
 		}
 
+		public string ToolTipText
+		{
+			get
+			{
+				return ToolTip.GetToolTip(InputTextBox);
+			}
+			set
+			{
+				ToolTip.SetToolTip(InputTextBox, value);
+				ToolTip.ToolTipIcon = ToolTipIcon.Info;
+			}
+		}
+
 		public string InputTitle
 		{
 			get
@@ -55,7 +68,7 @@ namespace VisualProcessors.Controls
 		#endregion Properties
 
 		#region Contructor
-
+		
 		public StringInputPanel()
 		{
 			m_Changing = true;
@@ -63,9 +76,7 @@ namespace VisualProcessors.Controls
 			IsInputValid = false;
 			m_Changing = false;
 		}
-
-		public StringInputPanel(string title)
-			: this()
+		public StringInputPanel(string title) : this()
 		{
 			InputTitle = title;
 		}
@@ -136,10 +147,6 @@ namespace VisualProcessors.Controls
 				e.SuppressKeyPress = true;
 				Complete();
 			}
-			else
-			{
-				OnRequestValidation();
-			}
 		}
 
 		private void InputTextBox_TextChanged(object sender, EventArgs e)
@@ -149,12 +156,12 @@ namespace VisualProcessors.Controls
 				OnRequestValidation();
 			}
 		}
-
-		#endregion Event Handlers
-
 		private void InputTextBox_Leave(object sender, EventArgs e)
 		{
 			Complete();
 		}
+
+		#endregion Event Handlers
+
 	}
 }

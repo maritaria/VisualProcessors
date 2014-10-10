@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using VisualProcessors.Controls;
+using System.Globalization;
 
 namespace VisualProcessors.Processing
 {
@@ -21,11 +22,11 @@ namespace VisualProcessors.Processing
 		#endregion Properties
 		#region Options
 
-		public int Value
+		public double Value
 		{
 			get
 			{
-				return int.Parse(Options.GetOption("Value", "1"));
+				return double.Parse(Options.GetOption("Value", "1"));
 			}
 			set
 			{
@@ -65,13 +66,12 @@ namespace VisualProcessors.Processing
 			button.Location = new Point((panel.Width - button.Width) / 2, (panel.Height - button.Height) / 2);
 			button.Anchor = AnchorStyles.None;
 
-			NumericInputPanel valueInput = new NumericInputPanel();
+			var valueInput = new DoubleInputPanel("Output value:");
 			valueInput.Dock = DockStyle.Top;
-			valueInput.InputTitle = "Output value:";
-			valueInput.InputMinimum = -10;
-			valueInput.InputMaximum = 10;
-			valueInput.InputCompleted += valueInput_InputCompleted;
-			valueInput.InputIncrement = 1;
+			valueInput.InputText = Value.ToString();
+			valueInput.InputCompleted+=valueInput_InputCompleted;
+			valueInput.ToolTipText = "Use '" + CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator + "' as decimal seperator";
+
 
 			panel.Controls.Add(valueInput);
 			panel.Controls.Add(button);
@@ -85,7 +85,7 @@ namespace VisualProcessors.Processing
 
 		private void valueInput_InputCompleted(object sender, EventArgs e)
 		{
-			Value = (int)(sender as NumericInputPanel).InputValue;
+			Value = (sender as DoubleInputPanel).InputValue;
 		}
 
 		#endregion Methods

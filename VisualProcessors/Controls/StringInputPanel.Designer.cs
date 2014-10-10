@@ -28,8 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.InputTextBox = new System.Windows.Forms.TextBox();
 			this.InputLabel = new System.Windows.Forms.Label();
+			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.SuspendLayout();
 			// 
 			// InputTextBox
@@ -70,5 +72,6 @@
 
 		private System.Windows.Forms.TextBox InputTextBox;
 		private System.Windows.Forms.Label InputLabel;
+		private System.Windows.Forms.ToolTip ToolTip;
 	}
 }

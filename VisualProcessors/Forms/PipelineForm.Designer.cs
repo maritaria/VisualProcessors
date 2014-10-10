@@ -201,7 +201,7 @@
 			// 
 			this.runToolStripMenuItem.Name = "runToolStripMenuItem";
 			this.runToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-			this.runToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.runToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
 			this.runToolStripMenuItem.Text = "Run";
 			this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
 			// 
@@ -217,18 +217,18 @@
 			// toolStripSeparator6
 			// 
 			this.toolStripSeparator6.Name = "toolStripSeparator6";
-			this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+			this.toolStripSeparator6.Size = new System.Drawing.Size(172, 6);
 			// 
 			// saveStateToolStripMenuItem
 			// 
 			this.saveStateToolStripMenuItem.Name = "saveStateToolStripMenuItem";
-			this.saveStateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveStateToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
 			this.saveStateToolStripMenuItem.Text = "Save state";
 			// 
 			// loadStateToolStripMenuItem
 			// 
 			this.loadStateToolStripMenuItem.Name = "loadStateToolStripMenuItem";
-			this.loadStateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.loadStateToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
 			this.loadStateToolStripMenuItem.Text = "Load state";
 			// 
 			// toolsToolStripMenuItem

@@ -42,7 +42,7 @@
 			this.ButtonPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 16);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(137, 340);
+			this.ButtonPanel.Size = new System.Drawing.Size(137, 197);
 			this.ButtonPanel.TabIndex = 0;
 			// 
 			// ButtonGroupBox
@@ -52,7 +52,7 @@
 			this.ButtonGroupBox.Controls.Add(this.ButtonPanel);
 			this.ButtonGroupBox.Location = new System.Drawing.Point(0, 0);
 			this.ButtonGroupBox.Name = "ButtonGroupBox";
-			this.ButtonGroupBox.Size = new System.Drawing.Size(143, 359);
+			this.ButtonGroupBox.Size = new System.Drawing.Size(143, 216);
 			this.ButtonGroupBox.TabIndex = 0;
 			this.ButtonGroupBox.TabStop = false;
 			this.ButtonGroupBox.Text = "New Processor";
