@@ -97,6 +97,7 @@ namespace VisualProcessors.Forms
 
 			//Settings
 			processor.GetUserInterface(SettingsPanel);
+			SettingsTab.Text = Processor.SettingsTabLabel;
 			if (Processor.HideSettingsTab)
 			{
 				Tabs.TabPages.Remove(SettingsTab);

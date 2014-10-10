@@ -11,7 +11,8 @@ using VisualProcessors.Controls;
 namespace VisualProcessors.Processing
 {
 	[ProcessorAttribute("Bram Kamies", "Allows user C# code to be executed during simulations", "Input1", "Output1",
-		AllowOptionalInputs = true)]
+		AllowOptionalInputs = true,
+		SettingsTabLabel="Code")]
 	public class CodeProcessor : Processor
 	{
 		#region Properties

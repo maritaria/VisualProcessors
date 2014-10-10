@@ -13,7 +13,8 @@ using ZedGraph;
 namespace VisualProcessors.Processing
 {
 	[ProcessorAttribute("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
-		AllowOptionalInputs = true, HideOutputTab = true)]
+		AllowOptionalInputs = true, HideOutputTab = true,
+		SettingsTabLabel="Graph")]
 	public class GraphPlotter : Processor
 	{
 		#region Properties

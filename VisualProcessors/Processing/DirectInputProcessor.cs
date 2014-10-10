@@ -12,7 +12,8 @@ using VisualProcessors.Controls;
 namespace VisualProcessors.Processing
 {
 	[ProcessorAttribute("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button", "", "Output",
-		HideInputTab = true)]
+		HideInputTab = true,
+		SettingsTabLabel="Input")]
 	public class DirectInputProcessor : Processor
 	{
 		public DirectInputProcessor()

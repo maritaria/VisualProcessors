@@ -10,7 +10,8 @@ using System.Xml.Serialization;
 namespace VisualProcessors.Processing
 {
 	[ProcessorAttribute("Bram Kamies", "Displays a single number on a label", "Input", "",
-		HideOutputTab = true)]
+		HideOutputTab = true,
+		SettingsTabLabel="Data")]
 	public class DirectOutputProcessor : Processor
 	{
 		private List<Label> guis = new List<Label>();

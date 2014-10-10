@@ -258,6 +258,16 @@ namespace VisualProcessors.Processing
 				return Meta.HideSettingsTab;
 			}
 		}
+		/// <summary>
+		/// Gets the preferred name for the 'Settings' tab
+		/// </summary>
+		public string SettingsTabLabel
+		{
+			get
+			{
+				return Meta.SettingsTabLabel;
+			}
+		}
 
 		public ProcessorAttribute Meta
 		{
