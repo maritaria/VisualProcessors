@@ -25,7 +25,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return Options.GetOption("FilePath");
+				return Options.GetOption("FilePath","");
 			}
 			set
 			{
@@ -38,7 +38,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return Options.GetOption("Seperator");
+				return Options.GetOption("Seperator", System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator);
 			}
 			set
 			{
@@ -61,8 +61,6 @@ namespace VisualProcessors.Processing
 			: base(pipeline, name)
 		{
 			AddInputChannel("1", false);
-			FilePath = "";
-			Seperator = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator;
 		}
 
 		#endregion Constructor

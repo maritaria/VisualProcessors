@@ -13,27 +13,18 @@ namespace VisualProcessors.Processing
 {
 	[ProcessorAttribute("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button", "", "Output",
 		HideInputTab = true,
-		SettingsTabLabel="Input")]
+		SettingsTabLabel = "Input")]
 	public class DirectInputProcessor : Processor
 	{
-		public DirectInputProcessor()
-		{
-			Value = 0;
-		}
+		#region Properties
 
-		public DirectInputProcessor(Pipeline pipeline, string name)
-			: base(pipeline, name)
-		{
-			AddInputChannel("DNC", false);
-			AddOutputChannel("Output");
-			Value = 0;
-		}
+		#region Options
 
 		public int Value
 		{
 			get
 			{
-				return int.Parse(Options.GetOption("Value"));
+				return int.Parse(Options.GetOption("Value", "1"));
 			}
 			set
 			{
@@ -44,6 +35,27 @@ namespace VisualProcessors.Processing
 				Options.SetOption("Value", value.ToString());
 			}
 		}
+
+		#endregion Options
+
+		#endregion Properties
+
+		#region Constructor
+
+		public DirectInputProcessor()
+		{
+		}
+
+		public DirectInputProcessor(Pipeline pipeline, string name)
+			: base(pipeline, name)
+		{
+			AddInputChannel("DNC", false);
+			AddOutputChannel("Output");
+		}
+
+		#endregion Constructor
+
+		#region Methods
 
 		public override void GetUserInterface(Panel panel)
 		{
@@ -75,5 +87,7 @@ namespace VisualProcessors.Processing
 		{
 			Value = (int)(sender as NumericInputPanel).InputValue;
 		}
+
+		#endregion Methods
 	}
 }

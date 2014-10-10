@@ -56,7 +56,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return Options.GetOption("Code");
+				return Options.GetOption("Code",DefaultCode);
 			}
 			set
 			{
@@ -130,7 +130,6 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output4");
 			AddOutputChannel("Output5");
 
-			Code = DefaultCode;
 			Usings.Add("System");
 			Usings.Add("System.Threading");
 			Usings.Add("VisualProcessors.Processing");
@@ -288,13 +287,13 @@ namespace VisualProcessors.Processing
 			{
 				if (key.StartsWith("Assembly_"))
 				{
-					Assemblies.Add(Assembly.Load(Options.GetOption(key)));
+					Assemblies.Add(Assembly.Load(Options.GetOption(key,null)));
 					removeQueue.Add(key);
 					continue;
 				}
 				if (key.StartsWith("Using_"))
 				{
-					Usings.Add(Options.GetOption(key));
+					Usings.Add(Options.GetOption(key,null));
 					removeQueue.Add(key);
 					continue;
 				}

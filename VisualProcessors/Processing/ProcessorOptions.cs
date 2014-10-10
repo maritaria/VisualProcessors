@@ -36,7 +36,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return GetOption(key);
+				return GetOption(key,null);
 			}
 			set
 			{
@@ -48,8 +48,9 @@ namespace VisualProcessors.Processing
 		///  Gets the value of a stored option
 		/// </summary>
 		/// <param name="key">The key to access the option by</param>
-		/// <returns>The value of the option, or null if the option is not set</returns>
-		public string GetOption(string key)
+		/// <param name="alt">The default value to return if the option is not found</param>
+		/// <returns>The value of the option, or alt if the option is not set</returns>
+		public string GetOption(string key, string alt)
 		{
 			foreach (Option o in m_Options)
 			{
@@ -58,7 +59,7 @@ namespace VisualProcessors.Processing
 					return o.Value;
 				}
 			}
-			return null;
+			return alt;
 		}
 
 		/// <summary>

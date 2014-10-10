@@ -20,7 +20,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return int.Parse(Options.GetOption("Frequency"));
+				return int.Parse(Options.GetOption("Frequency","1"));
 			}
 			set
 			{
@@ -36,7 +36,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return int.Parse(Options.GetOption("Value"));
+				return int.Parse(Options.GetOption("Value","0"));
 			}
 			set
 			{
@@ -55,16 +55,12 @@ namespace VisualProcessors.Processing
 		public PulseProcessor()
 			: base()
 		{
-			Frequency = 1;
-			Value = 0;
 		}
 
 		public PulseProcessor(Pipeline p, string name)
 			: base(p, name)
 		{
 			AddOutputChannel("Output");
-			Frequency = 1;
-			Value = 0;
 		}
 
 		#endregion Constructor
