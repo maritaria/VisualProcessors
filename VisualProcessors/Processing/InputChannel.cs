@@ -146,7 +146,7 @@ namespace VisualProcessors.Processing
 			}
 			if (IsOptional)
 			{
-				if (!HasData())
+				if (!HasValue())
 				{
 					return OptionalDefault;
 				}
@@ -162,7 +162,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets whether there is data in the queue ready to be read
 		/// </summary>
-		public bool HasData()
+		public bool HasValue()
 		{
 			//Don't need to lock if the inputchannel is a constant
 			if (IsConstant)

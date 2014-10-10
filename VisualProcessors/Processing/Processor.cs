@@ -428,7 +428,7 @@ namespace VisualProcessors.Processing
 				{
 					if (!input.IsOptional)
 					{
-						ready &= input.HasData();
+						ready &= input.HasValue();
 					}
 				}
 				if (ready)

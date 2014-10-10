@@ -114,7 +114,7 @@ namespace VisualProcessors.Processing
 		private void ReadAndWrite(InputChannel source, RollingPointPairList list)
 		{
 			double val = 0;
-			if (source.HasData())
+			if (source.HasValue())
 			{
 				val = source.GetValue();
 			}
