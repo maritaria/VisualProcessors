@@ -14,14 +14,17 @@ namespace VisualProcessors.Processing
 
 		public Processor Source { get; private set; }
 
+		public bool AskConfirmation { get; private set; }
+
 		#endregion Properties
 
 		#region Constructor
 
-		public ProcessorModifiedEventArgs(Processor source, bool shouldHalt)
+		public ProcessorModifiedEventArgs(Processor source, bool shouldHalt, bool askConfirmation)
 		{
 			Source = source;
 			ShouldHalt = shouldHalt;
+			AskConfirmation = askConfirmation;
 		}
 
 		#endregion Constructor
