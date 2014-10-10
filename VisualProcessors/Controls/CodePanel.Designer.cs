@@ -34,11 +34,10 @@
 			this.ButtonPanel = new System.Windows.Forms.Panel();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.LoadButton = new System.Windows.Forms.Button();
+			this.DefaultCodeButton = new System.Windows.Forms.Button();
 			this.CompileButton = new System.Windows.Forms.Button();
-			this.ApplyButton = new System.Windows.Forms.Button();
 			this.LoadCodeDialog = new System.Windows.Forms.OpenFileDialog();
 			this.SaveCodeDialog = new System.Windows.Forms.SaveFileDialog();
-			this.DefaultCodeButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
 			this.MainSplitContainer.Panel1.SuspendLayout();
 			this.MainSplitContainer.Panel2.SuspendLayout();
@@ -56,7 +55,7 @@
 			this.CodeBox.Multiline = true;
 			this.CodeBox.Name = "CodeBox";
 			this.CodeBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.CodeBox.Size = new System.Drawing.Size(554, 193);
+			this.CodeBox.Size = new System.Drawing.Size(554, 216);
 			this.CodeBox.TabIndex = 0;
 			this.CodeBox.WordWrap = false;
 			this.CodeBox.TextChanged += new System.EventHandler(this.CodeBox_TextChanged);
@@ -70,7 +69,7 @@
 			this.ErrorList.IntegralHeight = false;
 			this.ErrorList.Location = new System.Drawing.Point(0, 0);
 			this.ErrorList.Name = "ErrorList";
-			this.ErrorList.Size = new System.Drawing.Size(439, 115);
+			this.ErrorList.Size = new System.Drawing.Size(439, 92);
 			this.ErrorList.TabIndex = 1;
 			// 
 			// MainSplitContainer
@@ -90,9 +89,9 @@
 			// 
 			this.MainSplitContainer.Panel2.Controls.Add(this.ErrorList);
 			this.MainSplitContainer.Panel2.Controls.Add(this.ButtonPanel);
-			this.MainSplitContainer.Panel2MinSize = 114;
+			this.MainSplitContainer.Panel2MinSize = 91;
 			this.MainSplitContainer.Size = new System.Drawing.Size(554, 312);
-			this.MainSplitContainer.SplitterDistance = 193;
+			this.MainSplitContainer.SplitterDistance = 216;
 			this.MainSplitContainer.TabIndex = 2;
 			// 
 			// ButtonPanel
@@ -101,11 +100,10 @@
 			this.ButtonPanel.Controls.Add(this.LoadButton);
 			this.ButtonPanel.Controls.Add(this.DefaultCodeButton);
 			this.ButtonPanel.Controls.Add(this.CompileButton);
-			this.ButtonPanel.Controls.Add(this.ApplyButton);
 			this.ButtonPanel.Dock = System.Windows.Forms.DockStyle.Right;
 			this.ButtonPanel.Location = new System.Drawing.Point(439, 0);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(115, 115);
+			this.ButtonPanel.Size = new System.Drawing.Size(115, 92);
 			this.ButtonPanel.TabIndex = 2;
 			// 
 			// SaveButton
@@ -130,6 +128,17 @@
 			this.LoadButton.UseVisualStyleBackColor = true;
 			this.LoadButton.Click += new System.EventHandler(this.LoadButton_Click);
 			// 
+			// DefaultCodeButton
+			// 
+			this.DefaultCodeButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.DefaultCodeButton.Location = new System.Drawing.Point(0, 46);
+			this.DefaultCodeButton.Name = "DefaultCodeButton";
+			this.DefaultCodeButton.Size = new System.Drawing.Size(115, 23);
+			this.DefaultCodeButton.TabIndex = 4;
+			this.DefaultCodeButton.Text = "Default Code";
+			this.DefaultCodeButton.UseVisualStyleBackColor = true;
+			this.DefaultCodeButton.Click += new System.EventHandler(this.DefaultCodeButton_Click);
+			// 
 			// CompileButton
 			// 
 			this.CompileButton.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -140,18 +149,6 @@
 			this.CompileButton.Text = "Compile";
 			this.CompileButton.UseVisualStyleBackColor = true;
 			this.CompileButton.Click += new System.EventHandler(this.CompileButton_Click);
-			// 
-			// ApplyButton
-			// 
-			this.ApplyButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.ApplyButton.Enabled = false;
-			this.ApplyButton.Location = new System.Drawing.Point(0, 92);
-			this.ApplyButton.Name = "ApplyButton";
-			this.ApplyButton.Size = new System.Drawing.Size(115, 23);
-			this.ApplyButton.TabIndex = 3;
-			this.ApplyButton.Text = "Apply";
-			this.ApplyButton.UseVisualStyleBackColor = true;
-			this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
 			// 
 			// LoadCodeDialog
 			// 
@@ -166,17 +163,6 @@
 			this.SaveCodeDialog.Filter = "Code file|*.cs|All files|*.*";
 			this.SaveCodeDialog.Title = "Save Code";
 			this.SaveCodeDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveCodeDialog_FileOk);
-			// 
-			// DefaultCodeButton
-			// 
-			this.DefaultCodeButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.DefaultCodeButton.Location = new System.Drawing.Point(0, 46);
-			this.DefaultCodeButton.Name = "DefaultCodeButton";
-			this.DefaultCodeButton.Size = new System.Drawing.Size(115, 23);
-			this.DefaultCodeButton.TabIndex = 4;
-			this.DefaultCodeButton.Text = "Default Code";
-			this.DefaultCodeButton.UseVisualStyleBackColor = true;
-			this.DefaultCodeButton.Click += new System.EventHandler(this.DefaultCodeButton_Click);
 			// 
 			// CodePanel
 			// 
@@ -204,7 +190,6 @@
 		private System.Windows.Forms.Button SaveButton;
 		private System.Windows.Forms.Button LoadButton;
 		private System.Windows.Forms.Button CompileButton;
-		private System.Windows.Forms.Button ApplyButton;
 		private System.Windows.Forms.OpenFileDialog LoadCodeDialog;
 		private System.Windows.Forms.SaveFileDialog SaveCodeDialog;
 		private System.Windows.Forms.Button DefaultCodeButton;

@@ -17,10 +17,8 @@ namespace VisualProcessors.Controls
 	{
 		#region Properties
 
-		private bool m_Applied = false;
 		private bool m_CodeChanged = false;
 		private CodeProcessor m_CodeProcessor;
-		private UserCodeContext m_UserCodeContext;
 
 		public CodeProcessor CodeProcessor
 		{
@@ -44,7 +42,6 @@ namespace VisualProcessors.Controls
 			InitializeComponent();
 			SaveCodeDialog.InitialDirectory = Application.StartupPath;
 			LoadCodeDialog.InitialDirectory = Application.StartupPath;
-			m_UserCodeContext = new UserCodeContext();
 		}
 
 		public CodePanel(CodeProcessor cp)
@@ -60,20 +57,7 @@ namespace VisualProcessors.Controls
 		#endregion Methods
 
 		#region Event Handlers
-
-		private void ApplyButton_Click(object sender, EventArgs e)
-		{
-			if (!m_Applied)
-			{
-				CodeProcessor.ProcessFunction = m_UserCodeContext.ProcessFunction;
-				CodeProcessor.PrepareFunction = m_UserCodeContext.PrepareFunction;
-				CodeProcessor.Code = CodeBox.Text;
-				ErrorList.Items.Add("[Processor Updated]");
-				ApplyButton.Enabled = false;
-				m_Applied = true;
-			}
-		}
-
+		
 		private void CodeBox_DragDrop(object sender, DragEventArgs e)
 		{
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -102,24 +86,22 @@ namespace VisualProcessors.Controls
 
 		private void CompileButton_Click(object sender, EventArgs e)
 		{
-			m_UserCodeContext.UserCode = CodeBox.Text;
-			bool success = m_UserCodeContext.Compile();
+			CodeProcessor.Code = CodeBox.Text;
+			bool success = CodeProcessor.Compile();
 			ErrorList.Items.Clear();
 			CompileButton.Enabled = false;
-			ApplyButton.Enabled = success;
 			m_CodeChanged = false;
-			m_Applied = false;
 			if (success)
 			{
 				ErrorList.Items.Add("[Compiled Succesfully]");
 				CompileButton.Enabled = false;
 			}
-			foreach (CompilerError error in m_UserCodeContext.CompileErrors)
+			foreach (CompilerError error in CodeProcessor.Errors)
 			{
 				string msg = "Error:" + error.Line + " " + error.ErrorText;
 				ErrorList.Items.Add(msg);
 			}
-			foreach (CompilerError warning in m_UserCodeContext.CompileWarnings)
+			foreach (CompilerError warning in CodeProcessor.Warnings)
 			{
 				string msg = "Warning:" + warning.Line + " " + warning.ErrorText;
 				ErrorList.Items.Add(msg);
@@ -170,9 +152,7 @@ namespace VisualProcessors.Controls
 			if (!m_CodeChanged)
 			{
 				CompileButton.Enabled = true;
-				ApplyButton.Enabled = false;
 				m_CodeChanged = true;
-				m_Applied = false;
 				ErrorList.Items.Add("[Code modified]");
 			}
 			CodeProcessor.Code = CodeBox.Text;

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.CSharp;
+using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,7 +15,7 @@ namespace VisualProcessors.Processing
 {
 	[ProcessorAttribute("Bram Kamies", "Allows user C# code to be executed during simulations", "Input1", "Output1",
 		AllowOptionalInputs = true,
-		SettingsTabLabel="Code")]
+		SettingsTabLabel = "Code")]
 	public class CodeProcessor : Processor
 	{
 		#region Properties
@@ -22,6 +25,28 @@ namespace VisualProcessors.Processing
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine + Environment.NewLine +
 			"public static void Prepare(CodeProcessor processor)" + Environment.NewLine +
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine;
+
+		private List<Assembly> m_Assemblies = new List<Assembly>();
+		private List<CompilerError> m_Errors = new List<CompilerError>();
+		private bool m_IsCompiled;
+		private List<string> m_Usings = new List<string>();
+		private List<CompilerError> m_Warnings = new List<CompilerError>();
+		private string m_ChachedCode = "";
+		public List<Assembly> Assemblies
+		{
+			get
+			{
+				return m_Assemblies;
+			}
+		}
+
+		public string Classname
+		{
+			get
+			{
+				return "UserCode";
+			}
+		}
 
 		/// <summary>
 		///  Gets or sets the code stored in the processor. To use the code, compile it into a
@@ -40,6 +65,22 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		public List<CompilerError> Errors
+		{
+			get
+			{
+				return m_Errors;
+			}
+		}
+
+		public string Namespace
+		{
+			get
+			{
+				return "VisualProcessors.UserCode";
+			}
+		}
+
 		/// <summary>
 		///  Gets or sets the function executed when the CodeProcessor needs to prepare for a new
 		///  simulation
@@ -50,6 +91,22 @@ namespace VisualProcessors.Processing
 		///  Gets or sets the function executed when the CodeProcessor needs to process data.
 		/// </summary>
 		public Action<CodeProcessor> ProcessFunction { get; set; }
+
+		public List<string> Usings
+		{
+			get
+			{
+				return m_Usings;
+			}
+		}
+
+		public List<CompilerError> Warnings
+		{
+			get
+			{
+				return m_Warnings;
+			}
+		}
 
 		#endregion Properties
 
@@ -74,6 +131,12 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output5");
 
 			Code = DefaultCode;
+			Usings.Add("System");
+			Usings.Add("System.Threading");
+			Usings.Add("VisualProcessors.Processing");
+			Assemblies.Add(Assembly.GetAssembly(typeof(int)));//mscorlib
+			Assemblies.Add(Assembly.GetAssembly(typeof(System.Xml.XmlAttribute)));//System.Xml namespace
+			Assemblies.AddRange(Program.ProcessorAssemblies);
 		}
 
 		#endregion Constructor
@@ -90,6 +153,14 @@ namespace VisualProcessors.Processing
 
 		protected override void Prepare()
 		{
+			if (!m_IsCompiled)
+			{
+				throw new Exception("Uncompiled code");
+			}
+			if (m_ChachedCode!=Code)
+			{
+				OnWarning("Code changed");
+			}
 			base.Prepare();
 			if (PrepareFunction != null)
 			{
@@ -99,7 +170,7 @@ namespace VisualProcessors.Processing
 				}
 				catch (Exception e)
 				{
-					OnError("The Prepare() function threw an exception!" + Environment.NewLine + e.Message);
+					throw new Exception("The Prepare() function threw an exception!" + Environment.NewLine + e.Message);
 				}
 			}
 		}
@@ -120,5 +191,133 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion Methods
+
+		#region Compiling
+
+		public bool Compile()
+		{
+			m_IsCompiled = false;
+			m_ChachedCode = Code;
+			m_Errors.Clear();
+			PrepareFunction = null;
+			ProcessFunction = null;
+			CSharpCodeProvider provider = new CSharpCodeProvider();
+			CompilerParameters parameters = new CompilerParameters();
+			foreach (Assembly asm in Assemblies)
+			{
+				parameters.ReferencedAssemblies.Add(asm.Location);
+			}
+			parameters.GenerateInMemory = true;
+			parameters.GenerateExecutable = false;
+
+			//Compile
+			CompilerResults results = provider.CompileAssemblyFromSource(parameters, GenerateCode(Code));
+
+			//Report errors and warnings
+			if (results.Errors.HasErrors)
+			{
+				foreach (CompilerError error in results.Errors)
+				{
+					if (error.IsWarning)
+					{
+						Warnings.Add(error);
+					}
+					else
+					{
+						Errors.Add(error);
+					}
+				}
+				return false;
+			}
+			foreach (CompilerError error in results.Errors)
+			{
+				if (error.IsWarning)
+				{
+					Errors.Add(error);
+				}
+			}
+
+			//Bind function
+			Assembly assembly = results.CompiledAssembly;
+			Type program = assembly.GetType(Namespace + "." + Classname);
+			MethodInfo process = program.GetMethod("Process");
+			if (process == null)
+			{
+				Errors.Add(new CompilerError("userinput", 1, 1, "0", "No function 'Process' is defined"));
+				return false;
+			}
+			else
+			{
+				ProcessFunction = (Action<CodeProcessor>)Delegate.CreateDelegate(typeof(Action<CodeProcessor>), process);
+			}
+			MethodInfo prepare = program.GetMethod("Prepare");
+			if (prepare == null)
+			{
+				Warnings.Add(new CompilerError("userinput", 1, 1, "0", "No function 'Prepare' is defined"));
+			}
+			else
+			{
+				PrepareFunction = (Action<CodeProcessor>)Delegate.CreateDelegate(typeof(Action<CodeProcessor>), prepare);
+			}
+			m_IsCompiled = true;
+			return true;
+		}
+
+		private string GenerateCode(string usercode)
+		{
+			string result = "";
+			foreach (string use in Usings)
+			{
+				result += "using " + use + ";";
+			}
+			string classcode = "class " + Classname + "{" + usercode + "}";
+			result += "namespace " + Namespace + "{" + classcode + "}";
+			return result;
+		}
+
+		#endregion Compiling
+		#region Serialization
+
+		public override void ReadXml(XmlReader reader)
+		{
+			//After the options have been read, get all the assemblies and usings and put them in our lists, then remove the options from the Options object
+			base.ReadXml(reader);
+			IEnumerable<string> keys = Options.GetKeys();
+			List<string> removeQueue = new List<string>();
+			foreach(string key in keys)
+			{
+				if (key.StartsWith("Assembly_"))
+				{
+					Assemblies.Add(Assembly.Load(Options.GetOption(key)));
+					removeQueue.Add(key);
+					continue;
+				}
+				if (key.StartsWith("Using_"))
+				{
+					Usings.Add(Options.GetOption(key));
+					removeQueue.Add(key);
+					continue;
+				}
+			}
+			foreach(string key in removeQueue)
+			{
+				Options.ClearOption(key);
+			}
+		}
+		public override void WriteXml(XmlWriter writer)
+		{
+			//Add the lists of assemblies and usings to the options, for ease
+			for (int i = 0; i < Assemblies.Count; i++)
+			{
+				Options.SetOption("Assembly_" + i.ToString(), Assemblies[i].FullName);
+			}
+			for (int i = 0; i < Usings.Count; i++)
+			{
+				Options.SetOption("Using_" + i.ToString(), Usings[i]);
+			}
+			base.WriteXml(writer);
+		}
+
+		#endregion
 	}
 }
