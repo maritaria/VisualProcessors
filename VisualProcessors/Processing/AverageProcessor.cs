@@ -13,8 +13,10 @@ namespace VisualProcessors.Processing
 	[ProcessorAttribute("Bram Kamies", "Calculates the average of a signal over time", "Input", "Output")]
 	public class AverageProcessor : Processor
 	{
+		#region Properties
 		private List<double> m_History = new List<double>();
-
+		#endregion
+		#region Constructor
 		public AverageProcessor()
 		{
 		}
@@ -29,6 +31,8 @@ namespace VisualProcessors.Processing
 			hsize.ConstantValue = 1;
 			AddOutputChannel("Output");
 		}
+		#endregion
+		#region Methods
 
 		protected override void Process()
 		{
@@ -46,5 +50,6 @@ namespace VisualProcessors.Processing
 			}
 			GetOutputChannel("Output").WriteValue(b / historySize);
 		}
+		#endregion
 	}
 }

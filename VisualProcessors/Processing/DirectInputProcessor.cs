@@ -18,6 +18,7 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
+		#endregion Properties
 		#region Options
 
 		public int Value
@@ -38,7 +39,6 @@ namespace VisualProcessors.Processing
 
 		#endregion Options
 
-		#endregion Properties
 
 		#region Constructor
 

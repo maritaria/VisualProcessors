@@ -135,6 +135,10 @@ namespace VisualProcessors.Processing
 		{
 			foreach (Option o in m_Options)
 			{
+				if (o.Value==null)
+				{
+					continue;
+				}
 				writer.WriteStartElement("Option");
 				writer.WriteAttributeString("Key", StringSerialize(o.Key));
 				writer.WriteValue(StringSerialize(o.Value));

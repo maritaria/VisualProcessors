@@ -21,11 +21,15 @@ namespace VisualProcessors.Processing
 		private bool m_OutputSet = false;
 		private bool m_Overwrite = true;
 
+		#endregion Properties
+
+		#region Options
+
 		public string FilePath
 		{
 			get
 			{
-				return Options.GetOption("FilePath","");
+				return Options.GetOption("FilePath", "");
 			}
 			set
 			{
@@ -47,7 +51,7 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		#endregion Properties
+		#endregion Options
 
 		#region Constructor
 

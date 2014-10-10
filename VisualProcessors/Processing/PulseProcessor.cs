@@ -16,11 +16,15 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
+
+		#endregion Properties
+		#region Options
+
 		public int Frequency
 		{
 			get
 			{
-				return int.Parse(Options.GetOption("Frequency","1"));
+				return int.Parse(Options.GetOption("Frequency", "1"));
 			}
 			set
 			{
@@ -36,7 +40,7 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return int.Parse(Options.GetOption("Value","0"));
+				return int.Parse(Options.GetOption("Value", "0"));
 			}
 			set
 			{
@@ -47,8 +51,7 @@ namespace VisualProcessors.Processing
 				Options.SetOption("Value", value.ToString());
 			}
 		}
-
-		#endregion Properties
+		#endregion
 
 		#region Constructor
 
