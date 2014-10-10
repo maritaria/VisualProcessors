@@ -90,6 +90,7 @@ namespace VisualProcessors.Forms
 			//Input
 			ProcessorInputView.Pipeline = PipelineForm;
 			ProcessorInputView.Processor = Processor;
+			InputTab.Text = Processor.InputTabLabel;
 			if (Processor.HideInputTab)
 			{
 				Tabs.TabPages.Remove(InputTab);
@@ -106,6 +107,7 @@ namespace VisualProcessors.Forms
 			//Output
 			ProcessorOutputView.Pipeline = PipelineForm;
 			ProcessorOutputView.Processor = Processor;
+			OutputTab.Text = Processor.OutputTabLabel;
 			if (Processor.HideOutputTab)
 			{
 				Tabs.TabPages.Remove(OutputTab);

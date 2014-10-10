@@ -258,6 +258,7 @@ namespace VisualProcessors.Processing
 				return Meta.HideSettingsTab;
 			}
 		}
+
 		/// <summary>
 		/// Gets the preferred name for the 'Settings' tab
 		/// </summary>
@@ -266,6 +267,26 @@ namespace VisualProcessors.Processing
 			get
 			{
 				return Meta.SettingsTabLabel;
+			}
+		}
+		/// <summary>
+		/// Gets the preferred name for the 'Input' tab
+		/// </summary>
+		public string InputTabLabel
+		{
+			get
+			{
+				return Meta.InputTabLabel;
+			}
+		}
+		/// <summary>
+		/// Gets the preferred name for the 'Output' tab
+		/// </summary>
+		public string OutputTabLabel
+		{
+			get
+			{
+				return Meta.OutputTabLabel;
 			}
 		}
 
