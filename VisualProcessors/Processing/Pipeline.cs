@@ -82,7 +82,7 @@ namespace VisualProcessors.Processing
 				{
 					Stop();
 				}
-				p.Modified += ProcessorModified;
+				p.Modified += OnProcessorModified;
 				p.Error += OnError;
 				p.Warning += OnWarning;
 				if (GetByName(p.Name) == null)
@@ -227,6 +227,9 @@ namespace VisualProcessors.Processing
 			foreach (Processor p in m_Processors)
 			{
 				p.Build(this);
+				p.Modified += OnProcessorModified;
+				p.Error += OnError;
+				p.Warning += OnWarning;
 			}
 			foreach (Processor p in m_Processors)
 			{
@@ -252,7 +255,13 @@ namespace VisualProcessors.Processing
 		///  Invoked whenever a Processor invokes their Modified event.
 		/// </summary>
 		public event EventHandler<ProcessorModifiedEventArgs> ProcessorModified;
-
+		private void OnProcessorModified(object sender, ProcessorModifiedEventArgs e)
+		{
+			if (ProcessorModified!=null)
+			{
+				ProcessorModified(this, e);
+			}
+		}
 		/// <summary>
 		///  Invoked just after a processor is removed from the pipeline.
 		/// </summary>

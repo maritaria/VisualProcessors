@@ -562,6 +562,7 @@ namespace VisualProcessors.Forms
 
 		private void PipelineModification(object sender, ProcessorModifiedEventArgs e)
 		{
+			Console.WriteLine(e.Source.Name, e.HaltType.ToString());
 			IsSaved = false;
 			if (e.HaltType == HaltTypes.ShouldHalt)
 			{
