@@ -77,7 +77,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Determines the title of the 'Input' tab
 		/// </summary>
-		public string InputTabTitle;
+		public string InputTabTitle = "Input";
 
 		/// <summary>
 		///  Determines the display of the 'Output' TabPage on the ProcessorForm of this type of
@@ -88,7 +88,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Determines the title of the 'Output' tab
 		/// </summary>
-		public string OutputTabTitle;
+		public string OutputTabTitle = "Output";
 
 		/// <summary>
 		///  Determines the display of the 'Properties' TabPage on the ProcessorForm of this type of
