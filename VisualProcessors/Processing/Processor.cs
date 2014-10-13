@@ -84,13 +84,16 @@ namespace VisualProcessors.Processing
 			}
 			set
 			{
-				if (value == m_Name)
+				if (Pipeline != null)
 				{
-					return;
-				}
-				if (Pipeline.IsProcessorNameTaken(value))
-				{
-					throw new ArgumentException("The name is already taken by another processor");
+					if (value == m_Name)
+					{
+						return;
+					}
+					if (Pipeline.IsProcessorNameTaken(value))
+					{
+						throw new ArgumentException("The name is already taken by another processor");
+					}
 				}
 				string old = m_Name;
 				m_Name = value;
