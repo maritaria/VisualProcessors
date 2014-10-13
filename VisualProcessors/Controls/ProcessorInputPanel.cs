@@ -105,13 +105,13 @@ namespace VisualProcessors.Controls
 				{
 					InputChannel channel = m_Processor.GetInputChannel(channelname);
 					int i = InputChannelList.Items.Add(channel.Name);
-					if (channelname == m_Processor.DefaultInput)
+					if (channelname == m_Processor.Meta.DefaultInput)
 					{
 						index = i;
 					}
 				}
 				InputChannelList.SelectedIndex = index;
-				OptionalCheckBox.Enabled = m_Processor.AllowOptionalInputs;
+				OptionalCheckBox.Enabled = m_Processor.Meta.AllowOptionalInputs;
 			}
 			UpdateLinkData(this, EventArgs.Empty);
 		}

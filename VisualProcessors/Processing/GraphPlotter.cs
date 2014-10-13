@@ -12,9 +12,10 @@ using ZedGraph;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
-		AllowOptionalInputs = true, HideOutputTab = true,
-		SettingsTabLabel="Graph")]
+	[ProcessorMeta("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
+		AllowOptionalInputs = true,
+		CustomTabTitle="Graph",
+		OutputTabMode = ProcessorTabMode.Hidden)]
 	public class GraphPlotter : Processor
 	{
 		#region Properties

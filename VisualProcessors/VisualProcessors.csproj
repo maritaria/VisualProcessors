@@ -40,6 +40,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -55,36 +56,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\DoubleInputPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DoubleInputPanel.Designer.cs">
-      <DependentUpon>DoubleInputPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\FilepathInputPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FilepathInputPanel.Designer.cs">
-      <DependentUpon>FilepathInputPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\IntegerInputPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\IntegerInputPanel.Designer.cs">
-      <DependentUpon>IntegerInputPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\NumericInputPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\NumericInputPanel.Designer.cs">
-      <DependentUpon>NumericInputPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\StringInputPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\StringInputPanel.Designer.cs">
-      <DependentUpon>StringInputPanel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\CodePanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -116,6 +87,12 @@
       <DependentUpon>AssemblyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\BranchOperation.cs" />
+    <Compile Include="Forms\SerialPortForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SerialPortForm.Designer.cs">
+      <DependentUpon>SerialPortForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Processing\SerialPortProcessor.cs" />
     <Compile Include="Processing\DeltaProcessor.cs" />
     <Compile Include="Processing\CSVProcessor.cs" />
@@ -156,19 +133,10 @@
     <Compile Include="Processing\OutputChannel.cs" />
     <Compile Include="Processing\Pipeline.cs" />
     <Compile Include="Processing\Processor.cs" />
-    <Compile Include="Processing\ProcessorAttribute.cs" />
+    <Compile Include="Processing\ProcessorMetaAttribute.cs" />
     <Compile Include="Processing\XmlAnything.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Controls\FilepathInputPanel.resx">
-      <DependentUpon>FilepathInputPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\NumericInputPanel.resx">
-      <DependentUpon>NumericInputPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\StringInputPanel.resx">
-      <DependentUpon>StringInputPanel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\CodePanel.resx">
       <DependentUpon>CodePanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -192,6 +160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProcessorForm.resx">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SerialPortForm.resx">
+      <DependentUpon>SerialPortForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

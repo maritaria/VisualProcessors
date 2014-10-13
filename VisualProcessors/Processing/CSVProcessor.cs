@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,8 +11,9 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Writes the input to a .csv file", "Value1", "WritePulse",
-		HideOutputTab = true, DefaultInput = "1")]
+	[ProcessorMeta("Bram Kamies", "Writes the input to a .csv file", "1", "",
+		CustomTabMode = ProcessorTabMode.Hidden,
+		OutputTabMode = ProcessorTabMode.Hidden)]
 	public class CSVProcessor : Processor
 	{
 		#region Properties
@@ -25,6 +27,45 @@ namespace VisualProcessors.Processing
 
 		#region Options
 
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Columns")]
+		[Category("Settings")]
+		[Description("The number of values to write per row")]
+		[DefaultValue(1)]
+		public int ColumnCount
+		{
+			get
+			{
+				return InputChannelCount;
+			}
+			set
+			{
+				if (value <= 0)
+				{
+					throw new ArgumentOutOfRangeException("ColumnCount cannot be zero or negative");
+				}
+				int count = InputChannelCount;
+				while (count > value)
+				{
+					RemoveInputChannel(GetInputChannel(count.ToString()));
+					count = InputChannelCount;
+				}
+				while (count < value)
+				{
+					AddInputChannel((count + 1).ToString(), false);
+					count = InputChannelCount;
+				}
+			}
+		}
+
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Output file")]
+		[Category("Settings")]
+		[Description("The file to write the input data to")]
+		[DefaultValue("")]
+		[Editor(typeof(System.Windows.Forms.Design.FileNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
 		public string FilePath
 		{
 			get
@@ -33,11 +74,20 @@ namespace VisualProcessors.Processing
 			}
 			set
 			{
+				m_OutputSet = false;
+				ThrowExceptionOnInvalid(value);
+				m_OutputSet = true;
 				Options.SetOption("FilePath", value);
 				OnModified(HaltTypes.ShouldHalt);
 			}
 		}
 
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Column seperator")]
+		[Category("Settings")]
+		[Description("The string to seperate columns by, is not added to the last column")]
+		[DefaultValue("")]
 		public string Seperator
 		{
 			get
@@ -83,31 +133,6 @@ namespace VisualProcessors.Processing
 
 		public override void GetUserInterface(Panel panel)
 		{
-			NumericInputPanel channelInput = new NumericInputPanel();
-			channelInput.Dock = DockStyle.Top;
-			channelInput.InputTitle = "Columns:";
-			channelInput.InputMinimum = 1;
-			channelInput.InputMaximum = 100;
-			channelInput.InputIncrement = 1;
-			channelInput.InputCompleted += channelCountInput_InputCompleted;
-
-			SaveFileDialog fileDialog = new SaveFileDialog();
-			fileDialog.Filter = "CSV-file|*.csv";
-			fileDialog.FileName = Application.StartupPath;
-			FilepathInputPanel fileInput = new FilepathInputPanel("Output file:", fileDialog);
-			fileInput.Dock = DockStyle.Top;
-			fileInput.BrowseComplete += fileInput_BrowseComplete;
-			fileInput.CanBrowse += fileInput_CanBrowse;
-
-			StringInputPanel seperatorInput = new StringInputPanel("Seperator:");
-			seperatorInput.Dock = DockStyle.Top;
-			seperatorInput.InputText = Seperator;
-			seperatorInput.InputCompleted += seperatorInput_InputCompleted;
-
-			panel.Controls.Add(seperatorInput);
-			panel.Controls.Add(channelInput);
-			panel.Controls.Add(fileInput);
-			base.GetUserInterface(panel);
 		}
 
 		public override void Start()
@@ -127,6 +152,52 @@ namespace VisualProcessors.Processing
 			base.Stop();
 			DisposeFileWriter();
 			m_Overwrite = false;
+		}
+
+		public void ThrowExceptionOnInvalid(string path)
+		{
+			if (path == "")
+			{
+				throw new Exception("No output file selected");
+			}
+			FileInfo info = new FileInfo(path);
+			if (!info.Exists)
+			{
+				File.Create(path).Close();
+				info = new FileInfo(path);
+			}
+			if (info.Extension != ".csv")
+			{
+				throw new Exception("File extension is invalid: must be *.csv");
+			}
+			if (info.Attributes.HasFlag(FileAttributes.ReadOnly) || info.IsReadOnly)
+			{
+				throw new Exception("The selected file is a read-only file");
+			}
+			if (info.Attributes.HasFlag(FileAttributes.Directory))
+			{
+				throw new Exception("The selected file is a directory");
+			}
+			if (info.Attributes.HasFlag(FileAttributes.System))
+			{
+				throw new Exception("The selected file is a system-only file");
+			}
+			if (info.Attributes.HasFlag(FileAttributes.Offline))
+			{
+				throw new Exception("The selected file is offline or unavailable");
+			}
+			if (info.Attributes.HasFlag(FileAttributes.Temporary))
+			{
+				//OnWarning("The selected file is a temporary file, it may be removed when the application closes");
+			}
+			if (info.Attributes.HasFlag(FileAttributes.Compressed))
+			{
+				//OnWarning("The selected file is compressed, unknown behaviour on read/write-operations");
+			}
+
+			//This will try to open the file, and immidiatly close it again.
+			//This will throw an exception if the file is in use by another program.
+			info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None).Close();
 		}
 
 		protected override void Prepare()
@@ -183,104 +254,6 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		private void ThrowExceptionOnInvalid(string path)
-		{
-			if (path == "")
-			{
-				throw new Exception("No output file selected");
-			}
-			FileInfo info = new FileInfo(path);
-			if (!info.Exists)
-			{
-				File.Create(path).Close();
-				info = new FileInfo(path);
-			}
-			if (info.Extension != ".csv")
-			{
-				throw new Exception("File extension is invalid: must be *.csv");
-			}
-			if (info.Attributes.HasFlag(FileAttributes.ReadOnly) || info.IsReadOnly)
-			{
-				throw new Exception("The selected file is a read-only file");
-			}
-			if (info.Attributes.HasFlag(FileAttributes.Directory))
-			{
-				throw new Exception("The selected file is a directory");
-			}
-			if (info.Attributes.HasFlag(FileAttributes.System))
-			{
-				throw new Exception("The selected file is a system-only file");
-			}
-			if (info.Attributes.HasFlag(FileAttributes.Offline))
-			{
-				throw new Exception("The selected file is offline or unavailable");
-			}
-			if (info.Attributes.HasFlag(FileAttributes.Temporary))
-			{
-				OnWarning("The selected file is a temporary file, it may be removed when the application closes");
-			}
-			if (info.Attributes.HasFlag(FileAttributes.Compressed))
-			{
-				OnWarning("The selected file is compressed, unknown behaviour on read/write-operations");
-			}
-
-			//This will try to open the file, and immidiatly close it again.
-			//This will throw an exception if the file is in use by another program.
-			info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None).Close();
-		}
-
 		#endregion Methods
-
-		#region Event Handlers
-
-		private void channelCountInput_InputCompleted(object sender, EventArgs e)
-		{
-			int wanted = (int)(sender as NumericInputPanel).InputValue;
-			int count = InputChannelCount;
-			while (count > wanted)
-			{
-				RemoveInputChannel(GetInputChannel(count.ToString()));
-				count = InputChannelCount;
-			}
-			while (count < wanted)
-			{
-				AddInputChannel((count + 1).ToString(), false);
-				count = InputChannelCount;
-			}
-		}
-
-		private void fileInput_BrowseComplete(object sender, FilepathEventArgs e)
-		{
-			e.AcceptPath = true;
-			try
-			{
-				ThrowExceptionOnInvalid(e.FilePath);
-				FilePath = e.FilePath;
-				e.AcceptPath = true;
-				m_OutputSet = true;
-			}
-			catch (Exception ex)
-			{
-				e.AcceptPath = false;
-				m_OutputSet = false;
-				OnError(ex.Message);
-			}
-		}
-
-		private void fileInput_CanBrowse(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if (IsRunning)
-			{
-				DialogResult result = MessageBox.Show("If you want to change the output file, the simulation has to pause, are you sure you want to pause the simulation?", "Pause required", MessageBoxButtons.YesNo);
-				e.Cancel = (result == DialogResult.Yes);//OnModified() will be called when the target file changes
-			}
-		}
-
-		private void seperatorInput_InputCompleted(object sender, EventArgs e)
-		{
-			Seperator = (sender as StringInputPanel).InputText;
-		}
-
-		#endregion Event Handlers
 	}
 }

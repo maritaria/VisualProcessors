@@ -131,7 +131,7 @@ namespace VisualProcessors.Controls
 			{
 				if (processorType.IsSubclassOf(typeof(Processor)))
 				{
-					ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(processorType, typeof(ProcessorAttribute));
+					ProcessorMeta attr = (ProcessorMeta)Attribute.GetCustomAttribute(processorType, typeof(ProcessorMeta));
 					if (attr != null && !attr.AllowUserSpawn)
 					{
 						//If the attribute is not null, and the AllowUserSpawn flag is false, then dont create a button for it

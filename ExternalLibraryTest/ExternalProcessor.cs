@@ -7,7 +7,7 @@ using VisualProcessors.Processing;
 
 namespace ExternalLibraryTest
 {
-	[ProcessorAttribute("Bram Kamies", "This processor is loaded from an external assembly", "Input", "Output")]
+	[ProcessorMeta("Bram Kamies", "This processor is loaded from an external assembly", "Input", "Output")]
 	public class ExternalProcessor : Processor
 	{
 		public ExternalProcessor()

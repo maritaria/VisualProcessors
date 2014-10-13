@@ -89,25 +89,33 @@ namespace VisualProcessors.Forms
 			//Input
 			ProcessorInputView.Pipeline = PipelineForm;
 			ProcessorInputView.Processor = Processor;
-			InputTab.Text = Processor.InputTabLabel;
-			if (Processor.HideInputTab)
+			InputTab.Text = Processor.Meta.InputTabTitle;
+			if (Processor.Meta.InputTabMode == ProcessorTabMode.Hidden)
 			{
 				Tabs.TabPages.Remove(InputTab);
 			}
 
-			//Settings
-			processor.GetUserInterface(SettingsPanel);
-			SettingsTab.Text = Processor.SettingsTabLabel;
-			if (Processor.HideSettingsTab)
+			//Properties
+			PropertiesTab.Text = Processor.Meta.PropertiesTabTitle;
+			PropertyGrid.SelectedObject = Processor;
+			if (Processor.Meta.PropertiesTabMode == ProcessorTabMode.Hidden)
 			{
-				Tabs.TabPages.Remove(SettingsTab);
+				Tabs.TabPages.Remove(PropertiesTab);
+			}
+
+			//Custom
+			processor.GetUserInterface(CustomPanel);
+			CustomTab.Text = Processor.Meta.CustomTabTitle;
+			if (Processor.Meta.CustomTabMode == ProcessorTabMode.Hidden)
+			{
+				Tabs.TabPages.Remove(CustomTab);
 			}
 
 			//Output
 			ProcessorOutputView.Pipeline = PipelineForm;
 			ProcessorOutputView.Processor = Processor;
-			OutputTab.Text = Processor.OutputTabLabel;
-			if (Processor.HideOutputTab)
+			OutputTab.Text = Processor.Meta.OutputTabTitle;
+			if (Processor.Meta.OutputTabMode == ProcessorTabMode.Hidden)
 			{
 				Tabs.TabPages.Remove(OutputTab);
 			}
@@ -142,12 +150,12 @@ namespace VisualProcessors.Forms
 			{
 				case LinkMode.InputFirst:
 					ConfirmLinkButton.Text = "Link Output";
-					ConfirmLinkButton.Enabled = !Processor.HideOutputTab && (Processor.OutputChannelCount > 0);
+					ConfirmLinkButton.Enabled = (Processor.Meta.OutputTabMode != ProcessorTabMode.Hidden) && (Processor.OutputChannelCount > 0);
 					break;
 
 				case LinkMode.OutputFirst:
 					ConfirmLinkButton.Text = "Link Input";
-					ConfirmLinkButton.Enabled = !Processor.HideInputTab && (Processor.InputChannelCount > 0);
+					ConfirmLinkButton.Enabled = (Processor.Meta.InputTabMode != ProcessorTabMode.Hidden) && (Processor.InputChannelCount > 0);
 					break;
 			}
 		}

@@ -61,12 +61,12 @@ namespace VisualProcessors.Forms
 			if (m_Type == ChannelType.InputChannel)
 			{
 				col = Processor.GetInputChannelNames();
-				def = Processor.DefaultInput;
+				def = Processor.Meta.DefaultInput;
 			}
 			else
 			{
 				col = Processor.GetOutputChannelNames();
-				def = Processor.DefaultOutput;
+				def = Processor.Meta.DefaultOutput;
 			}
 			int index = 0;
 			foreach (string cname in col)

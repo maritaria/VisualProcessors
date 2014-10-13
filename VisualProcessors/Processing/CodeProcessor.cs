@@ -2,6 +2,8 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Design;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,13 +15,14 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Allows user C# code to be executed during simulations", "Input1", "Output1",
+	[ProcessorMeta("Bram Kamies", "Allows user C# code to be executed during simulations", "Input1", "Output1",
 		AllowOptionalInputs = true,
-		SettingsTabLabel = "Code")]
+		CustomTabLabel = "Code")]
 	public class CodeProcessor : Processor
 	{
 		#region Properties
 
+		[Browsable(false)]
 		public static string DefaultCode =
 			"public static void Process(CodeProcessor processor)" + Environment.NewLine +
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine + Environment.NewLine +
@@ -27,11 +30,13 @@ namespace VisualProcessors.Processing
 			"{" + Environment.NewLine + "\t" + Environment.NewLine + "}" + Environment.NewLine;
 
 		private List<Assembly> m_Assemblies = new List<Assembly>();
+		private string m_ChachedCode = "";
 		private List<CompilerError> m_Errors = new List<CompilerError>();
 		private bool m_IsCompiled;
 		private List<string> m_Usings = new List<string>();
 		private List<CompilerError> m_Warnings = new List<CompilerError>();
-		private string m_ChachedCode = "";
+
+		[Browsable(false)]
 		public List<Assembly> Assemblies
 		{
 			get
@@ -40,6 +45,7 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		[Browsable(false)]
 		public string Classname
 		{
 			get
@@ -48,23 +54,7 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		/// <summary>
-		///  Gets or sets the code stored in the processor. To use the code, compile it into a
-		///  function and store these in PrepareFunction and ProcessFunction.
-		/// </summary>
-		public string Code
-		{
-			get
-			{
-				return Options.GetOption("Code",DefaultCode);
-			}
-			set
-			{
-				Options.SetOption("Code", value);
-				OnModified(HaltTypes.AskHalt);
-			}
-		}
-
+		[Browsable(false)]
 		public List<CompilerError> Errors
 		{
 			get
@@ -73,6 +63,7 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		[Browsable(false)]
 		public string Namespace
 		{
 			get
@@ -85,21 +76,16 @@ namespace VisualProcessors.Processing
 		///  Gets or sets the function executed when the CodeProcessor needs to prepare for a new
 		///  simulation
 		/// </summary>
+		[Browsable(false)]
 		public Action<CodeProcessor> PrepareFunction { get; set; }
 
 		/// <summary>
 		///  Gets or sets the function executed when the CodeProcessor needs to process data.
 		/// </summary>
+		[Browsable(false)]
 		public Action<CodeProcessor> ProcessFunction { get; set; }
 
-		public List<string> Usings
-		{
-			get
-			{
-				return m_Usings;
-			}
-		}
-
+		[Browsable(false)]
 		public List<CompilerError> Warnings
 		{
 			get
@@ -109,6 +95,43 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion Properties
+
+		#region Options
+
+		/// <summary>
+		///  Gets or sets the code stored in the processor. To use the code, compile it into a
+		///  function and store these in PrepareFunction and ProcessFunction.
+		/// </summary>
+		[Browsable(false)]
+		public string Code
+		{
+			get
+			{
+				return Options.GetOption("Code", DefaultCode);
+			}
+			set
+			{
+				Options.SetOption("Code", value);
+				OnModified(HaltTypes.AskHalt);
+			}
+		}
+
+		[Browsable(true)]
+		[ReadOnly(true)]
+		[DisplayName("Using statements")]
+		[Category("Settings")]
+		[Description("Sets the using statements for the code")]
+		[Editor(@"System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+			typeof(System.Drawing.Design.UITypeEditor))]
+		public List<string> Usings
+		{
+			get
+			{
+				return m_Usings;
+			}
+		}
+
+		#endregion Options
 
 		#region Constructor
 
@@ -156,7 +179,7 @@ namespace VisualProcessors.Processing
 			{
 				throw new Exception("Uncompiled code");
 			}
-			if (m_ChachedCode!=Code)
+			if (m_ChachedCode != Code)
 			{
 				OnWarning("Code changed");
 			}
@@ -275,6 +298,7 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion Compiling
+
 		#region Serialization
 
 		public override void ReadXml(XmlReader reader)
@@ -283,26 +307,27 @@ namespace VisualProcessors.Processing
 			base.ReadXml(reader);
 			IEnumerable<string> keys = Options.GetKeys();
 			List<string> removeQueue = new List<string>();
-			foreach(string key in keys)
+			foreach (string key in keys)
 			{
 				if (key.StartsWith("Assembly_"))
 				{
-					Assemblies.Add(Assembly.Load(Options.GetOption(key,null)));
+					Assemblies.Add(Assembly.Load(Options.GetOption(key, null)));
 					removeQueue.Add(key);
 					continue;
 				}
 				if (key.StartsWith("Using_"))
 				{
-					Usings.Add(Options.GetOption(key,null));
+					Usings.Add(Options.GetOption(key, null));
 					removeQueue.Add(key);
 					continue;
 				}
 			}
-			foreach(string key in removeQueue)
+			foreach (string key in removeQueue)
 			{
 				Options.ClearOption(key);
 			}
 		}
+
 		public override void WriteXml(XmlWriter writer)
 		{
 			//Add the lists of assemblies and usings to the options, for ease
@@ -317,6 +342,6 @@ namespace VisualProcessors.Processing
 			base.WriteXml(writer);
 		}
 
-		#endregion
+		#endregion Serialization
 	}
 }

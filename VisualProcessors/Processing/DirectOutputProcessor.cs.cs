@@ -9,12 +9,18 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Displays a single number on a label", "Input", "",
-		HideOutputTab = true,
-		SettingsTabLabel="Data")]
+	[ProcessorMeta("Bram Kamies", "Displays a single number on a label", "Input", "",
+		OutputTabMode = ProcessorTabMode.Hidden,
+		CustomTabTitle = "Data")]
 	public class DirectOutputProcessor : Processor
 	{
+		#region Properties
+
 		private List<Label> guis = new List<Label>();
+
+		#endregion Properties
+
+		#region Constructor
 
 		public DirectOutputProcessor()
 		{
@@ -26,12 +32,16 @@ namespace VisualProcessors.Processing
 			AddInputChannel("Input", false);
 		}
 
+		#endregion Constructor
+
+		#region Methods
+
 		public override void GetUserInterface(Panel panel)
 		{
 			Label l = new Label();
-			guis.Add(l);
 			l.Text = "No input available yet";
 			l.Dock = DockStyle.Top;
+			guis.Add(l);
 			panel.Controls.Add(l);
 			base.GetUserInterface(panel);
 		}
@@ -45,5 +55,7 @@ namespace VisualProcessors.Processing
 				l.BeginInvoke(action);
 			}
 		}
+
+		#endregion Methods
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -29,11 +30,23 @@ namespace VisualProcessors.Processing
 		///  Gets whether the processor is prepared for processing, if this value is false, the
 		///  Prepare() function will run when the processor is started.
 		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(true)]
+		[DisplayName("Prepared")]
+		[Category("Processor")]
+		[Description("Is processor ready for simulation")]
+		[DefaultValue(true)]
 		public bool IsPrepared { get; protected set; }
 
 		/// <summary>
 		///  Gets whether the processor has a thread running for processing data.
 		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(true)]
+		[DisplayName("Running")]
+		[Category("Processor")]
+		[Description("Is processor running in a simulation")]
+		[DefaultValue(false)]
 		public bool IsRunning
 		{
 			get
@@ -45,6 +58,11 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets or sets the name of the processor, must be unique within the pipeline
 		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(false)]//For now
+		[DisplayName("Name")]
+		[Category("Processor")]
+		[Description("Name of the processor")]
 		public string Name
 		{
 			get
@@ -53,6 +71,14 @@ namespace VisualProcessors.Processing
 			}
 			set
 			{
+				if (value==m_Name)
+				{
+					return;
+				}
+				if (Pipeline.IsProcessorNameTaken(value))
+				{
+					throw new ArgumentException("The name is already taken by another processor");
+				}
 				string old = m_Name;
 				m_Name = value;
 				OnNameChanged(old, value);
@@ -62,6 +88,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets the pipeline the processor belongs to.
 		/// </summary>
+		[Browsable(false)]
 		public Pipeline Pipeline
 		{
 			get
@@ -71,8 +98,21 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
+		/// Gets the ProcessorAttribute of this processor
+		/// </summary>
+		[Browsable(false)]
+		public ProcessorMeta Meta
+		{
+			get
+			{
+				ProcessorMeta attr = (ProcessorMeta)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorMeta));
+				return (attr != null) ? attr : ProcessorMeta.Default;
+			}
+		}
+		/// <summary>
 		///  Gets the options collection for storing data
 		/// </summary>
+		[Browsable(false)]
 		protected ProcessorOptions Options
 		{
 			get
@@ -86,6 +126,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets or sets the Height component of the processors Size property
 		/// </summary>
+		[Browsable(false)]
 		public int Height
 		{
 			get
@@ -101,6 +142,12 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets or sets the location of the processor in the model
 		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(true)]
+		[DisplayName("Location")]
+		[Category("Processor")]
+		[Description("The location of the processor window in the model")]
+		[DefaultValue(false)]
 		public Point Location
 		{
 			get
@@ -117,6 +164,12 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets or sets the size of the processor's form in the model
 		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(true)]
+		[DisplayName("Size")]
+		[Category("Processor")]
+		[Description("The size of the processor window in the model")]
+		[DefaultValue(false)]
 		public Size Size
 		{
 			get
@@ -133,6 +186,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets or sets the Width component of the processors Size property
 		/// </summary>
+		[Browsable(false)]
 		public int Width
 		{
 			get
@@ -148,6 +202,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets or sets the X component of the processors Location property
 		/// </summary>
+		[Browsable(false)]
 		public int X
 		{
 			get
@@ -163,6 +218,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets or sets the Y component of the processors Location property
 		/// </summary>
+		[Browsable(false)]
 		public int Y
 		{
 			get
@@ -176,131 +232,7 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion ProcessorForm
-
-		#region Meta
-
-		public bool AllowOptionalInputs
-		{
-			get
-			{
-				return Meta.AllowOptionalInputs;
-			}
-		}
-
-		public bool AllowUserSpawn
-		{
-			get
-			{
-				return Meta.AllowUserSpawn;
-			}
-		}
-
-		public string Author
-		{
-			get
-			{
-				return Meta.Author;
-			}
-		}
-
-		public string DefaultInput
-		{
-			get
-			{
-				return Meta.DefaultInput;
-			}
-		}
-
-		public string DefaultOutput
-		{
-			get
-			{
-				return Meta.DefaultOutput;
-			}
-		}
-
-		public string Description
-		{
-			get
-			{
-				return Meta.Description;
-			}
-		}
-
-		public bool HasMeta
-		{
-			get
-			{
-				return ((ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute)) != null);
-			}
-		}
-
-		public bool HideInputTab
-		{
-			get
-			{
-				return Meta.HideInputTab;
-			}
-		}
-
-		public bool HideOutputTab
-		{
-			get
-			{
-				return Meta.HideOutputTab;
-			}
-		}
-
-		public bool HideSettingsTab
-		{
-			get
-			{
-				return Meta.HideSettingsTab;
-			}
-		}
-
-		/// <summary>
-		/// Gets the preferred name for the 'Settings' tab
-		/// </summary>
-		public string SettingsTabLabel
-		{
-			get
-			{
-				return Meta.SettingsTabLabel;
-			}
-		}
-		/// <summary>
-		/// Gets the preferred name for the 'Input' tab
-		/// </summary>
-		public string InputTabLabel
-		{
-			get
-			{
-				return Meta.InputTabLabel;
-			}
-		}
-		/// <summary>
-		/// Gets the preferred name for the 'Output' tab
-		/// </summary>
-		public string OutputTabLabel
-		{
-			get
-			{
-				return Meta.OutputTabLabel;
-			}
-		}
-
-		public ProcessorAttribute Meta
-		{
-			get
-			{
-				ProcessorAttribute attr = (ProcessorAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorAttribute));
-				return (attr != null) ? attr : ProcessorAttribute.Default;
-			}
-		}
-
-		#endregion Meta
-
+		
 		#endregion Properties
 
 		#region Constructor
@@ -336,13 +268,6 @@ namespace VisualProcessors.Processing
 
 		public virtual void GetUserInterface(Panel panel)
 		{
-			StringInputPanel input = new StringInputPanel();
-			input.InputCompleted += input_InputCompleted;
-			input.RequestValidation += input_RequestValidation;
-			input.InputTitle = "Name:";
-			input.Dock = DockStyle.Top;
-			input.InputText = Name;
-			panel.Controls.Add(input);
 		}
 
 		/// <summary>
@@ -438,24 +363,7 @@ namespace VisualProcessors.Processing
 				Thread.Sleep(m_ThreadSleep);
 			}
 		}
-
-		private void input_RequestValidation(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if (sender is StringInputPanel)
-			{
-				StringInputPanel panel = sender as StringInputPanel;
-				Processor p = Pipeline.GetByName(panel.InputText);
-				if (p == null)
-				{
-					e.Cancel = false;
-				}
-				else
-				{
-					e.Cancel = (this != p);
-				}
-			}
-		}
-
+		
 		#endregion Methods
 
 		#region InputChannels
@@ -465,6 +373,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets the number of InputChannels the processor has
 		/// </summary>
+		[Browsable(false)]
 		public int InputChannelCount
 		{
 			get
@@ -573,6 +482,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Gets the number of OutputChannels the processor has
 		/// </summary>
+		[Browsable(false)]
 		public int OutputChannelCount
 		{
 			get
@@ -789,7 +699,8 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		///  Invokes the Modified event, tells the pipeline that a simulation should/shouldn't be halted due to the modification
+		///  Invokes the Modified event, tells the pipeline that a simulation should/shouldn't be
+		///  halted due to the modification
 		/// </summary>
 		/// <param name="haltType">Whether and or how to halt the simulation</param>
 		protected void OnModified(HaltTypes haltType)
@@ -915,11 +826,6 @@ namespace VisualProcessors.Processing
 			{
 				OnLinkAdded();
 			}
-		}
-
-		private void input_InputCompleted(object sender, EventArgs e)
-		{
-			Name = (sender as StringInputPanel).InputText;
 		}
 
 		#endregion Event Handlers

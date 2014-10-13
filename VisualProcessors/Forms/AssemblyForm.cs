@@ -64,18 +64,19 @@ namespace VisualProcessors.Forms
 
 					foreach (Attribute attr in Attribute.GetCustomAttributes(t))
 					{
-						if (attr is ProcessorAttribute)
+						if (attr is ProcessorMeta)
 						{
-							ProcessorAttribute pm = attr as ProcessorAttribute;
+							ProcessorMeta pm = attr as ProcessorMeta;
 							InformationList.Items.Add("Author: " + pm.Author);
 							InformationList.Items.Add("Description: " + pm.Description);
 							InformationList.Items.Add("AllowUserSpawn: " + ((pm.AllowUserSpawn) ? "Allowed" : "Denied"));
 							InformationList.Items.Add("AllowOptionalInputs: " + ((pm.AllowOptionalInputs) ? "Allowed" : "Denied"));
 							InformationList.Items.Add("Default InputChannel: " + pm.DefaultInput);
 							InformationList.Items.Add("Default OutputChannel: " + pm.DefaultOutput);
-							InformationList.Items.Add("InputTab: " + ((pm.HideInputTab) ? "Hidden" : "Shown"));
-							InformationList.Items.Add("SettingsTab: " + ((pm.HideSettingsTab) ? "Hidden" : "Shown"));
-							InformationList.Items.Add("OutputTab: " + ((pm.HideOutputTab) ? "Hidden" : "Shown"));
+							InformationList.Items.Add("InputTab: " + pm.InputTabMode.ToString());
+							InformationList.Items.Add("PropertiesTab: " + pm.PropertiesTabMode.ToString());
+							InformationList.Items.Add("CustomTab: " + pm.CustomTabMode.ToString());
+							InformationList.Items.Add("OutputTab: " + pm.OutputTabMode.ToString());
 							break;
 						}
 					}

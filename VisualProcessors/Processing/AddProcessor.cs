@@ -9,7 +9,8 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Adds two values together", "A", "Output")]
+	[ProcessorMeta("Bram Kamies", "Adds two values together", "A", "Output",
+		CustomTabMode = ProcessorTabMode.Hidden)]
 	public class AddProcessor : Processor
 	{
 		#region Properties

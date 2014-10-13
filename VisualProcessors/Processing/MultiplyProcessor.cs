@@ -9,9 +9,16 @@ using System.Xml.Serialization;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Multiplies two values together", "A", "Output")]
+	[ProcessorMeta("Bram Kamies", "Multiplies two values together", "A", "Output",
+		CustomTabMode = ProcessorTabMode.Hidden)]
 	public class MultiplyProcessor : Processor
 	{
+		#region Properties
+
+		#endregion Properties
+
+		#region Constructor
+
 		public MultiplyProcessor()
 		{
 		}
@@ -24,11 +31,17 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output");
 		}
 
+		#endregion Constructor
+
+		#region Methods
+
 		protected override void Process()
 		{
 			double a = GetInputChannel("A").GetValue();
 			double b = GetInputChannel("B").GetValue();
 			GetOutputChannel("Output").WriteValue(a * b);
 		}
+
+		#endregion Methods
 	}
 }

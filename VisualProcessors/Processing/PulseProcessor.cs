@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,16 +11,22 @@ using VisualProcessors.Controls;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorAttribute("Bram Kamies", "Generates a pulse on a fixed interval", "", "Output",
-		HideInputTab = true)]
+	[ProcessorMeta("Bram Kamies", "Generates a pulse on a fixed interval", "", "Output",
+		InputTabMode = ProcessorTabMode.Hidden)]
 	public class PulseProcessor : Processor
 	{
 		#region Properties
 
-
 		#endregion Properties
+
 		#region Options
 
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Frequency")]
+		[Category("Settings")]
+		[Description("The number of pulses per second to write to the OutputChannel")]
+		[DefaultValue(1)]
 		public int Frequency
 		{
 			get
@@ -36,22 +43,25 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		public int Value
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Value")]
+		[Category("Settings")]
+		[Description("The value of a pulse")]
+		[DefaultValue(0)]
+		public double Value
 		{
 			get
 			{
-				return int.Parse(Options.GetOption("Value", "0"));
+				return double.Parse(Options.GetOption("Value", "0"));
 			}
 			set
 			{
-				if (value < 0)
-				{
-					throw new ArgumentOutOfRangeException("value", "Cannot be lower or equal to zero");
-				}
 				Options.SetOption("Value", value.ToString());
 			}
 		}
-		#endregion
+
+		#endregion Options
 
 		#region Constructor
 
@@ -69,30 +79,7 @@ namespace VisualProcessors.Processing
 		#endregion Constructor
 
 		#region Methods
-
-		public override void GetUserInterface(Panel panel)
-		{
-			NumericInputPanel freqInput = new NumericInputPanel();
-			freqInput.Dock = DockStyle.Top;
-			freqInput.InputTitle = "Frequency (Hz):";
-			freqInput.InputMinimum = 1;
-			freqInput.InputMaximum = 100000;
-			freqInput.InputCompleted += freqInput_InputCompleted;
-			freqInput.InputIncrement = 1;
-
-			NumericInputPanel valueInput = new NumericInputPanel();
-			valueInput.Dock = DockStyle.Top;
-			valueInput.InputTitle = "Output value:";
-			valueInput.InputMinimum = -10;
-			valueInput.InputMaximum = 10;
-			valueInput.InputCompleted += valueInput_InputCompleted;
-			valueInput.InputIncrement = 1;
-
-			panel.Controls.Add(valueInput);
-			panel.Controls.Add(freqInput);
-			base.GetUserInterface(panel);
-		}
-
+		
 		protected override void WorkerMethod()
 		{
 			while (true)
@@ -102,15 +89,6 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		private void freqInput_InputCompleted(object sender, EventArgs e)
-		{
-			Frequency = (int)(sender as NumericInputPanel).InputValue;
-		}
-
-		private void valueInput_InputCompleted(object sender, EventArgs e)
-		{
-			Value = (int)(sender as NumericInputPanel).InputValue;
-		}
 
 		#endregion Methods
 
