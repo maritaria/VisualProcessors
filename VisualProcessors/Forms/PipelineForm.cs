@@ -85,7 +85,7 @@ namespace VisualProcessors.Forms
 			}
 			MdiClient.Paint += MdiClientPaintLinks;
 			MdiClient.MouseDown += MdiClientMouseDown;
-			MdiClient.MouseMove += MdiclientMouseMove;
+			MdiClient.MouseMove += MdiClientMouseMove;
 			MdiClient.MouseUp += MdiClientMouseUp;
 			MdiClient.MouseClick += MdiClientMouseClick;
 			m_MdiClientHelper = new MdiClientHelper(m_MdiClient);
@@ -468,7 +468,7 @@ namespace VisualProcessors.Forms
 			Cursor = Cursors.Hand;
 		}
 
-		private void MdiclientMouseMove(object sender, MouseEventArgs e)
+		private void MdiClientMouseMove(object sender, MouseEventArgs e)
 		{
 			if (!m_IsDragging)
 			{
@@ -782,8 +782,5 @@ namespace VisualProcessors.Forms
 
 		#endregion MenuStrip Implementation
 
-		#region Interop
-
-		#endregion Interop
 	}
 }
