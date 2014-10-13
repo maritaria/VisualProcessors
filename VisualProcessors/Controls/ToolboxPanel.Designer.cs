@@ -33,11 +33,9 @@
 			this.ButtonGroupBox = new System.Windows.Forms.GroupBox();
 			this.DescriptionTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.MainHorizontalSplit = new System.Windows.Forms.SplitContainer();
-			this.ProcessorPropertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.ButtonGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MainHorizontalSplit)).BeginInit();
 			this.MainHorizontalSplit.Panel1.SuspendLayout();
-			this.MainHorizontalSplit.Panel2.SuspendLayout();
 			this.MainHorizontalSplit.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -76,21 +74,9 @@
 			// MainHorizontalSplit.Panel1
 			// 
 			this.MainHorizontalSplit.Panel1.Controls.Add(this.ButtonGroupBox);
-			// 
-			// MainHorizontalSplit.Panel2
-			// 
-			this.MainHorizontalSplit.Panel2.Controls.Add(this.ProcessorPropertyGrid);
 			this.MainHorizontalSplit.Size = new System.Drawing.Size(153, 414);
 			this.MainHorizontalSplit.SplitterDistance = 207;
 			this.MainHorizontalSplit.TabIndex = 1;
-			// 
-			// ProcessorPropertyGrid
-			// 
-			this.ProcessorPropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProcessorPropertyGrid.Location = new System.Drawing.Point(0, 0);
-			this.ProcessorPropertyGrid.Name = "ProcessorPropertyGrid";
-			this.ProcessorPropertyGrid.Size = new System.Drawing.Size(153, 203);
-			this.ProcessorPropertyGrid.TabIndex = 0;
 			// 
 			// ToolboxPanel
 			// 
@@ -102,7 +88,6 @@
 			this.Size = new System.Drawing.Size(153, 414);
 			this.ButtonGroupBox.ResumeLayout(false);
 			this.MainHorizontalSplit.Panel1.ResumeLayout(false);
-			this.MainHorizontalSplit.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MainHorizontalSplit)).EndInit();
 			this.MainHorizontalSplit.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -115,7 +100,6 @@
 		private System.Windows.Forms.GroupBox ButtonGroupBox;
 		private System.Windows.Forms.ToolTip DescriptionTooltip;
 		private System.Windows.Forms.SplitContainer MainHorizontalSplit;
-		private System.Windows.Forms.PropertyGrid ProcessorPropertyGrid;
 
 
 	}
