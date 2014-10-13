@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -9,7 +10,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using VisualProcessors.Controls;
-using System.ComponentModel;
 
 namespace VisualProcessors.Processing
 {
@@ -75,7 +75,7 @@ namespace VisualProcessors.Processing
 		{
 			GetOutputChannel("Output").WriteValue(Value);
 		}
-		
+
 		#endregion Methods
 	}
 }

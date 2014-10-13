@@ -46,18 +46,18 @@ namespace ZedGraph
 		private int _mag;
 
 		/// <summary>
+		///  The axis range data for <see cref="Scale.Min" />, <see cref="Scale.Max" />, <see
+		///  cref="Scale.MinorStep" />, and <see cref="Scale.MajorStep" />
+		/// </summary>
+		private double _min, _minorStep, _majorStep, _max;
+
+		/// <summary>
 		///  The status of <see cref="Scale.MinAuto" />, <see cref="Scale.MaxAuto" />, <see
 		///  cref="Scale.MinorStepAuto" />, and <see cref="Scale.MajorStepAuto" />
 		/// </summary>
 		private bool _minAuto, _minorStepAuto,
 							_majorStepAuto, _maxAuto,
 							_formatAuto, _magAuto;
-
-		/// <summary>
-		///  The axis range data for <see cref="Scale.Min" />, <see cref="Scale.Max" />, <see
-		///  cref="Scale.MinorStep" />, and <see cref="Scale.MajorStep" />
-		/// </summary>
-		private double _min, _minorStep, _majorStep, _max;
 
 		/// <summary>
 		///  The status of <see cref="Scale.MajorUnit" /> and <see cref="Scale.MinorUnit" />

@@ -56,6 +56,19 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
+		///  Gets the ProcessorAttribute of this processor
+		/// </summary>
+		[Browsable(false)]
+		public ProcessorMeta Meta
+		{
+			get
+			{
+				ProcessorMeta attr = (ProcessorMeta)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorMeta));
+				return (attr != null) ? attr : ProcessorMeta.Default;
+			}
+		}
+
+		/// <summary>
 		///  Gets or sets the name of the processor, must be unique within the pipeline
 		/// </summary>
 		[Browsable(true)]
@@ -71,7 +84,7 @@ namespace VisualProcessors.Processing
 			}
 			set
 			{
-				if (value==m_Name)
+				if (value == m_Name)
 				{
 					return;
 				}
@@ -97,18 +110,6 @@ namespace VisualProcessors.Processing
 			}
 		}
 
-		/// <summary>
-		/// Gets the ProcessorAttribute of this processor
-		/// </summary>
-		[Browsable(false)]
-		public ProcessorMeta Meta
-		{
-			get
-			{
-				ProcessorMeta attr = (ProcessorMeta)Attribute.GetCustomAttribute(this.GetType(), typeof(ProcessorMeta));
-				return (attr != null) ? attr : ProcessorMeta.Default;
-			}
-		}
 		/// <summary>
 		///  Gets the options collection for storing data
 		/// </summary>
@@ -232,7 +233,7 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion ProcessorForm
-		
+
 		#endregion Properties
 
 		#region Constructor
@@ -363,7 +364,7 @@ namespace VisualProcessors.Processing
 				Thread.Sleep(m_ThreadSleep);
 			}
 		}
-		
+
 		#endregion Methods
 
 		#region InputChannels

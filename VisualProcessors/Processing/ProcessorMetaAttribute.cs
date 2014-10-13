@@ -13,6 +13,7 @@ namespace VisualProcessors.Processing
 		Hidden,
 		Custom,
 	}
+
 	public enum ProcessorTabs
 	{
 		Input,
@@ -42,15 +43,15 @@ namespace VisualProcessors.Processing
 		public string Author;
 
 		/// <summary>
-		///  Determines the title of the 'Custom' tab
-		/// </summary>
-		public string CustomTabTitle = "Custom";
-
-		/// <summary>
 		///  Determines the display of the 'Custom' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
 		public ProcessorTabMode CustomTabMode = ProcessorTabMode.Normal;
+
+		/// <summary>
+		///  Determines the title of the 'Custom' tab
+		/// </summary>
+		public string CustomTabTitle = "Custom";
 
 		/// <summary>
 		///  Determines the name of the default/primary InputChannel
@@ -68,20 +69,15 @@ namespace VisualProcessors.Processing
 		public string Description;
 
 		/// <summary>
-		///  Determines the title of the 'Input' tab
-		/// </summary>
-		public string InputTabTitle;
-
-		/// <summary>
 		///  Determines the display of the 'Input' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
 		public ProcessorTabMode InputTabMode = ProcessorTabMode.Normal;
 
 		/// <summary>
-		///  Determines the title of the 'Output' tab
+		///  Determines the title of the 'Input' tab
 		/// </summary>
-		public string OutputTabTitle;
+		public string InputTabTitle;
 
 		/// <summary>
 		///  Determines the display of the 'Output' TabPage on the ProcessorForm of this type of
@@ -90,15 +86,20 @@ namespace VisualProcessors.Processing
 		public ProcessorTabMode OutputTabMode = ProcessorTabMode.Normal;
 
 		/// <summary>
-		///  Determines the title of the 'Properties' tab
+		///  Determines the title of the 'Output' tab
 		/// </summary>
-		public string PropertiesTabTitle = "Properties";
+		public string OutputTabTitle;
 
 		/// <summary>
 		///  Determines the display of the 'Properties' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
 		public ProcessorTabMode PropertiesTabMode = ProcessorTabMode.Normal;
+
+		/// <summary>
+		///  Determines the title of the 'Properties' tab
+		/// </summary>
+		public string PropertiesTabTitle = "Properties";
 
 		public ProcessorMeta(string author, string description, string defaultinput, string defaultoutput)
 		{
@@ -108,5 +109,4 @@ namespace VisualProcessors.Processing
 			DefaultOutput = defaultoutput;
 		}
 	}
-
 }

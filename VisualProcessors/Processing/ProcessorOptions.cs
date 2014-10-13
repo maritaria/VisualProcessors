@@ -36,11 +36,37 @@ namespace VisualProcessors.Processing
 		{
 			get
 			{
-				return GetOption(key,null);
+				return GetOption(key, null);
 			}
 			set
 			{
 				SetOption(key, value);
+			}
+		}
+
+		/// <summary>
+		///  Removes an option, by its key
+		/// </summary>
+		/// <param name="key">The key to access the option by</param>
+		public void ClearOption(string key)
+		{
+			foreach (Option o in m_Options)
+			{
+				if (o.Key == key)
+				{
+					m_Options.Remove(o);
+					return;
+				}
+			}
+		}
+
+		public IEnumerable<string> GetKeys()
+		{
+			//yield:		http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx
+			//yield return:	http://www.dotnetperls.com/yield
+			foreach (Option o in m_Options)
+			{
+				yield return o.Key;
 			}
 		}
 
@@ -80,31 +106,6 @@ namespace VisualProcessors.Processing
 			}
 			m_Options.Add(new Option(key, value));
 		}
-		/// <summary>
-		/// Removes an option, by its key
-		/// </summary>
-		/// <param name="key">The key to access the option by</param>
-		public void ClearOption(string key)
-		{
-			foreach (Option o in m_Options)
-			{
-				if (o.Key == key)
-				{
-					m_Options.Remove(o);
-					return;
-				}
-			}
-		}
-
-		public IEnumerable<string> GetKeys()
-		{
-			//yield:		http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx
-			//yield return:	http://www.dotnetperls.com/yield
-			foreach(Option o in m_Options)
-			{
-				yield return o.Key;
-			}
-		}
 
 		#endregion Options
 
@@ -135,7 +136,7 @@ namespace VisualProcessors.Processing
 		{
 			foreach (Option o in m_Options)
 			{
-				if (o.Value==null)
+				if (o.Value == null)
 				{
 					continue;
 				}

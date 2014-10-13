@@ -16,11 +16,11 @@ namespace VisualProcessors.Forms
 	{
 		#region Properties
 
+		private bool m_BaudRateComboBoxChanging = false;
 		private bool m_DataBitsTextBoxChanging = false;
 		private bool m_ReadTimeoutTextBoxChanging = false;
 		private bool m_ReceivedBytesThresholdTextBoxChanging = false;
 		private bool m_WriteTimeoutTextBoxChanging = false;
-		private bool m_BaudRateComboBoxChanging = false;
 
 		public int BaudRate
 		{
@@ -107,7 +107,7 @@ namespace VisualProcessors.Forms
 				return RtsEnableCheckBox.Checked;
 			}
 		}
-		
+
 		public StopBits StopBits
 		{
 			get
@@ -160,7 +160,6 @@ namespace VisualProcessors.Forms
 			RtsEnableCheckBox.Checked = rts;
 		}
 
-
 		#endregion Constructor
 
 		#region Methods
@@ -202,6 +201,17 @@ namespace VisualProcessors.Forms
 		#endregion Methods
 
 		#region Event Handlers
+
+		private void BaudRateComboBox_TextChanged(object sender, EventArgs e)
+		{
+			if (m_BaudRateComboBoxChanging)
+			{
+				return;
+			}
+			m_BaudRateComboBoxChanging = true;
+			TextboxValidateInput(BaudRateComboBox);
+			m_BaudRateComboBoxChanging = false;
+		}
 
 		private void DataBitsTextBox_TextChanged(object sender, EventArgs e)
 		{
@@ -250,17 +260,6 @@ namespace VisualProcessors.Forms
 			m_WriteTimeoutTextBoxChanging = true;
 			TextboxValidateInput(WriteTimeoutTextBox);
 			m_WriteTimeoutTextBoxChanging = false;
-		}
-		private void BaudRateComboBox_TextChanged(object sender, EventArgs e)
-		{
-
-			if (m_BaudRateComboBoxChanging)
-			{
-				return;
-			}
-			m_BaudRateComboBoxChanging = true;
-			TextboxValidateInput(BaudRateComboBox);
-			m_BaudRateComboBoxChanging = false;
 		}
 
 		#endregion Event Handlers

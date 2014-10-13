@@ -79,7 +79,7 @@ namespace VisualProcessors.Processing
 		#endregion Constructor
 
 		#region Methods
-		
+
 		protected override void WorkerMethod()
 		{
 			while (true)
@@ -88,7 +88,6 @@ namespace VisualProcessors.Processing
 				Thread.Sleep(1 / Frequency);
 			}
 		}
-
 
 		#endregion Methods
 

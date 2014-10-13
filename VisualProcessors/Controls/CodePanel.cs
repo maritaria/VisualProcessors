@@ -57,7 +57,7 @@ namespace VisualProcessors.Controls
 		#endregion Methods
 
 		#region Event Handlers
-		
+
 		private void CodeBox_DragDrop(object sender, DragEventArgs e)
 		{
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))

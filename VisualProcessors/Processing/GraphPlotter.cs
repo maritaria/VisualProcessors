@@ -14,7 +14,7 @@ namespace VisualProcessors.Processing
 {
 	[ProcessorMeta("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
 		AllowOptionalInputs = true,
-		CustomTabTitle="Graph",
+		CustomTabTitle = "Graph",
 		OutputTabMode = ProcessorTabMode.Hidden)]
 	public class GraphPlotter : Processor
 	{

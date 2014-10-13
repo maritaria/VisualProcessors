@@ -293,7 +293,7 @@ namespace VisualProcessors.Processing
 			SerialPortSettings settings = value as SerialPortSettings;
 			if (svc != null && settings != null)
 			{
-				using (SerialPortForm form = new SerialPortForm(settings.PortName, settings.BaudRate, settings.DataBits, settings.Parity, settings.Handshake, settings.StopBits, settings.ReadTimeout, settings.WriteTimeout, settings.ReceivedBytesThreshold, settings.DtrEnable, settings.RtsEnable)) 
+				using (SerialPortForm form = new SerialPortForm(settings.PortName, settings.BaudRate, settings.DataBits, settings.Parity, settings.Handshake, settings.StopBits, settings.ReadTimeout, settings.WriteTimeout, settings.ReceivedBytesThreshold, settings.DtrEnable, settings.RtsEnable))
 				{
 					if (svc.ShowDialog(form) == DialogResult.OK)
 					{

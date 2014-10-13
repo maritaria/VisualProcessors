@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace VisualProcessors.Processing
 {
 	[ProcessorMeta("Bram Kamies", "Calculates the delta of its input value, and the delta of the sample interval", "Input", "ValueDelta",
-		CustomTabMode=ProcessorTabMode.Hidden)]
+		CustomTabMode = ProcessorTabMode.Hidden)]
 	public class DeltaProcessor : Processor
 	{
 		#region Properties

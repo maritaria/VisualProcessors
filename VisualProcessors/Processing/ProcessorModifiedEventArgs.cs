@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace VisualProcessors.Processing
 {
+	public enum HaltTypes
+	{
+		None,
+		ShouldHalt,
+		AskHalt,
+	}
+
 	public class ProcessorModifiedEventArgs : EventArgs
 	{
 		#region Properties
@@ -13,7 +20,6 @@ namespace VisualProcessors.Processing
 		public HaltTypes HaltType { get; private set; }
 
 		public Processor Source { get; private set; }
-
 
 		#endregion Properties
 
@@ -26,11 +32,5 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion Constructor
-	}
-	public enum HaltTypes
-	{
-		None,
-		ShouldHalt,
-		AskHalt,
 	}
 }
