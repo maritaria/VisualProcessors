@@ -472,7 +472,7 @@ namespace VisualProcessors.Processing
 
 		public override string ToString()
 		{
-			string result = "Portname: " + PortName + " Baudrate: " + BaudRate;
+			string result = "Portname: " + PortName + " Baudrate: " + BaudRate + " Databits: " + DataBits;
 			if (Parity!=Parity.None)
 			{
 				result += " Parity: " + Parity;
@@ -481,9 +481,29 @@ namespace VisualProcessors.Processing
 			{
 				result += " Handshake: " + Handshake;
 			}
-			if (StopBits!= StopBits.One)
+			if (StopBits!= StopBits.None)
 			{
 				result += " Stopbits: " + StopBits;
+			}
+			if (ReadTimeout!= SerialPort.InfiniteTimeout)
+			{
+				result += " ReadTimeout: " + ReadTimeout;
+			}
+			if (WriteTimeout != SerialPort.InfiniteTimeout)
+			{
+				result += " WriteTimeout: " + WriteTimeout;
+			}
+			if (ReceivedBytesThreshold!=1)
+			{
+				result += "ReceivedBytesThreshold: " + ReceivedBytesThreshold;
+			}
+			if (DtrEnable)
+			{
+				result += " DTR";
+			}
+			if (RtsEnable)
+			{
+				result += " RTS";
 			}
 
 			return result;
