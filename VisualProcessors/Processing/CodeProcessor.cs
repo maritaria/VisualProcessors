@@ -17,7 +17,7 @@ namespace VisualProcessors.Processing
 {
 	[ProcessorMeta("Bram Kamies", "Allows user C# code to be executed during simulations", "Input1", "Output1",
 		AllowOptionalInputs = true,
-		CustomTabLabel = "Code")]
+		CustomTabTitle = "Code")]
 	public class CodeProcessor : Processor
 	{
 		#region Properties

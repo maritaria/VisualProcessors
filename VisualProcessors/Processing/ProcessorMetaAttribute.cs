@@ -39,7 +39,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Determines the author of the processor
 		/// </summary>
-		public string Authorl;
+		public string Author;
 
 		/// <summary>
 		///  Determines the title of the 'Custom' tab
