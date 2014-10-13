@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using VisualProcessors.Forms;
+using System.Diagnostics;
 
 namespace VisualProcessors.Processing
 {
@@ -226,6 +227,11 @@ namespace VisualProcessors.Processing
 			AddOutputChannel("Output");
 		}
 
+		~SerialPortProcessor()
+		{
+			Stop();
+		}
+
 		#endregion Constructor
 
 		#region Methods
@@ -249,6 +255,7 @@ namespace VisualProcessors.Processing
 			SerialPort.ReceivedBytesThreshold = ReceivedBytesThreshold;
 			SerialPort.RtsEnable = RtsEnable;
 			SerialPort.WriteTimeout = WriteTimeout;
+			SerialPort.Open();
 			base.Start();
 		}
 
@@ -266,12 +273,12 @@ namespace VisualProcessors.Processing
 		{
 			while (SerialPort.IsOpen)
 			{
-				byte[] buffer = new byte[4096];
-				int read = SerialPort.Read(buffer, 0, 4096);
-				for (int i = 0; i < read; i++)
+				int i = SerialPort.ReadByte();
+				if (i==-1)
 				{
-					GetOutputChannel("Output").WriteValue((double)buffer[i]);
+					break;
 				}
+				GetOutputChannel("Output").WriteValue((double)i);
 			}
 			OnWarning("SerialPort has closed");
 		}
@@ -465,7 +472,21 @@ namespace VisualProcessors.Processing
 
 		public override string ToString()
 		{
-			return base.ToString();
+			string result = "Portname: " + PortName + " Baudrate: " + BaudRate;
+			if (Parity!=Parity.None)
+			{
+				result += " Parity: " + Parity;
+			}
+			if (Handshake!=Handshake.None)
+			{
+				result += " Handshake: " + Handshake;
+			}
+			if (StopBits!= StopBits.One)
+			{
+				result += " Stopbits: " + StopBits;
+			}
+
+			return result;
 		}
 	}
 
