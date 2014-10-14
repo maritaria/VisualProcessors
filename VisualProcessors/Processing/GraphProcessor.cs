@@ -58,7 +58,7 @@ namespace VisualProcessors.Processing
 
 		[Browsable(true)]
 		[ReadOnly(false)]
-		[DisplayName("Buffer size")]
+		[DisplayName("ForceScroll")]
 		[Category("Settings")]
 		[Description("When true, the graph will scroll in real-time showing the last received samples. When false, the graph will autozoom to fit the curve entirely on the panel")]
 		[DefaultValue(true)]
