@@ -21,7 +21,6 @@ namespace VisualProcessors.Processing
 		private StreamWriter m_FileWriter;
 		private bool m_Truncate = false;
 
-
 		#endregion Properties
 
 		#region Options
@@ -116,25 +115,10 @@ namespace VisualProcessors.Processing
 
 		#region Methods
 
-		public override void Stop()
-		{
-			base.Stop();
-			if (m_FileWriter != null)
-			{
-				m_FileWriter.Dispose();
-				m_FileWriter = null;
-			}
-		}
-
-		protected override void Prepare()
-		{
-			base.Prepare();
-			m_Truncate = TruncateOnPrepare;
-		}
 		public override void Start()
 		{
 			base.Start();
-			if (m_FileWriter!=null)
+			if (m_FileWriter != null)
 			{
 				m_FileWriter.Dispose();
 			}
@@ -144,6 +128,28 @@ namespace VisualProcessors.Processing
 			}
 			FileStream.Position = FileStream.Length;
 			m_FileWriter = new StreamWriter(FileStream);
+		}
+
+		public override void Stop()
+		{
+			if (m_FileWriter != null)
+			{
+				try
+				{
+					m_FileWriter.Dispose();
+				}
+				catch
+				{
+				}
+				m_FileWriter = null;
+			}
+			base.Stop();
+		}
+
+		protected override void Prepare()
+		{
+			base.Prepare();
+			m_Truncate = TruncateOnPrepare;
 		}
 
 		protected override void Process()
