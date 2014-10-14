@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -173,6 +174,28 @@ namespace VisualProcessors.Processing
 			{
 				return m_Data.Count > 0;
 			}
+		}
+
+		public void LoadState(StreamReader reader)
+		{
+			m_Data.Clear();
+			string base64 = reader.ReadLine();
+			byte[] buffer = Convert.FromBase64String(base64);
+			for (int i = 0; i < buffer.Length; i += 8)
+			{
+				m_Data.Add(BitConverter.ToDouble(buffer, i));
+			}
+		}
+
+		public void SaveState(StreamWriter writer)
+		{
+			List<byte> bytelist = new List<byte>();
+			foreach (double value in m_Data)
+			{
+				bytelist.AddRange(BitConverter.GetBytes(value));
+			}
+			string base64 = Convert.ToBase64String(bytelist.ToArray());
+			writer.WriteLine(base64);
 		}
 
 		public void Unlink()
