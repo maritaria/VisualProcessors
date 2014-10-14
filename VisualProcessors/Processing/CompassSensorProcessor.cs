@@ -203,38 +203,41 @@ namespace VisualProcessors.Processing
 				TimeSpan delay = new TimeSpan(averageSpan.Ticks / packet.Count);
 				Console.WriteLine("{3} LastRead: {0}, average: {1}, span: {2}", span, averageSpan, delay, m_Bursts.Count);
 				lastread = DateTime.Now;
+				int counter = 0;
 				while (packet.Count > 0)
 				{
 					if (Axis.HasFlag(AxisSelection.AcceleroX))
 					{
 						ax.WriteValue(PopFromBottom(packet));
-						Thread.Sleep(delay);
+						counter++;
 					}
 					if (Axis.HasFlag(AxisSelection.AcceleroY))
 					{
 						ay.WriteValue(PopFromBottom(packet));
-						Thread.Sleep(delay);
+						counter++;
 					}
 					if (Axis.HasFlag(AxisSelection.AcceleroZ))
 					{
 						az.WriteValue(PopFromBottom(packet));
-						Thread.Sleep(delay);
+						counter++;
 					}
 					if (Axis.HasFlag(AxisSelection.MagnetoX))
 					{
 						mx.WriteValue(PopFromBottom(packet));
-						Thread.Sleep(delay);
+						counter++;
 					}
 					if (Axis.HasFlag(AxisSelection.MagnetoY))
 					{
 						my.WriteValue(PopFromBottom(packet));
-						Thread.Sleep(delay);
+						counter++;
 					}
 					if (Axis.HasFlag(AxisSelection.MagnetoZ))
 					{
 						mz.WriteValue(PopFromBottom(packet));
-						Thread.Sleep(delay);
+						counter++;
+		
 					}
+					Thread.Sleep(new TimeSpan(delay.Ticks));
 				}
 			}
 		}
