@@ -111,7 +111,7 @@ namespace VisualProcessors.Processing
 			set
 			{
 				Options.SetOption("Code", value);
-				OnModified(HaltTypes.AskHalt);
+				OnModified(HaltTypes.Ask);
 			}
 		}
 

@@ -72,7 +72,7 @@ namespace VisualProcessors.Processing
 			set
 			{
 				Options.SetOption("Seperator", value);
-				OnModified(HaltTypes.AskHalt);
+				OnModified(HaltTypes.Ask);
 			}
 		}
 

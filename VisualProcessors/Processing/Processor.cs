@@ -738,7 +738,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelAdded(this, EventArgs.Empty);
 			}
-			OnModified(HaltTypes.AskHalt);
+			OnModified(HaltTypes.Ask);
 		}
 
 		private void OnInputChannelRemoved()
@@ -747,7 +747,7 @@ namespace VisualProcessors.Processing
 			{
 				InputChannelRemoved(this, EventArgs.Empty);
 			}
-			OnModified(HaltTypes.AskHalt);
+			OnModified(HaltTypes.Ask);
 		}
 
 		private void OnLinkAdded()
@@ -792,7 +792,7 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelAdded(this, EventArgs.Empty);
 			}
-			OnModified(HaltTypes.AskHalt);
+			OnModified(HaltTypes.Ask);
 		}
 
 		private void OnOutputChannelRemoved()
@@ -801,7 +801,7 @@ namespace VisualProcessors.Processing
 			{
 				OutputChannelRemoved(this, EventArgs.Empty);
 			}
-			OnModified(HaltTypes.AskHalt);
+			OnModified(HaltTypes.Ask);
 		}
 
 		private void OnSizeChanged()

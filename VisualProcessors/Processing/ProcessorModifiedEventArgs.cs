@@ -10,7 +10,7 @@ namespace VisualProcessors.Processing
 	{
 		Continue,
 		ShouldHalt,
-		AskHalt,
+		Ask,
 	}
 
 	public class ProcessorModifiedEventArgs : EventArgs
