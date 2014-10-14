@@ -176,6 +176,11 @@ namespace VisualProcessors.Forms
 
 		#region Event Handlers
 
+		private void CancelLinkButton_Click(object sender, EventArgs e)
+		{
+			PipelineForm.ResetLinkMode();
+		}
+
 		private void LinkEndpointButton_Click(object sender, EventArgs e)
 		{
 			PipelineForm.CompleteLinkMode(this);

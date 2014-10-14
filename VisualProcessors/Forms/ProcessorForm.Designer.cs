@@ -32,14 +32,14 @@
 			this.LinkButtons = new System.Windows.Forms.SplitContainer();
 			this.CancelLinkButton = new System.Windows.Forms.Button();
 			this.OutputTab = new System.Windows.Forms.TabPage();
-			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			this.PropertiesTab = new System.Windows.Forms.TabPage();
+			this.PropertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.CustomPanel = new System.Windows.Forms.Panel();
 			this.InputTab = new System.Windows.Forms.TabPage();
-			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
 			this.Tabs = new System.Windows.Forms.TabControl();
 			this.CustomTab = new System.Windows.Forms.TabPage();
-			this.PropertyGrid = new System.Windows.Forms.PropertyGrid();
+			this.ProcessorInputView = new VisualProcessors.Controls.ProcessorInputPanel();
+			this.ProcessorOutputView = new VisualProcessors.Controls.ProcessorOutputPanel();
 			((System.ComponentModel.ISupportInitialize)(this.LinkButtons)).BeginInit();
 			this.LinkButtons.Panel1.SuspendLayout();
 			this.LinkButtons.Panel2.SuspendLayout();
@@ -91,6 +91,7 @@
 			this.CancelLinkButton.TabIndex = 0;
 			this.CancelLinkButton.Text = "Cancel";
 			this.CancelLinkButton.UseVisualStyleBackColor = true;
+			this.CancelLinkButton.Click += new System.EventHandler(this.CancelLinkButton_Click);
 			// 
 			// OutputTab
 			// 
@@ -103,16 +104,6 @@
 			this.OutputTab.Text = "Output";
 			this.OutputTab.UseVisualStyleBackColor = true;
 			// 
-			// ProcessorOutputView
-			// 
-			this.ProcessorOutputView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProcessorOutputView.Location = new System.Drawing.Point(3, 3);
-			this.ProcessorOutputView.Name = "ProcessorOutputView";
-			this.ProcessorOutputView.Pipeline = null;
-			this.ProcessorOutputView.Processor = null;
-			this.ProcessorOutputView.Size = new System.Drawing.Size(384, 168);
-			this.ProcessorOutputView.TabIndex = 0;
-			// 
 			// PropertiesTab
 			// 
 			this.PropertiesTab.Controls.Add(this.PropertyGrid);
@@ -122,6 +113,14 @@
 			this.PropertiesTab.TabIndex = 2;
 			this.PropertiesTab.Text = "Properties";
 			this.PropertiesTab.UseVisualStyleBackColor = true;
+			// 
+			// PropertyGrid
+			// 
+			this.PropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PropertyGrid.Location = new System.Drawing.Point(0, 0);
+			this.PropertyGrid.Name = "PropertyGrid";
+			this.PropertyGrid.Size = new System.Drawing.Size(390, 174);
+			this.PropertyGrid.TabIndex = 0;
 			// 
 			// CustomPanel
 			// 
@@ -141,17 +140,6 @@
 			this.InputTab.TabIndex = 1;
 			this.InputTab.Text = "Input";
 			this.InputTab.UseVisualStyleBackColor = true;
-			// 
-			// ProcessorInputView
-			// 
-			this.ProcessorInputView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProcessorInputView.Location = new System.Drawing.Point(3, 3);
-			this.ProcessorInputView.Name = "ProcessorInputView";
-			this.ProcessorInputView.Pipeline = null;
-			this.ProcessorInputView.Processor = null;
-			this.ProcessorInputView.SelectedInputChannel = null;
-			this.ProcessorInputView.Size = new System.Drawing.Size(384, 168);
-			this.ProcessorInputView.TabIndex = 0;
 			// 
 			// Tabs
 			// 
@@ -176,13 +164,26 @@
 			this.CustomTab.Text = "Custom";
 			this.CustomTab.UseVisualStyleBackColor = true;
 			// 
-			// PropertyGrid
+			// ProcessorInputView
 			// 
-			this.PropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PropertyGrid.Location = new System.Drawing.Point(0, 0);
-			this.PropertyGrid.Name = "PropertyGrid";
-			this.PropertyGrid.Size = new System.Drawing.Size(390, 174);
-			this.PropertyGrid.TabIndex = 0;
+			this.ProcessorInputView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProcessorInputView.Location = new System.Drawing.Point(3, 3);
+			this.ProcessorInputView.Name = "ProcessorInputView";
+			this.ProcessorInputView.Pipeline = null;
+			this.ProcessorInputView.Processor = null;
+			this.ProcessorInputView.SelectedInputChannel = null;
+			this.ProcessorInputView.Size = new System.Drawing.Size(384, 168);
+			this.ProcessorInputView.TabIndex = 0;
+			// 
+			// ProcessorOutputView
+			// 
+			this.ProcessorOutputView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProcessorOutputView.Location = new System.Drawing.Point(3, 3);
+			this.ProcessorOutputView.Name = "ProcessorOutputView";
+			this.ProcessorOutputView.Pipeline = null;
+			this.ProcessorOutputView.Processor = null;
+			this.ProcessorOutputView.Size = new System.Drawing.Size(384, 168);
+			this.ProcessorOutputView.TabIndex = 0;
 			// 
 			// ProcessorForm
 			// 
