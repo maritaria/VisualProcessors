@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace VisualProcessors.Processing
 		AllowOptionalInputs = true,
 		CustomTabTitle = "Graph",
 		OutputTabMode = ProcessorTabMode.Hidden)]
-	public class GraphPlotter : Processor
+	public class GraphProcessor : Processor
 	{
 		#region Properties
 
@@ -32,12 +33,12 @@ namespace VisualProcessors.Processing
 
 		#region Constructor
 
-		public GraphPlotter()
+		public GraphProcessor()
 		{
 			SetupLists();
 		}
 
-		public GraphPlotter(Pipeline pipeline, string name)
+		public GraphProcessor(Pipeline pipeline, string name)
 			: base(pipeline, name)
 		{
 			AddInputChannel("Red", true);
@@ -48,9 +49,9 @@ namespace VisualProcessors.Processing
 
 		private void SetupLists()
 		{
-			m_PointListRed = new RollingPointPairList(2000);
-			m_PointListBlue = new RollingPointPairList(20);
-			m_PointListGreen = new RollingPointPairList(20);
+			m_PointListRed = new RollingPointPairList(200);
+			m_PointListBlue = new RollingPointPairList(200);
+			m_PointListGreen = new RollingPointPairList(200);
 		}
 
 		#endregion Constructor
@@ -115,11 +116,11 @@ namespace VisualProcessors.Processing
 		private void ReadAndWrite(InputChannel source, RollingPointPairList list)
 		{
 			double val = 0;
-			if (source.HasValue())
+			while (source.HasValue())
 			{
 				val = source.GetValue();
+				list.Add(DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds, val);
 			}
-			list.Add(DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds, val);
 		}
 
 		private void RenderThreadMethod()

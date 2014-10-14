@@ -18,7 +18,6 @@ namespace VisualProcessors.Processing
 	{
 		#region Properties
 
-		protected int m_ThreadSleep = 1;
 		private Point m_Location = new Point(0, 0);
 		private string m_Name = "Undefined";
 		private ProcessorOptions m_Options = new ProcessorOptions();
@@ -72,7 +71,7 @@ namespace VisualProcessors.Processing
 		///  Gets or sets the name of the processor, must be unique within the pipeline
 		/// </summary>
 		[Browsable(true)]
-		[ReadOnly(false)]//For now
+		[ReadOnly(false)]
 		[DisplayName("Name")]
 		[Category("Processor")]
 		[Description("Name of the processor")]
@@ -270,6 +269,13 @@ namespace VisualProcessors.Processing
 
 		#region Methods
 
+		/// <summary>
+		///  When implemented in derived type, this will add a GUI specific for the processor to the
+		///  panel
+		/// </summary>
+		/// <param name="panel">
+		///  A (clean/empty) panel that will hold the GUI for the processor
+		/// </param>
 		public virtual void GetUserInterface(Panel panel)
 		{
 		}
@@ -364,7 +370,6 @@ namespace VisualProcessors.Processing
 				{
 					Process();
 				}
-				Thread.Sleep(m_ThreadSleep);
 			}
 		}
 
@@ -769,7 +774,7 @@ namespace VisualProcessors.Processing
 			{
 				LocationChanged(this, EventArgs.Empty);
 			}
-			OnModified(HaltTypes.None);
+			OnModified(HaltTypes.Continue);
 		}
 
 		private void OnNameChanged(string oldname, string newname)
@@ -778,7 +783,7 @@ namespace VisualProcessors.Processing
 			{
 				NameChanged(this, oldname, newname);
 			}
-			OnModified(HaltTypes.None);
+			OnModified(HaltTypes.Continue);
 		}
 
 		private void OnOutputChannelAdded()
@@ -805,7 +810,7 @@ namespace VisualProcessors.Processing
 			{
 				SizeChanged(this, EventArgs.Empty);
 			}
-			OnModified(HaltTypes.None);
+			OnModified(HaltTypes.Continue);
 		}
 
 		#endregion Events

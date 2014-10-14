@@ -555,33 +555,48 @@ namespace VisualProcessors.Forms
 
 		private void PipelineError(Processor arg1, string arg2)
 		{
-			ShowProcessor(arg1.Name);
-			ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-			ErrorIcon.Icon = SystemIcons.Error;
+			MethodInvoker action = delegate
+			{
+				ShowProcessor(arg1.Name);
+				ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
+				ErrorIcon.Icon = SystemIcons.Error;
+			};
+			this.BeginInvoke(action);
 		}
 
 		private void PipelineModification(object sender, ProcessorModifiedEventArgs e)
 		{
-			Console.WriteLine(e.Source.Name, e.HaltType.ToString());
-			IsSaved = false;
-			if (e.HaltType == HaltTypes.ShouldHalt)
+			MethodInvoker action = delegate
 			{
-				CurrentPipeline.Stop();
-			}
+				IsSaved = false;
+				if (e.HaltType == HaltTypes.ShouldHalt)
+				{
+					CurrentPipeline.Stop();
+				}
+			};
+			this.BeginInvoke(action);
 		}
 
 		private void PipelineStarted(object sender, EventArgs e)
 		{
-			runToolStripMenuItem.Checked = true;
-			SimulationStatusLabel.Text = "Simulating";
-			MdiClient.Invalidate();
+			MethodInvoker action = delegate
+			{
+				runToolStripMenuItem.Checked = true;
+				SimulationStatusLabel.Text = "Simulating";
+				MdiClient.Invalidate();
+			};
+			this.BeginInvoke(action);
 		}
 
 		private void PipelineStopped(object sender, EventArgs e)
 		{
-			runToolStripMenuItem.Checked = false;
-			SimulationStatusLabel.Text = "Edit-mode";
-			MdiClient.Invalidate();
+			MethodInvoker action = delegate
+			{
+				runToolStripMenuItem.Checked = false;
+				SimulationStatusLabel.Text = "Edit-mode";
+				MdiClient.Invalidate();
+			};
+			this.BeginInvoke(action);
 		}
 
 		private void PipelineWarning(Processor arg1, string arg2)

@@ -25,7 +25,7 @@ namespace VisualProcessors.Processing
 		#region Options
 
 		[Browsable(true)]
-		[ReadOnly(true)]
+		[ReadOnly(false)]
 		[DisplayName("Output value")]
 		[Category("Settings")]
 		[Description("The value to write to the OutputChannel")]

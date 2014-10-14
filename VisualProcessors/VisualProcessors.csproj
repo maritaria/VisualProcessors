@@ -62,6 +62,10 @@
     <Compile Include="Controls\CodePanel.Designer.cs">
       <DependentUpon>CodePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Design\EnumFlagsListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Design\EnumFlagsTypeEditor.cs" />
     <Compile Include="Controls\ProcessorInputPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -93,6 +97,7 @@
     <Compile Include="Forms\SerialPortForm.Designer.cs">
       <DependentUpon>SerialPortForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Processing\CompassSensorProcessor.cs" />
     <Compile Include="Processing\SerialPortProcessor.cs" />
     <Compile Include="Processing\DeltaProcessor.cs" />
     <Compile Include="Processing\CSVProcessor.cs" />
@@ -120,7 +125,7 @@
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Processing\GraphPlotter.cs" />
+    <Compile Include="Processing\GraphProcessor.cs" />
     <Compile Include="Processing\AverageProcessor.cs" />
     <Compile Include="Processing\AddProcessor.cs" />
     <Compile Include="Processing\ChannelType.cs" />

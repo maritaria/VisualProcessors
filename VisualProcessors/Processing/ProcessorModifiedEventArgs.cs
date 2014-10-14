@@ -8,7 +8,7 @@ namespace VisualProcessors.Processing
 {
 	public enum HaltTypes
 	{
-		None,
+		Continue,
 		ShouldHalt,
 		AskHalt,
 	}

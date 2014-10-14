@@ -19,6 +19,7 @@ namespace VisualProcessors.Controls
 
 		private PipelineForm m_PipelineForm;
 		private List<Type> m_Types = new List<Type>();
+		private SortedList<string, Control> m_Buttons = new SortedList<string, Control>();
 
 		public PipelineForm PipelineForm
 		{
@@ -61,6 +62,7 @@ namespace VisualProcessors.Controls
 				b.Dispose();
 			}
 			ButtonPanel.Controls.Clear();
+			m_Buttons.Clear();
 		}
 
 		public void PopulateButtonList()
@@ -74,8 +76,15 @@ namespace VisualProcessors.Controls
 			{
 				AddAssembly(asm);
 			}
+			SortButtons();
 		}
-
+		private void SortButtons()
+		{
+			foreach(KeyValuePair<string, Control> c in m_Buttons.Reverse())
+			{
+				ButtonPanel.Controls.Add(c.Value);
+			}
+		}
 		public void SetPipelineForm(PipelineForm pipeline)
 		{
 			ClearButtonList();
@@ -150,7 +159,7 @@ namespace VisualProcessors.Controls
 					{
 						SpawnProcessor(processorType);
 					};
-					ButtonPanel.Controls.Add(b);
+					m_Buttons.Add(processorType.Name, b);
 				}
 			}
 		}
