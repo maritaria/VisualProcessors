@@ -11,7 +11,7 @@ using VisualProcessors.Design;
 
 namespace VisualProcessors.Processing
 {
-	[ProcessorMeta("Bram Kamies", "Reads data from the eCompass Sensor", "", "AcceleroX",
+	[ProcessorMeta("Bram Kamies", "Reads data from the eCompass sensor", "", "AcceleroX",
 		InputTabMode = ProcessorTabMode.Hidden,
 		CustomTabMode = ProcessorTabMode.Hidden)]
 	public class CompassSensorProcessor : SerialPortProcessor
