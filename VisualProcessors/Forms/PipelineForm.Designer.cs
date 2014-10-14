@@ -301,6 +301,7 @@
 			this.Controls.Add(this.MdiStatusStrip);
 			this.Controls.Add(this.Toolbox);
 			this.Controls.Add(this.MainMenu);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.IsMdiContainer = true;
 			this.Name = "PipelineForm";
 			this.Text = "Pipeline Editor";
