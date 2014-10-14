@@ -98,6 +98,7 @@
       <DependentUpon>SerialPortForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Processing\CompassSensorProcessor.cs" />
+    <Compile Include="Processing\FileBasedProcessor.cs" />
     <Compile Include="Processing\SerialPortProcessor.cs" />
     <Compile Include="Processing\DeltaProcessor.cs" />
     <Compile Include="Processing\CSVProcessor.cs" />
