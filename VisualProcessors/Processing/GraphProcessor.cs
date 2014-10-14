@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using ZedGraph;
+using System.ComponentModel;
 
 namespace VisualProcessors.Processing
 {
@@ -31,11 +32,55 @@ namespace VisualProcessors.Processing
 
 		#endregion Properties
 
+		#region Options
+
+
+
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Buffer size")]
+		[Category("Settings")]
+		[Description("The amount of values to store per curve")]
+		[DefaultValue(200)]
+		public int BufferSize
+		{
+			get
+			{
+				return int.Parse(Options.GetOption("BufferSize", "200"));
+			}
+			set
+			{
+				Options.SetOption("BufferSize", value.ToString());
+				OnModified(HaltTypes.ShouldHalt);
+				IsPrepared = false;
+			}
+		}
+
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Buffer size")]
+		[Category("Settings")]
+		[Description("When true, the graph will scroll in real-time showing the last received samples. When false, the graph will autozoom to fit the curve entirely on the panel")]
+		[DefaultValue(true)]
+		public bool ForceScroll
+		{
+			get
+			{
+				return bool.Parse(Options.GetOption("ForceScroll", "True"));
+			}
+			set
+			{
+				Options.SetOption("ForceScroll", value.ToString());
+				OnModified(HaltTypes.Continue);
+			}
+		}
+
+		#endregion
+
 		#region Constructor
 
-		public GraphProcessor()
+		public GraphProcessor() : base()
 		{
-			SetupLists();
 		}
 
 		public GraphProcessor(Pipeline pipeline, string name)
@@ -44,14 +89,17 @@ namespace VisualProcessors.Processing
 			AddInputChannel("Red", true);
 			AddInputChannel("Blue", true);
 			AddInputChannel("Green", true);
-			SetupLists();
 		}
 
 		private void SetupLists()
 		{
-			m_PointListRed = new RollingPointPairList(200);
-			m_PointListBlue = new RollingPointPairList(200);
-			m_PointListGreen = new RollingPointPairList(200);
+			m_Graph.GraphPane.CurveList.Clear();
+			m_PointListRed = new RollingPointPairList(BufferSize);
+			m_PointListBlue = new RollingPointPairList(BufferSize);
+			m_PointListGreen = new RollingPointPairList(BufferSize);
+			m_Graph.GraphPane.AddCurve("Red", m_PointListRed, Color.Red, SymbolType.None);
+			m_Graph.GraphPane.AddCurve("Blue", m_PointListBlue, Color.Blue, SymbolType.None);
+			m_Graph.GraphPane.AddCurve("Green", m_PointListGreen, Color.Green, SymbolType.None);
 		}
 
 		#endregion Constructor
@@ -63,9 +111,8 @@ namespace VisualProcessors.Processing
 			m_Graph = new ZedGraphControl();
 			m_Graph.Dock = DockStyle.Fill;
 
-			m_Graph.GraphPane.AddCurve("Red", m_PointListRed, Color.Red, SymbolType.None);
-			m_Graph.GraphPane.AddCurve("Blue", m_PointListBlue, Color.Blue, SymbolType.None);
-			m_Graph.GraphPane.AddCurve("Green", m_PointListGreen, Color.Green, SymbolType.None);
+			SetupLists();
+
 			panel.Controls.Add(m_Graph);
 			base.GetUserInterface(panel);
 		}
@@ -99,6 +146,7 @@ namespace VisualProcessors.Processing
 		protected override void Prepare()
 		{
 			m_StartTimestamp = DateTime.Now;
+			SetupLists();
 			base.Prepare();
 		}
 
@@ -131,8 +179,11 @@ namespace VisualProcessors.Processing
 				{
 					lock (this)
 					{
-						m_Graph.GraphPane.XAxis.Scale.Min = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds - 2;
-						m_Graph.GraphPane.XAxis.Scale.Max = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds;
+						if (ForceScroll)
+						{
+							m_Graph.GraphPane.XAxis.Scale.Min = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds - 2;
+							m_Graph.GraphPane.XAxis.Scale.Max = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds;
+						}
 						m_Graph.AxisChange();
 						m_Graph.Invalidate();
 						m_Redraw = false;
