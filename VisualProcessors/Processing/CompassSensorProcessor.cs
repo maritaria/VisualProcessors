@@ -110,8 +110,7 @@ namespace VisualProcessors.Processing
 			{
 				try
 				{
-					SerialPort.Close();
-					SerialPort.Open();
+					KillWorkerThread();
 					SendStopCommand();
 				}
 				catch (Exception e)
