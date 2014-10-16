@@ -29,6 +29,7 @@ namespace VisualProcessors.Processing
 		private bool m_Redraw = false;
 		private Thread m_RenderThread;
 		private DateTime m_StartTimestamp;
+		private long m_Counter = 0;
 
 		#endregion Properties
 
@@ -51,8 +52,8 @@ namespace VisualProcessors.Processing
 			set
 			{
 				Options.SetOption("BufferSize", value.ToString());
-				OnModified(HaltTypes.ShouldHalt);
 				IsPrepared = false;
+				OnModified(HaltTypes.ShouldHalt);
 			}
 		}
 
@@ -72,6 +73,25 @@ namespace VisualProcessors.Processing
 			{
 				Options.SetOption("ForceScroll", value.ToString());
 				OnModified(HaltTypes.Continue);
+			}
+		}
+
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("RealTime")]
+		[Category("Settings")]
+		[Description("When true, the X-axis represents time in seconds. When false the X-axis represents the index of the Y-value")]
+		[DefaultValue(true)]
+		public bool RealTime
+		{
+			get
+			{
+				return bool.Parse(Options.GetOption("RealTime", "True"));
+			}
+			set
+			{
+				Options.SetOption("RealTime", value.ToString());
+				OnModified(HaltTypes.Ask);
 			}
 		}
 
@@ -146,6 +166,7 @@ namespace VisualProcessors.Processing
 		protected override void Prepare()
 		{
 			m_StartTimestamp = DateTime.Now;
+			m_Counter = 0;
 			SetupLists();
 			base.Prepare();
 		}
@@ -154,9 +175,31 @@ namespace VisualProcessors.Processing
 		{
 			lock (this)
 			{
-				ReadAndWrite(GetInputChannel("Red"), m_PointListRed);
-				ReadAndWrite(GetInputChannel("Blue"), m_PointListBlue);
-				ReadAndWrite(GetInputChannel("Green"), m_PointListGreen);
+				if (RealTime)
+				{
+					ReadAndWrite(GetInputChannel("Red"), m_PointListRed);
+					ReadAndWrite(GetInputChannel("Blue"), m_PointListBlue);
+					ReadAndWrite(GetInputChannel("Green"), m_PointListGreen);
+				}
+				else
+				{
+					var inputRed = GetInputChannel("Red");
+					if (inputRed.HasValue())
+					{
+						m_PointListRed.Add(m_Counter, inputRed.GetValue());
+					}
+					var inputBlue = GetInputChannel("Blue");
+					if (inputBlue.HasValue())
+					{
+						m_PointListBlue.Add(m_Counter, inputBlue.GetValue());
+					}
+					var inputGreen = GetInputChannel("Green");
+					if (inputGreen.HasValue())
+					{
+						m_PointListGreen.Add(m_Counter, inputGreen.GetValue());
+					}
+					m_Counter++;
+				}
 			}
 			m_Redraw = true;
 		}
@@ -181,8 +224,16 @@ namespace VisualProcessors.Processing
 					{
 						if (ForceScroll)
 						{
-							m_Graph.GraphPane.XAxis.Scale.Min = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds - 2;
-							m_Graph.GraphPane.XAxis.Scale.Max = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds;
+							if (RealTime)
+							{
+								m_Graph.GraphPane.XAxis.Scale.Min = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds - 2;
+								m_Graph.GraphPane.XAxis.Scale.Max = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds;
+							}
+							else
+							{
+								m_Graph.GraphPane.XAxis.Scale.Min = m_Counter - BufferSize;
+								m_Graph.GraphPane.XAxis.Scale.Max = m_Counter;
+							}
 						}
 						m_Graph.AxisChange();
 						m_Graph.Invalidate();
