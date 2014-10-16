@@ -649,9 +649,23 @@ namespace VisualProcessors.Forms
 			}
 			m_CurrentFilepath = MainMenuOpenFileDialog.FileName;
 			FileStream file = new FileStream(m_CurrentFilepath, FileMode.Open);
-			CurrentPipeline = Pipeline.LoadFromFile(file);
-			file.Close();
-			IsSaved = true;
+			try
+			{
+				CurrentPipeline = Pipeline.LoadFromFile(file);
+			}
+			catch (Exception e)
+			{
+				while (e.InnerException != null)
+				{
+					e = e.InnerException;
+				}
+				MessageBox.Show("There was a XML syntax error when trying to parse the file:"+Environment.NewLine+ e.Message,"Syntax error");
+			}
+			finally
+			{
+				file.Close();
+				IsSaved = true;
+			}
 		}
 
 		public void SaveFile()
