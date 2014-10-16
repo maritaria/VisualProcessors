@@ -20,9 +20,6 @@ namespace VisualProcessors.Processing
 
 		private static byte[] SyncBlock = new byte[] { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
 
-		private List<List<short>> m_Bursts = new List<List<short>>();
-		private Thread m_SpacerThread;
-
 		#endregion Properties
 
 		#region Options
@@ -43,6 +40,44 @@ namespace VisualProcessors.Processing
 			{
 				Options.SetOption("AxisSelection", value.ToString());
 				OnModified(HaltTypes.Ask);
+			}
+		}
+
+		public double ConfirmationTimeout
+		{
+			get
+			{
+				return double.Parse(Options.GetOption("ConfirmationTimeout", "1"));
+			}
+			set
+			{
+				if (double.IsNaN(value) || double.IsInfinity(value) || value <= 0)
+				{
+					throw new Exception("ConfirmationTimeout cannot be NaN, infinity, negative or zero");
+				}
+				Options.SetOption("ConfirmationTimeout", value.ToString());
+			}
+		}
+
+		public int SampleRate
+		{
+			get
+			{
+				return int.Parse(Options.GetOption("SampleRate", "100"));
+			}
+			set
+			{
+				int val = 0;
+				int axi = (int)Axis;
+				for (int i = 0; i < 8; i++)
+				{
+					val += (axi >> i) & 1;
+				}
+				if (value * val > 2400)
+				{
+					OnWarning("Warning: the given samplerate and sensor axis selection creates a data rate higher then 2400, the device may block up!");
+				}
+				Options.SetOption("SampleRate", value.ToString());
 			}
 		}
 
@@ -69,36 +104,23 @@ namespace VisualProcessors.Processing
 
 		#region Methods
 
-		public override void Start()
-		{
-			if (m_SpacerThread != null)
-			{
-				Stop();
-			}
-			m_SpacerThread = new Thread(new ThreadStart(SpacerWorkerMethod));
-			m_SpacerThread.IsBackground = true;
-			m_SpacerThread.Start();
-			base.Start();
-		}
-
 		public override void Stop()
 		{
-			if (m_SpacerThread != null)
+			if (SerialPort != null)
 			{
-				if (m_SpacerThread.IsAlive)
+				try
 				{
-					m_SpacerThread.Abort();
-					while (m_SpacerThread.IsAlive) ;
+					SerialPort.Close();
+					SerialPort.Open();
+					SendStopCommand();
 				}
-				m_SpacerThread = null;
+				catch (Exception e)
+				{
+					OnError("Failed to stop device:" + Environment.NewLine + e.Message);
+					return;
+				}
 			}
 			base.Stop();
-		}
-
-		protected override void Prepare()
-		{
-			base.Prepare();
-			m_Bursts.Clear();
 		}
 
 		protected override void WorkerMethod()
@@ -108,14 +130,67 @@ namespace VisualProcessors.Processing
 				OnWarning("No axis have been selected");
 				return;
 			}
+			try
+			{
+				SendConfigCommand();
+				SendStartCommand();
+			}
+			catch (Exception e)
+			{
+				OnError("Could not configure device:" + Environment.NewLine + e.Message);
+				return;
+			}
+
+			OutputChannel ax = GetOutputChannel("AcceleroX");
+			OutputChannel ay = GetOutputChannel("AcceleroY");
+			OutputChannel az = GetOutputChannel("AcceleroZ");
+			OutputChannel mx = GetOutputChannel("MagnetoX");
+			OutputChannel my = GetOutputChannel("MagnetoY");
+			OutputChannel mz = GetOutputChannel("MagnetoZ");
+			AxisSelection axis = Axis;
+			bool sax = axis.HasFlag(AxisSelection.AcceleroX);
+			bool say = axis.HasFlag(AxisSelection.AcceleroY);
+			bool saz = axis.HasFlag(AxisSelection.AcceleroZ);
+			bool smx = axis.HasFlag(AxisSelection.MagnetoX);
+			bool smy = axis.HasFlag(AxisSelection.MagnetoY);
+			bool smz = axis.HasFlag(AxisSelection.MagnetoZ);
+			int count = 0;
+			for (int i = 0; i < 8; i++)
+			{
+				count += ((int)axis >> i) & 1;
+			}
+
 			while (true)
 			{
 				try
 				{
 					List<short> packet = ReadPacket().ToList();
-					lock (m_Bursts)
+					while (packet.Count >= count)
 					{
-						m_Bursts.Add(packet);
+						if (sax)
+						{
+							ax.WriteValue(PopFromBottom(packet));
+						}
+						if (say)
+						{
+							ay.WriteValue(PopFromBottom(packet));
+						}
+						if (saz)
+						{
+							az.WriteValue(PopFromBottom(packet));
+						}
+						if (smx)
+						{
+							mx.WriteValue(PopFromBottom(packet));
+						}
+						if (smy)
+						{
+							my.WriteValue(PopFromBottom(packet));
+						}
+						if (smz)
+						{
+							mz.WriteValue(PopFromBottom(packet));
+						}
 					}
 				}
 				catch
@@ -139,6 +214,24 @@ namespace VisualProcessors.Processing
 				}
 			}
 			return true;
+		}
+
+		private byte[] GeneratePacket(byte[] userdata)
+		{
+			List<byte> packet = new List<byte>();
+			packet.Add(0xAA);
+			if (userdata.Length > 255)
+			{
+				throw new ArgumentException("userdata is too long");
+			}
+			packet.Add((byte)userdata.Length);
+			packet.AddRange(userdata);
+			packet.Add(0xBB);
+			packet.Add(0xCC);
+
+			Console.WriteLine("Generated: " + BitConverter.ToString(packet.ToArray()));
+
+			return packet.ToArray();
 		}
 
 		private double PopFromBottom(List<short> l)
@@ -179,67 +272,69 @@ namespace VisualProcessors.Processing
 			return converted;
 		}
 
-		private void SpacerWorkerMethod()
+		private void SendConfigCommand()
 		{
-			TimeSpan averageSpan = new TimeSpan(0);
-			DateTime lastread = DateTime.Now;
-			OutputChannel ax = GetOutputChannel("AcceleroX");
-			OutputChannel ay = GetOutputChannel("AcceleroY");
-			OutputChannel az = GetOutputChannel("AcceleroZ");
-			OutputChannel mx = GetOutputChannel("MagnetoX");
-			OutputChannel my = GetOutputChannel("MagnetoY");
-			OutputChannel mz = GetOutputChannel("MagnetoZ");
-			while (true)
+			if (SerialPort != null && SerialPort.IsOpen)
 			{
-				List<short> packet;
-				while (m_Bursts.Count == 0) ;
-				lock (m_Bursts)
+				int srate = SampleRate;
+				byte[] packet = GeneratePacket(new byte[] { 0x03, (byte)(srate >> 8), (byte)(srate & 0xFF), (byte)Axis });
+				Console.WriteLine("Sending config command");
+				SerialPort.Write(packet, 0, packet.Length);
+				Console.WriteLine("Waiting for confirmation");
+				WaitForConfirmation();
+			}
+		}
+
+		private void SendStartCommand()
+		{
+			if (SerialPort != null && SerialPort.IsOpen)
+			{
+				byte[] packet = GeneratePacket(new byte[] { 0x01 });
+				Console.WriteLine("Sending start command");
+				SerialPort.Write(packet, 0, packet.Length);
+			}
+		}
+
+		private void SendStopCommand()
+		{
+			if (SerialPort != null && SerialPort.IsOpen)
+			{
+				byte[] packet = GeneratePacket(new byte[] { 0x02 });
+				Console.WriteLine("Sending stop command");
+				SerialPort.Write(packet, 0, packet.Length);
+				Console.WriteLine("Waiting for confirmation");
+				WaitForConfirmation();
+			}
+		}
+
+		private void WaitForConfirmation()
+		{
+			byte[] buffer = new byte[3] { 0, 0, 0 };
+			DateTime start = DateTime.Now;
+			while (DateTime.Now.Subtract(start).TotalSeconds < ConfirmationTimeout)
+			{
+				if (SerialPort.BytesToRead > 0)
 				{
-					packet = m_Bursts.First();
-					m_Bursts.RemoveAt(0);
+					int i = SerialPort.ReadByte();
+					if (i == -1)
+					{
+						throw new Exception("SerialPort has closed");
+					}
+					Array.Copy(buffer, 0, buffer, 1, buffer.Length - 1);
+					buffer[0] = (byte)i;
+					Console.Write(i.ToString() + " ");
+					if (buffer[0] == 0xC4 && buffer[1] == 0xD8 && buffer[2] == 0x61)
+					{
+						Console.WriteLine("Confirmed");
+						return;
+					}
 				}
-				TimeSpan span = DateTime.Now.Subtract(lastread);
-				averageSpan = new TimeSpan((averageSpan + span).Ticks / (2 + m_Bursts.Count));
-				TimeSpan delay = new TimeSpan(averageSpan.Ticks / packet.Count);
-				Console.WriteLine("{3} LastRead: {0}, average: {1}, span: {2}", span, averageSpan, delay, m_Bursts.Count);
-				lastread = DateTime.Now;
-				int counter = 0;
-				while (packet.Count > 0)
+				else
 				{
-					if (Axis.HasFlag(AxisSelection.AcceleroX))
-					{
-						ax.WriteValue(PopFromBottom(packet));
-						counter++;
-					}
-					if (Axis.HasFlag(AxisSelection.AcceleroY))
-					{
-						ay.WriteValue(PopFromBottom(packet));
-						counter++;
-					}
-					if (Axis.HasFlag(AxisSelection.AcceleroZ))
-					{
-						az.WriteValue(PopFromBottom(packet));
-						counter++;
-					}
-					if (Axis.HasFlag(AxisSelection.MagnetoX))
-					{
-						mx.WriteValue(PopFromBottom(packet));
-						counter++;
-					}
-					if (Axis.HasFlag(AxisSelection.MagnetoY))
-					{
-						my.WriteValue(PopFromBottom(packet));
-						counter++;
-					}
-					if (Axis.HasFlag(AxisSelection.MagnetoZ))
-					{
-						mz.WriteValue(PopFromBottom(packet));
-						counter++;
-		
-					}
-					Thread.Sleep(new TimeSpan(delay.Ticks));
+					Thread.Sleep(1);
 				}
 			}
+			throw new Exception("Device did not respond with confirmation");
 		}
 
 		#endregion Methods
@@ -254,9 +349,9 @@ namespace VisualProcessors.Processing
 			AcceleroX = 0x01,
 			AcceleroY = 0x02,
 			AcceleroZ = 0x04,
-			MagnetoX = 0x08,
-			MagnetoY = 0x10,
-			MagnetoZ = 0x20,
+			MagnetoX = 0x10,
+			MagnetoY = 0x20,
+			MagnetoZ = 0x40,
 		}
 
 		#endregion AxisSelection Enum
