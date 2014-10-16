@@ -564,6 +564,14 @@ namespace VisualProcessors.Forms
 			this.BeginInvoke(action);
 		}
 
+		private void PipelineFormFormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (CurrentPipeline != null)
+			{
+				CurrentPipeline.Stop();
+			}
+		}
+
 		private void PipelineModification(object sender, ProcessorModifiedEventArgs e)
 		{
 			MethodInvoker action = delegate
@@ -797,6 +805,5 @@ namespace VisualProcessors.Forms
 		#endregion Menu: Tools
 
 		#endregion MenuStrip Implementation
-
 	}
 }

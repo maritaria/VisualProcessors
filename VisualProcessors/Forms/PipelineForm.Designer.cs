@@ -305,6 +305,7 @@
 			this.Name = "PipelineForm";
 			this.Text = "Pipeline Editor";
 			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PipelineFormFormClosing);
 			this.MdiClientContextMenu.ResumeLayout(false);
 			this.MainMenu.ResumeLayout(false);
 			this.MainMenu.PerformLayout();
