@@ -319,6 +319,11 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public virtual void Stop()
 		{
+			KillWorkerThread();
+		}
+
+		protected void KillWorkerThread()
+		{
 			if (m_WorkerThread == null)
 			{
 				return;
