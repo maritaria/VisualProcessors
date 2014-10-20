@@ -103,6 +103,7 @@
     </Compile>
     <Compile Include="Processors\CompassSensorProcessor.cs" />
     <Compile Include="Processors\FileBasedProcessor.cs" />
+    <Compile Include="Processors\GenericTcpReader.cs" />
     <Compile Include="Processors\SerialPortProcessor.cs" />
     <Compile Include="Processors\DeltaProcessor.cs" />
     <Compile Include="Processors\CSVProcessor.cs" />
