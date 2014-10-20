@@ -15,9 +15,7 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Reads data from a SerialPort and writes it to its 'Output' channel", "", "Output",
-		InputTabMode = ProcessorTabMode.Hidden,
-		CustomTabMode = ProcessorTabMode.Hidden
-		)]
+		AllowUserSpawn=false)]
 	public class SerialPortProcessor : Processor
 	{
 		#region Properties
@@ -225,7 +223,6 @@ namespace VisualProcessors.Processors
 			: base(pipeline, name)
 		{
 			m_SerialPortSettings = new SerialPortSettings(this);
-			AddOutputChannel("Output");
 		}
 
 		~SerialPortProcessor()
@@ -268,20 +265,6 @@ namespace VisualProcessors.Processors
 				SerialPort = null;
 			}
 			base.Stop();
-		}
-
-		protected override void WorkerMethod()
-		{
-			while (SerialPort.IsOpen)
-			{
-				int i = SerialPort.ReadByte();
-				if (i == -1)
-				{
-					break;
-				}
-				GetOutputChannel("Output").WriteValue((double)i);
-			}
-			OnWarning("SerialPort has closed");
 		}
 
 		#endregion Methods
