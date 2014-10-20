@@ -124,6 +124,7 @@ namespace VisualProcessors.Processors
 			}
 			m_TcpThread = new Thread(new ThreadStart(TcpWorkerThread));
 			m_TcpThread.IsBackground = true;
+			m_TcpThread.Name = "WT:TCP " + Name;
 			m_TcpThread.Start();
 			base.Start();
 		}
