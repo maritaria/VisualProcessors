@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing.Design;
 using System.IO.Ports;
 using System.Linq;
@@ -9,9 +10,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using VisualProcessors.Forms;
-using System.Diagnostics;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Reads data from a SerialPort and writes it to its 'Output' channel", "", "Output",
 		InputTabMode = ProcessorTabMode.Hidden,
@@ -274,7 +275,7 @@ namespace VisualProcessors.Processing
 			while (SerialPort.IsOpen)
 			{
 				int i = SerialPort.ReadByte();
-				if (i==-1)
+				if (i == -1)
 				{
 					break;
 				}
@@ -473,19 +474,19 @@ namespace VisualProcessors.Processing
 		public override string ToString()
 		{
 			string result = "Portname: " + PortName + " Baudrate: " + BaudRate + " Databits: " + DataBits;
-			if (Parity!=Parity.None)
+			if (Parity != Parity.None)
 			{
 				result += " Parity: " + Parity;
 			}
-			if (Handshake!=Handshake.None)
+			if (Handshake != Handshake.None)
 			{
 				result += " Handshake: " + Handshake;
 			}
-			if (StopBits!= StopBits.None)
+			if (StopBits != StopBits.None)
 			{
 				result += " Stopbits: " + StopBits;
 			}
-			if (ReadTimeout!= SerialPort.InfiniteTimeout)
+			if (ReadTimeout != SerialPort.InfiniteTimeout)
 			{
 				result += " ReadTimeout: " + ReadTimeout;
 			}
@@ -493,7 +494,7 @@ namespace VisualProcessors.Processing
 			{
 				result += " WriteTimeout: " + WriteTimeout;
 			}
-			if (ReceivedBytesThreshold!=1)
+			if (ReceivedBytesThreshold != 1)
 			{
 				result += "ReceivedBytesThreshold: " + ReceivedBytesThreshold;
 			}

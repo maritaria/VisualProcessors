@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualProcessors.Controls;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Writes the input to a .csv file", "1", "",
 		CustomTabMode = ProcessorTabMode.Hidden,

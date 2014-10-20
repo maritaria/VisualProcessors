@@ -101,15 +101,15 @@
     <Compile Include="Forms\SerialPortForm.Designer.cs">
       <DependentUpon>SerialPortForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Processing\CompassSensorProcessor.cs" />
-    <Compile Include="Processing\FileBasedProcessor.cs" />
-    <Compile Include="Processing\SerialPortProcessor.cs" />
-    <Compile Include="Processing\DeltaProcessor.cs" />
-    <Compile Include="Processing\CSVProcessor.cs" />
-    <Compile Include="Processing\EmptyProcessor.cs" />
+    <Compile Include="Processors\CompassSensorProcessor.cs" />
+    <Compile Include="Processors\FileBasedProcessor.cs" />
+    <Compile Include="Processors\SerialPortProcessor.cs" />
+    <Compile Include="Processors\DeltaProcessor.cs" />
+    <Compile Include="Processors\CSVProcessor.cs" />
+    <Compile Include="Processors\EmptyProcessor.cs" />
     <Compile Include="Processing\ProcessorModifiedEventArgs.cs" />
     <Compile Include="Processing\ProcessorOptions.cs" />
-    <Compile Include="Processing\PulseProcessor.cs" />
+    <Compile Include="Processors\PulseProcessor.cs" />
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,21 +130,21 @@
     <Compile Include="Forms\ProcessorForm.Designer.cs">
       <DependentUpon>ProcessorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Processing\GraphProcessor.cs" />
-    <Compile Include="Processing\AverageProcessor.cs" />
-    <Compile Include="Processing\AddProcessor.cs" />
+    <Compile Include="Processors\GraphProcessor.cs" />
+    <Compile Include="Processors\AverageProcessor.cs" />
+    <Compile Include="Processors\AddProcessor.cs" />
     <Compile Include="Processing\ChannelType.cs" />
-    <Compile Include="Processing\CodeProcessor.cs" />
-    <Compile Include="Processing\DirectInputProcessor.cs" />
-    <Compile Include="Processing\DirectOutputProcessor.cs.cs" />
+    <Compile Include="Processors\CodeProcessor.cs" />
+    <Compile Include="Processors\DirectInputProcessor.cs" />
+    <Compile Include="Processors\DirectOutputProcessor.cs" />
     <Compile Include="Processing\InputChannel.cs" />
-    <Compile Include="Processing\MultiplyProcessor.cs" />
+    <Compile Include="Processors\MultiplyProcessor.cs" />
     <Compile Include="Processing\NameChanged.cs" />
     <Compile Include="Processing\OutputChannel.cs" />
     <Compile Include="Processing\Pipeline.cs" />
     <Compile Include="Processing\Processor.cs" />
     <Compile Include="Processing\ProcessorMetaAttribute.cs" />
-    <Compile Include="Processing\TcpClientProcessor.cs" />
+    <Compile Include="Processors\TcpClientProcessor.cs" />
     <Compile Include="Processing\XmlAnything.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -204,6 +204,7 @@
       <Name>ZedGraph</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Adds two values together", "A", "Output",
 		CustomTabMode = ProcessorTabMode.Hidden)]

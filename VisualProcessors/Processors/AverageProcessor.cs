@@ -7,8 +7,9 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using VisualProcessors.Controls;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Calculates the average of a signal over time", "Input", "Output",
 		CustomTabMode = ProcessorTabMode.Hidden)]

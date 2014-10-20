@@ -11,8 +11,9 @@ using System.Xml;
 using System.Xml.Serialization;
 using ZedGraph;
 using System.ComponentModel;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
 		AllowOptionalInputs = true,

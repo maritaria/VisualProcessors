@@ -11,8 +11,9 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using VisualProcessors.Controls;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Allows user C# code to be executed during simulations", "Input1", "Output1",
 		AllowOptionalInputs = true,

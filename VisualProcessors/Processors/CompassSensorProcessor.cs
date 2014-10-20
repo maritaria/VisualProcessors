@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using VisualProcessors.Design;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Reads data from the eCompass sensor", "", "AcceleroX",
 		InputTabMode = ProcessorTabMode.Hidden,
@@ -312,7 +313,7 @@ namespace VisualProcessors.Processing
 					SerialPort.DiscardInBuffer();
 					SerialPort.Write(packet, 0, packet.Length);
 					int i = SerialPort.ReadByte();
-					if (i==0x24)
+					if (i == 0x24)
 					{
 						success = true;
 						break;

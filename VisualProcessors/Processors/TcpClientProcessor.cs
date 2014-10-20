@@ -9,7 +9,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace VisualProcessors.Processing
+using VisualProcessors.Processing;
+
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "A base processor for processors which use a TcpClient", "", "",
 		AllowUserSpawn = false)]

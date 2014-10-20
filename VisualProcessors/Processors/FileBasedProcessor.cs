@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VisualProcessors.Design;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "A base processor for processors whose functionallity requires interaction with a file", "", "",
 		AllowUserSpawn = false)]
@@ -67,13 +68,19 @@ namespace VisualProcessors.Processing
 
 		#region Methods
 
+		public override void Dispose()
+		{
+			DisposeFileStream();
+			base.Dispose();
+		}
+
 		public override void Start()
 		{
 			ThrowExceptionOnInvalid(FilePath);
 			FileStream = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess);
 			base.Start();
 		}
-		
+
 		public override void Stop()
 		{
 			base.Stop();
@@ -153,6 +160,7 @@ namespace VisualProcessors.Processing
 				throw new Exception("No file selected");
 			}
 		}
+
 		protected override void WorkerMethod()
 		{
 			if (!m_OutputSet)
@@ -164,11 +172,6 @@ namespace VisualProcessors.Processing
 				base.WorkerMethod();
 			}
 		}
-		public override void Dispose()
-		{
-			DisposeFileStream();
-			base.Dispose();
-		} 
 
 		#endregion Methods
 	}

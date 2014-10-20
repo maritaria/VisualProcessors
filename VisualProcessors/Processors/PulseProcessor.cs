@@ -8,8 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualProcessors.Controls;
+using VisualProcessors.Processing;
 
-namespace VisualProcessors.Processing
+namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Generates a pulse on a fixed interval", "", "Output",
 		InputTabMode = ProcessorTabMode.Hidden)]
