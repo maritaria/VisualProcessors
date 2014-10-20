@@ -20,6 +20,9 @@ namespace VisualProcessors.Processing
 
 		private static byte[] SyncBlock = new byte[] { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
 
+		private bool m_DeviceStopped = false;
+		private bool m_Stopping = false;
+
 		#endregion Properties
 
 		#region Options
@@ -108,16 +111,13 @@ namespace VisualProcessors.Processing
 		{
 			if (SerialPort != null)
 			{
-				try
-				{
-					KillWorkerThread();
-					SendStopCommand();
-				}
-				catch (Exception e)
-				{
-					OnError("Failed to stop device:" + Environment.NewLine + e.Message);
-					return;
-				}
+				m_DeviceStopped = false;
+				m_Stopping = true;
+				SerialPort.ReadTimeout = 0;
+				DateTime start = DateTime.Now;
+				while (!m_DeviceStopped && DateTime.Now.Subtract(start).TotalSeconds < 5) ;
+				m_DeviceStopped = false;
+				m_Stopping = false;
 			}
 			base.Stop();
 		}
@@ -137,6 +137,7 @@ namespace VisualProcessors.Processing
 			catch (Exception e)
 			{
 				OnError("Could not configure device:" + Environment.NewLine + e.Message);
+				m_DeviceStopped = true;
 				return;
 			}
 
@@ -164,6 +165,10 @@ namespace VisualProcessors.Processing
 				try
 				{
 					List<short> packet = ReadPacket().ToList();
+					if (m_Stopping)
+					{
+						break;
+					}
 					while (packet.Count >= count)
 					{
 						if (sax)
@@ -192,10 +197,31 @@ namespace VisualProcessors.Processing
 						}
 					}
 				}
-				catch
+				catch (Exception e)
 				{
+					if (m_Stopping)
+					{
+						break;
+					}
+					if (SerialPort != null)
+					{
+						OnWarning("Lost connection to device:" + Environment.NewLine + e.Message);
+					}
 					return;
 				}
+			}
+			SerialPort.ReadTimeout = 3000;
+			try
+			{
+				SendStopCommand();
+			}
+			catch (Exception e2)
+			{
+				OnWarning("Failed to stop device:" + Environment.NewLine + e2.Message);
+			}
+			finally
+			{
+				m_DeviceStopped = true;
 			}
 		}
 
@@ -224,11 +250,10 @@ namespace VisualProcessors.Processing
 				throw new ArgumentException("userdata is too long");
 			}
 			packet.Add((byte)userdata.Length);
+			packet.Add((byte)userdata.Length);
 			packet.AddRange(userdata);
 			packet.Add(0xBB);
 			packet.Add(0xCC);
-
-			Console.WriteLine("Generated: " + BitConverter.ToString(packet.ToArray()));
 
 			return packet.ToArray();
 		}
@@ -267,6 +292,9 @@ namespace VisualProcessors.Processing
 			for (int i = 0; i < 30; i++)
 			{
 				converted[i] = BitConverter.ToInt16(packet, i * 2);
+				if (converted[i] < -25000)
+				{
+				}
 			}
 			return converted;
 		}
@@ -277,9 +305,23 @@ namespace VisualProcessors.Processing
 			{
 				int srate = SampleRate;
 				byte[] packet = GeneratePacket(new byte[] { 0x03, (byte)(srate >> 8), (byte)(srate & 0xFF), (byte)Axis });
-				Console.WriteLine("Sending config command");
-				SerialPort.Write(packet, 0, packet.Length);
-				Console.WriteLine("Waiting for confirmation");
+				DateTime start = DateTime.Now;
+				bool success = false;
+				while (DateTime.Now.Subtract(start).TotalSeconds < 1)
+				{
+					SerialPort.DiscardInBuffer();
+					SerialPort.Write(packet, 0, packet.Length);
+					int i = SerialPort.ReadByte();
+					if (i==0x24)
+					{
+						success = true;
+						break;
+					}
+				}
+				if (!success)
+				{
+					throw new TimeoutException("Device accept any packet within timeout");
+				}
 				WaitForConfirmation();
 			}
 		}
@@ -289,8 +331,23 @@ namespace VisualProcessors.Processing
 			if (SerialPort != null && SerialPort.IsOpen)
 			{
 				byte[] packet = GeneratePacket(new byte[] { 0x01 });
-				Console.WriteLine("Sending start command");
-				SerialPort.Write(packet, 0, packet.Length);
+				DateTime start = DateTime.Now;
+				bool success = false;
+				while (DateTime.Now.Subtract(start).TotalSeconds < 1)
+				{
+					SerialPort.DiscardInBuffer();
+					SerialPort.Write(packet, 0, packet.Length);
+					int i = SerialPort.ReadByte();
+					if (i == 0x24)
+					{
+						success = true;
+						break;
+					}
+				}
+				if (!success)
+				{
+					throw new TimeoutException("Device accept any packet within timeout");
+				}
 			}
 		}
 
@@ -299,10 +356,23 @@ namespace VisualProcessors.Processing
 			if (SerialPort != null && SerialPort.IsOpen)
 			{
 				byte[] packet = GeneratePacket(new byte[] { 0x02 });
-				Console.WriteLine("Sending stop command");
-				SerialPort.Write(packet, 0, packet.Length);
-				Console.WriteLine("Waiting for confirmation");
-				WaitForConfirmation();
+				DateTime start = DateTime.Now;
+				bool success = false;
+				while (DateTime.Now.Subtract(start).TotalSeconds < 1)
+				{
+					SerialPort.DiscardInBuffer();
+					SerialPort.Write(packet, 0, packet.Length);
+					int i = SerialPort.ReadByte();
+					if (i == 0x24)
+					{
+						success = true;
+						break;
+					}
+				}
+				if (!success)
+				{
+					throw new TimeoutException("Device accept any packet within timeout");
+				}
 			}
 		}
 
@@ -321,10 +391,8 @@ namespace VisualProcessors.Processing
 					}
 					Array.Copy(buffer, 0, buffer, 1, buffer.Length - 1);
 					buffer[0] = (byte)i;
-					Console.Write(i.ToString() + " ");
 					if (buffer[0] == 0xC4 && buffer[1] == 0xD8 && buffer[2] == 0x61)
 					{
-						Console.WriteLine("Confirmed");
 						return;
 					}
 				}
