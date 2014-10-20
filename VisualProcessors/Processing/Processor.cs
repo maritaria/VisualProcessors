@@ -310,6 +310,7 @@ namespace VisualProcessors.Processing
 			}
 			m_WorkerThread = new Thread(new ThreadStart(WorkerMethod));
 			m_WorkerThread.IsBackground = true;
+			m_WorkerThread.Name = "WT "+ Name;
 			m_WorkerThread.Start();
 		}
 
