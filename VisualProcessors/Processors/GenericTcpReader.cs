@@ -11,7 +11,7 @@ namespace VisualProcessors.Processors
 	[ProcessorMeta("Bram Kamies", "Processor that implements the TcpPlot Generic profile protocol", "", "1",
 		CustomTabMode = ProcessorTabMode.Hidden,
 		InputTabMode = ProcessorTabMode.Hidden)]
-	public class GenericTcpReader : TcpClientBasedProcessor
+	public class GenericTcpReader : TcpClientProcessor
 	{
 		#region Properties
 
