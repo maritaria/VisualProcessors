@@ -15,7 +15,7 @@ namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "A base processor for processors which use a TcpClient", "", "",
 		AllowUserSpawn = false)]
-	public class TcpClientProcessor : Processor
+	public class TcpClientBasedProcessor : Processor
 	{
 		#region Properties
 
@@ -101,12 +101,12 @@ namespace VisualProcessors.Processors
 
 		#region Constructor
 
-		public TcpClientProcessor()
+		public TcpClientBasedProcessor()
 			: base()
 		{
 		}
 
-		public TcpClientProcessor(Pipeline p, string name)
+		public TcpClientBasedProcessor(Pipeline p, string name)
 			: base(p, name)
 		{
 		}
