@@ -19,6 +19,9 @@ namespace VisualProcessors.Forms
 
 		private ChannelType m_Type;
 
+		/// <summary>
+		///  Gets the name of the choosen channel, null if there is no selection.
+		/// </summary>
 		public string Choice
 		{
 			get
@@ -29,7 +32,7 @@ namespace VisualProcessors.Forms
 				}
 				else
 				{
-					return "_ERROR_NO_SELECTION_";
+					return null;
 				}
 			}
 		}
@@ -87,6 +90,8 @@ namespace VisualProcessors.Forms
 
 		#endregion Methods
 
+		#region Event Handlers
+
 		private void ChannelSelectionBox_Load(object sender, EventArgs e)
 		{
 			UpdateChannelList();
@@ -94,11 +99,13 @@ namespace VisualProcessors.Forms
 
 		private void listView1_DoubleClick(object sender, EventArgs e)
 		{
-			if (ChannelListView.SelectedItems.Count==1)
+			if (ChannelListView.SelectedItems.Count == 1)
 			{
 				this.DialogResult = DialogResult.OK;
 				Close();
 			}
 		}
+
+		#endregion Event Handlers
 	}
 }
