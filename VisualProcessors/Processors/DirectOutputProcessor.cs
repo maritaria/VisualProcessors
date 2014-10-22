@@ -42,6 +42,8 @@ namespace VisualProcessors.Processors
 			Label l = new Label();
 			l.Text = "No input available yet";
 			l.Dock = DockStyle.Top;
+			l.Font = new System.Drawing.Font(l.Font.FontFamily, 24);
+			l.Height = l.PreferredHeight;
 			guis.Add(l);
 			panel.Controls.Add(l);
 			base.GetUserInterface(panel);
