@@ -118,9 +118,12 @@ namespace VisualProcessors.Processors
 			m_PointListRed = new RollingPointPairList(BufferSize);
 			m_PointListBlue = new RollingPointPairList(BufferSize);
 			m_PointListGreen = new RollingPointPairList(BufferSize);
-			m_Graph.GraphPane.AddCurve("Red", m_PointListRed, Color.Red, SymbolType.None);
-			m_Graph.GraphPane.AddCurve("Blue", m_PointListBlue, Color.Blue, SymbolType.None);
-			m_Graph.GraphPane.AddCurve("Green", m_PointListGreen, Color.Green, SymbolType.None);
+			var rinput = GetInputChannel("Red");
+			var binput = GetInputChannel("Blue");
+			var ginput = GetInputChannel("Green");
+			m_Graph.GraphPane.AddCurve(rinput.IsConnected ? rinput.Source.Name : "Disconnected", m_PointListRed, Color.Red, SymbolType.None);
+			m_Graph.GraphPane.AddCurve(binput.IsConnected ? binput.Source.Name : "Disconnected", m_PointListBlue, Color.Blue, SymbolType.None);
+			m_Graph.GraphPane.AddCurve(ginput.IsConnected ? ginput.Source.Name : "Disconnected", m_PointListGreen, Color.Green, SymbolType.None);
 		}
 
 		#endregion Constructor
