@@ -166,7 +166,10 @@ namespace VisualProcessors.Processors
 			}
 			catch (Exception e)
 			{
-				OnError("Could not configure device:" + Environment.NewLine + e.Message);
+				if (!m_Stopping)
+				{
+					OnError("Could not configure device:" + Environment.NewLine + e.Message);
+				}
 				m_DeviceStopped = true;
 				return;
 			}
