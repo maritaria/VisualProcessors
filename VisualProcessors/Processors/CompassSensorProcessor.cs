@@ -47,6 +47,12 @@ namespace VisualProcessors.Processors
 			}
 		}
 
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Confirmation timeout")]
+		[Category("Settings")]
+		[Description("Sets the maximum time in seconds to wait for a response from the RF device")]
+		[DefaultValue(1)]
 		public double ConfirmationTimeout
 		{
 			get
@@ -63,6 +69,12 @@ namespace VisualProcessors.Processors
 			}
 		}
 
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Sensor selection")]
+		[Category("Settings")]
+		[Description("Sets the samplerate to read samples in from, the actual binary data rate is the samplerate multiplied by the number of selected sensor axis.")]
+		[DefaultValue(60)]
 		public int SampleRate
 		{
 			get
