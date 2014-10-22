@@ -236,16 +236,7 @@ namespace VisualProcessors.Processors
 
 		public override void Start()
 		{
-			if (SerialPort != null)
-			{
-				//This should never happen
-				OnWarning("SerialPort was not disposed previously");
-				if (SerialPort.IsOpen)
-				{
-					SerialPort.Close();
-				}
-				SerialPort.Dispose();
-			}
+			base.Start();
 			SerialPort = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
 			SerialPort.DtrEnable = DtrEnable;
 			SerialPort.Handshake = Handshake;
@@ -254,7 +245,6 @@ namespace VisualProcessors.Processors
 			SerialPort.RtsEnable = RtsEnable;
 			SerialPort.WriteTimeout = WriteTimeout;
 			SerialPort.Open();
-			base.Start();
 		}
 
 		public override void Stop()

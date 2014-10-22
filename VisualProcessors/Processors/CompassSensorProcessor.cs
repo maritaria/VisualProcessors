@@ -144,6 +144,21 @@ namespace VisualProcessors.Processors
 				OnWarning("No axis have been selected");
 				return;
 			}
+			DateTime start = DateTime.Now;
+			while(true)
+			{
+				if (SerialPort!=null && SerialPort.IsOpen)
+				{
+					break;
+				}
+				if (DateTime.Now.Subtract(start).TotalSeconds > 5)
+				{
+					OnError("SerialPort was not initialized");
+					return;
+				}
+				Thread.Sleep(1);
+			}
+
 			try
 			{
 				SendConfigCommand();
