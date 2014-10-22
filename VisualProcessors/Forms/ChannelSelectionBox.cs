@@ -23,7 +23,14 @@ namespace VisualProcessors.Forms
 		{
 			get
 			{
-				return (string)ChannelComboBox.SelectedItem;
+				if (ChannelListView.SelectedItems.Count == 1)
+				{
+					return ChannelListView.SelectedItems[0].Text;
+				}
+				else
+				{
+					return "_ERROR_NO_SELECTION_";
+				}
 			}
 		}
 
@@ -55,7 +62,7 @@ namespace VisualProcessors.Forms
 
 		private void UpdateChannelList()
 		{
-			ChannelComboBox.Items.Clear();
+			ChannelListView.Items.Clear();
 			string[] col;
 			string def = "";
 			if (m_Type == ChannelType.InputChannel)
@@ -68,16 +75,14 @@ namespace VisualProcessors.Forms
 				col = Processor.GetOutputChannelNames();
 				def = Processor.Meta.DefaultOutput;
 			}
-			int index = 0;
 			foreach (string cname in col)
 			{
-				int i = ChannelComboBox.Items.Add(cname);
+				var item = ChannelListView.Items.Add(cname);
 				if (cname == def)
 				{
-					index = i;
+					item.Selected = true;
 				}
 			}
-			ChannelComboBox.SelectedIndex = index;
 		}
 
 		#endregion Methods
@@ -85,6 +90,15 @@ namespace VisualProcessors.Forms
 		private void ChannelSelectionBox_Load(object sender, EventArgs e)
 		{
 			UpdateChannelList();
+		}
+
+		private void listView1_DoubleClick(object sender, EventArgs e)
+		{
+			if (ChannelListView.SelectedItems.Count==1)
+			{
+				this.DialogResult = DialogResult.OK;
+				Close();
+			}
 		}
 	}
 }

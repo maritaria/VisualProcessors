@@ -28,39 +28,25 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.ConfirmButton = new System.Windows.Forms.Button();
-			this.ChannelComboBox = new System.Windows.Forms.ComboBox();
+			this.ChannelListView = new System.Windows.Forms.ListView();
 			this.SuspendLayout();
 			// 
-			// ConfirmButton
+			// ChannelListView
 			// 
-			this.ConfirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ConfirmButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.ConfirmButton.Location = new System.Drawing.Point(217, 12);
-			this.ConfirmButton.Name = "ConfirmButton";
-			this.ConfirmButton.Size = new System.Drawing.Size(55, 21);
-			this.ConfirmButton.TabIndex = 0;
-			this.ConfirmButton.Text = "Confirm";
-			this.ConfirmButton.UseVisualStyleBackColor = true;
-			// 
-			// ChannelComboBox
-			// 
-			this.ChannelComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.ChannelComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ChannelComboBox.FormattingEnabled = true;
-			this.ChannelComboBox.Location = new System.Drawing.Point(12, 12);
-			this.ChannelComboBox.Name = "ChannelComboBox";
-			this.ChannelComboBox.Size = new System.Drawing.Size(199, 21);
-			this.ChannelComboBox.TabIndex = 1;
+			this.ChannelListView.Location = new System.Drawing.Point(12, 12);
+			this.ChannelListView.MultiSelect = false;
+			this.ChannelListView.Name = "ChannelListView";
+			this.ChannelListView.Size = new System.Drawing.Size(512, 194);
+			this.ChannelListView.TabIndex = 0;
+			this.ChannelListView.UseCompatibleStateImageBehavior = false;
+			this.ChannelListView.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
 			// 
 			// ChannelSelectionBox
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(284, 45);
-			this.Controls.Add(this.ChannelComboBox);
-			this.Controls.Add(this.ConfirmButton);
+			this.ClientSize = new System.Drawing.Size(536, 218);
+			this.Controls.Add(this.ChannelListView);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -76,7 +62,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button ConfirmButton;
-		private System.Windows.Forms.ComboBox ChannelComboBox;
+		private System.Windows.Forms.ListView ChannelListView;
+
 	}
 }
