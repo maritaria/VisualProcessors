@@ -33,10 +33,11 @@
 			// 
 			// ChannelListView
 			// 
-			this.ChannelListView.Location = new System.Drawing.Point(12, 12);
+			this.ChannelListView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ChannelListView.Location = new System.Drawing.Point(0, 0);
 			this.ChannelListView.MultiSelect = false;
 			this.ChannelListView.Name = "ChannelListView";
-			this.ChannelListView.Size = new System.Drawing.Size(512, 194);
+			this.ChannelListView.Size = new System.Drawing.Size(536, 218);
 			this.ChannelListView.TabIndex = 0;
 			this.ChannelListView.UseCompatibleStateImageBehavior = false;
 			this.ChannelListView.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
