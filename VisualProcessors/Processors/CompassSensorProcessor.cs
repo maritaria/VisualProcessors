@@ -117,6 +117,8 @@ namespace VisualProcessors.Processors
 				SerialPort.ReadTimeout = 0;
 				DateTime start = DateTime.Now;
 				while (!m_DeviceStopped && DateTime.Now.Subtract(start).TotalSeconds < 5) ;
+				SerialPort.Dispose();
+				SerialPort = null;
 				m_DeviceStopped = false;
 				m_Stopping = false;
 			}
