@@ -22,6 +22,13 @@ namespace VisualProcessors.Processing
 		Custom,
 	}
 
+	public enum ProcessorThreadMode
+	{
+		ForceMultiThreading,
+		DenyMultiThreading,
+		UserDefined,
+	}
+
 	[AttributeUsage(AttributeTargets.Class)]
 	public class ProcessorMeta : System.Attribute
 	{
@@ -100,6 +107,11 @@ namespace VisualProcessors.Processing
 		///  Determines the title of the 'Properties' tab
 		/// </summary>
 		public string PropertiesTabTitle = "Properties";
+
+		/// <summary>
+		/// Determines whether to use multithreading, also allows the end user to choose
+		/// </summary>
+		public ProcessorThreadMode ThreadMode = ProcessorThreadMode.UserDefined;
 
 		public ProcessorMeta(string author, string description, string defaultinput, string defaultoutput)
 		{

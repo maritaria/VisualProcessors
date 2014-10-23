@@ -101,6 +101,59 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
+		///  Gets or sets whether the processor uses a seperate thread during simulation
+		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("MultiThreaded")]
+		[Category("Processor")]
+		[Description("When true, the processor gets its own thread during simulation, use this only for intensive processors, or if there is a feedback loop in your model (and then only one is required to be multithreaded).")]
+		[DefaultValue(false)]
+		public bool MultiThreaded
+		{
+			get
+			{
+				if (Meta.ThreadMode == ProcessorThreadMode.UserDefined)
+				{
+					return bool.Parse(Options.GetOption("MultiThreaded", "False"));
+				}
+				else
+				{
+					return Meta.ThreadMode == ProcessorThreadMode.ForceMultiThreading;
+				}
+			}
+			set
+			{
+				if (Meta.ThreadMode == ProcessorThreadMode.UserDefined)
+				{
+					Options.SetOption("MultiThreaded", value.ToString());
+					OnModified(HaltTypes.ShouldHalt);
+				}
+			}
+		}
+		/// <summary>
+		/// Gets the amount of milliseconds to sleep after a unsuccesfull inputchannel check loop
+		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("ThreadSleep")]
+		[Category("Processor")]
+		[Description("Only used when multi-threading is enabled. Sets the amount of milliseconds to sleep after the workermethod has determined not all required inputchannels have data. Allows decimal placements.")]
+		[DefaultValue(1)]
+		public double ThreadSleep
+		{
+			get
+			{
+				return double.Parse(Options.GetOption("ThreadSleep", "1"));
+			}
+			set
+			{
+				Options.SetOption("ThreadSleep", value.ToString());
+				OnModified(HaltTypes.Continue);
+			}
+		}
+
+		/// <summary>
 		///  Gets the pipeline the processor belongs to.
 		/// </summary>
 		[Browsable(false)]
@@ -299,19 +352,22 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public virtual void Start()
 		{
-			if (m_WorkerThread != null)
+			if (MultiThreaded)
 			{
-				Stop();
+				if (m_WorkerThread != null)
+				{
+					Stop();
+				}
+				if (!IsPrepared)
+				{
+					Prepare();
+					IsPrepared = true;
+				}
+				m_WorkerThread = new Thread(new ThreadStart(WorkerMethod));
+				m_WorkerThread.IsBackground = true;
+				m_WorkerThread.Name = "WT " + Name;
+				m_WorkerThread.Start();
 			}
-			if (!IsPrepared)
-			{
-				Prepare();
-				IsPrepared = true;
-			}
-			m_WorkerThread = new Thread(new ThreadStart(WorkerMethod));
-			m_WorkerThread.IsBackground = true;
-			m_WorkerThread.Name = "WT "+ Name;
-			m_WorkerThread.Start();
 		}
 
 		/// <summary>
@@ -364,18 +420,27 @@ namespace VisualProcessors.Processing
 		{
 			while (true)
 			{
-				bool ready = true;
-				foreach (InputChannel input in m_InputChannels)
+				SingleWorkerLoop();
+			}
+		}
+
+		internal void SingleWorkerLoop()
+		{
+			bool ready = true;
+			foreach (InputChannel input in m_InputChannels)
+			{
+				if (!input.IsOptional)
 				{
-					if (!input.IsOptional)
-					{
-						ready &= input.HasValue();
-					}
+					ready &= input.HasValue();
 				}
-				if (ready)
-				{
-					Process();
-				}
+			}
+			if (ready)
+			{
+				Process();
+			}
+			else
+			{
+				Thread.Sleep(new TimeSpan((long)(TimeSpan.TicksPerMillisecond * ThreadSleep)));
 			}
 		}
 
@@ -635,6 +700,14 @@ namespace VisualProcessors.Processing
 			{
 				channel.BuildLinks(pipeline);
 			}
+		}
+		/// <summary>
+		/// Called when the processor has been loaded from a file, after its in- and outputs have been linked.
+		/// </summary>
+		/// <param name="pipeline"></param>
+		public virtual void PostLoad(Pipeline pipeline)
+		{
+
 		}
 
 		#endregion Build

@@ -235,6 +235,10 @@ namespace VisualProcessors.Processing
 			{
 				p.BuildLinks(this);
 			}
+			foreach(Processor p in m_Processors)
+			{
+				p.PostLoad(this);
+			}
 		}
 
 		#endregion Methods

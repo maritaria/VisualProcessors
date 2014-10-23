@@ -222,6 +222,10 @@ namespace VisualProcessors.Processing
 			{
 				m_Data.Add(value);
 			}
+			if (!Owner.MultiThreaded)
+			{
+				Owner.SingleWorkerLoop();
+			}
 		}
 
 		internal void SetSource(OutputChannel output)

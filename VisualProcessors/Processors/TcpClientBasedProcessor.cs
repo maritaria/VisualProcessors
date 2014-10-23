@@ -14,7 +14,8 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "A base processor for processors which use a TcpClient", "", "",
-		AllowUserSpawn = false)]
+		AllowUserSpawn = false,
+		ThreadMode=ProcessorThreadMode.DenyMultiThreading)]
 	public class TcpClientBasedProcessor : Processor
 	{
 		#region Properties

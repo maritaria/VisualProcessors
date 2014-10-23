@@ -213,6 +213,11 @@ namespace VisualProcessors.Processors
 			}
 		}
 
+		public override void PostLoad(Pipeline pipeline)
+		{
+			Compile();
+		}
+
 		#endregion Methods
 
 		#region Compiling
