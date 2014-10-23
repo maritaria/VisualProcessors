@@ -13,8 +13,8 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Writes the input to a .csv file", "1", "",
-		CustomTabMode = ProcessorTabMode.Hidden,
-		OutputTabMode = ProcessorTabMode.Hidden)]
+		CustomTabMode = ProcessorTabMode.Hide,
+		OutputTabMode = ProcessorTabMode.Hide)]
 	public class CSVProcessor : FileBasedProcessor
 	{
 		#region Properties

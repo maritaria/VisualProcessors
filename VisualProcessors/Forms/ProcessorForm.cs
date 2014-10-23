@@ -90,7 +90,7 @@ namespace VisualProcessors.Forms
 			ProcessorInputView.Pipeline = PipelineForm;
 			ProcessorInputView.Processor = Processor;
 			InputTab.Text = Processor.Meta.InputTabTitle;
-			if (Processor.Meta.InputTabMode == ProcessorTabMode.Hidden)
+			if (Processor.Meta.InputTabMode == ProcessorTabMode.Hide)
 			{
 				Tabs.TabPages.Remove(InputTab);
 			}
@@ -98,7 +98,7 @@ namespace VisualProcessors.Forms
 			//Properties
 			PropertiesTab.Text = Processor.Meta.PropertiesTabTitle;
 			PropertyGrid.SelectedObject = Processor;
-			if (Processor.Meta.PropertiesTabMode == ProcessorTabMode.Hidden)
+			if (Processor.Meta.PropertiesTabMode == ProcessorTabMode.Hide)
 			{
 				Tabs.TabPages.Remove(PropertiesTab);
 			}
@@ -106,7 +106,7 @@ namespace VisualProcessors.Forms
 			//Custom
 			processor.GetUserInterface(CustomPanel);
 			CustomTab.Text = Processor.Meta.CustomTabTitle;
-			if (Processor.Meta.CustomTabMode == ProcessorTabMode.Hidden)
+			if (Processor.Meta.CustomTabMode == ProcessorTabMode.Hide)
 			{
 				Tabs.TabPages.Remove(CustomTab);
 			}
@@ -115,7 +115,7 @@ namespace VisualProcessors.Forms
 			ProcessorOutputView.Pipeline = PipelineForm;
 			ProcessorOutputView.Processor = Processor;
 			OutputTab.Text = Processor.Meta.OutputTabTitle;
-			if (Processor.Meta.OutputTabMode == ProcessorTabMode.Hidden)
+			if (Processor.Meta.OutputTabMode == ProcessorTabMode.Hide)
 			{
 				Tabs.TabPages.Remove(OutputTab);
 			}
@@ -150,12 +150,12 @@ namespace VisualProcessors.Forms
 			{
 				case LinkMode.InputFirst:
 					ConfirmLinkButton.Text = "Link Output";
-					ConfirmLinkButton.Enabled = (Processor.Meta.OutputTabMode != ProcessorTabMode.Hidden) && (Processor.OutputChannelCount > 0);
+					ConfirmLinkButton.Enabled = (Processor.Meta.OutputTabMode != ProcessorTabMode.Hide) && (Processor.OutputChannelCount > 0);
 					break;
 
 				case LinkMode.OutputFirst:
 					ConfirmLinkButton.Text = "Link Input";
-					ConfirmLinkButton.Enabled = (Processor.Meta.InputTabMode != ProcessorTabMode.Hidden) && (Processor.InputChannelCount > 0);
+					ConfirmLinkButton.Enabled = (Processor.Meta.InputTabMode != ProcessorTabMode.Hide) && (Processor.InputChannelCount > 0);
 					break;
 			}
 		}

@@ -15,7 +15,7 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button", "", "Output",
-		InputTabMode = ProcessorTabMode.Hidden,
+		InputTabMode = ProcessorTabMode.Hide,
 		CustomTabTitle = "Input")]
 	public class DirectInputProcessor : Processor
 	{

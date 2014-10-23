@@ -13,7 +13,7 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Generates a pulse on a fixed interval", "", "Output",
-		InputTabMode = ProcessorTabMode.Hidden)]
+		InputTabMode = ProcessorTabMode.Hide)]
 	public class PulseProcessor : Processor
 	{
 		#region Properties

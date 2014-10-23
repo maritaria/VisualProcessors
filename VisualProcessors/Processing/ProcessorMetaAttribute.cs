@@ -9,9 +9,8 @@ namespace VisualProcessors.Processing
 {
 	public enum ProcessorTabMode
 	{
-		Normal,
-		Hidden,
-		Custom,
+		Show,
+		Hide,
 	}
 
 	public enum ProcessorTabs
@@ -53,7 +52,7 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Custom' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode CustomTabMode = ProcessorTabMode.Normal;
+		public ProcessorTabMode CustomTabMode = ProcessorTabMode.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Custom' tab
@@ -79,7 +78,7 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Input' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode InputTabMode = ProcessorTabMode.Normal;
+		public ProcessorTabMode InputTabMode = ProcessorTabMode.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Input' tab
@@ -90,7 +89,7 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Output' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode OutputTabMode = ProcessorTabMode.Normal;
+		public ProcessorTabMode OutputTabMode = ProcessorTabMode.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Output' tab
@@ -101,7 +100,7 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Properties' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode PropertiesTabMode = ProcessorTabMode.Normal;
+		public ProcessorTabMode PropertiesTabMode = ProcessorTabMode.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Properties' tab

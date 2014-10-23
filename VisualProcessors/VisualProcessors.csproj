@@ -95,6 +95,18 @@
       <DependentUpon>AssemblyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\BranchOperation.cs" />
+    <Compile Include="Forms\ProcessorInterfaceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ProcessorInterfaceForm.Designer.cs">
+      <DependentUpon>ProcessorInterfaceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PipelineOutputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PipelineOutputForm.Designer.cs">
+      <DependentUpon>PipelineOutputForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SerialPortForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -166,6 +178,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ChannelSelectionBox.resx">
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PipelineOutputForm.resx">
+      <DependentUpon>PipelineOutputForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ProcessorInterfaceForm.resx">
+      <DependentUpon>ProcessorInterfaceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PipelineForm.resx">
       <DependentUpon>PipelineForm.cs</DependentUpon>

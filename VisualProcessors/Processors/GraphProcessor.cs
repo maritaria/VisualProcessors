@@ -18,12 +18,12 @@ namespace VisualProcessors.Processors
 	[ProcessorMeta("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
 		AllowOptionalInputs = true,
 		CustomTabTitle = "Graph",
-		OutputTabMode = ProcessorTabMode.Hidden)]
+		OutputTabMode = ProcessorTabMode.Hide)]
 	public class GraphProcessor : Processor
 	{
 		#region Properties
 
-		private ZedGraphControl m_Graph;
+		private List<ZedGraphControl> m_Graphs = new List<ZedGraphControl>();
 		private RollingPointPairList m_PointListBlue;
 		private RollingPointPairList m_PointListGreen;
 		private RollingPointPairList m_PointListRed;
@@ -114,16 +114,27 @@ namespace VisualProcessors.Processors
 
 		private void SetupLists()
 		{
-			m_Graph.GraphPane.CurveList.Clear();
-			m_PointListRed = new RollingPointPairList(BufferSize);
-			m_PointListBlue = new RollingPointPairList(BufferSize);
-			m_PointListGreen = new RollingPointPairList(BufferSize);
-			var rinput = GetInputChannel("Red");
-			var binput = GetInputChannel("Blue");
-			var ginput = GetInputChannel("Green");
-			m_Graph.GraphPane.AddCurve(rinput.IsConnected ? rinput.Source.Name : "Disconnected", m_PointListRed, Color.Red, SymbolType.None);
-			m_Graph.GraphPane.AddCurve(binput.IsConnected ? binput.Source.Name : "Disconnected", m_PointListBlue, Color.Blue, SymbolType.None);
-			m_Graph.GraphPane.AddCurve(ginput.IsConnected ? ginput.Source.Name : "Disconnected", m_PointListGreen, Color.Green, SymbolType.None);
+			List<ZedGraphControl> copy = m_Graphs.ToList();
+			m_Graphs.Clear();
+			while(copy.Count > 0)
+			{
+				ZedGraphControl graph = copy[0];
+				copy.RemoveAt(0);
+				if (!graph.BeenDisposed)
+				{
+					graph.GraphPane.CurveList.Clear();
+					m_PointListRed = new RollingPointPairList(BufferSize);
+					m_PointListBlue = new RollingPointPairList(BufferSize);
+					m_PointListGreen = new RollingPointPairList(BufferSize);
+					var rinput = GetInputChannel("Red");
+					var binput = GetInputChannel("Blue");
+					var ginput = GetInputChannel("Green");
+					graph.GraphPane.AddCurve(rinput.IsConnected ? rinput.Source.Name : "Disconnected", m_PointListRed, Color.Red, SymbolType.None);
+					graph.GraphPane.AddCurve(binput.IsConnected ? binput.Source.Name : "Disconnected", m_PointListBlue, Color.Blue, SymbolType.None);
+					graph.GraphPane.AddCurve(ginput.IsConnected ? ginput.Source.Name : "Disconnected", m_PointListGreen, Color.Green, SymbolType.None);
+					m_Graphs.Add(graph);
+				}
+			}
 		}
 
 		#endregion Constructor
@@ -132,13 +143,12 @@ namespace VisualProcessors.Processors
 
 		public override void GetUserInterface(Panel panel)
 		{
-			m_Graph = new ZedGraphControl();
-			m_Graph.Dock = DockStyle.Fill;
-
-			SetupLists();
-
-			panel.Controls.Add(m_Graph);
+			ZedGraphControl graph = new ZedGraphControl();
+			graph.Dock = DockStyle.Fill;
+			panel.Controls.Add(graph);
+			m_Graphs.Add(graph);
 			base.GetUserInterface(panel);
+			SetupLists();
 		}
 
 		public override void Start()
@@ -226,22 +236,25 @@ namespace VisualProcessors.Processors
 				{
 					lock (this)
 					{
-						if (ForceScroll)
+						foreach(ZedGraphControl graph in m_Graphs)
 						{
-							if (RealTime)
+							if (ForceScroll)
 							{
-								m_Graph.GraphPane.XAxis.Scale.Min = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds - 2;
-								m_Graph.GraphPane.XAxis.Scale.Max = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds;
+								if (RealTime)
+								{
+									graph.GraphPane.XAxis.Scale.Min = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds - 2;
+									graph.GraphPane.XAxis.Scale.Max = DateTime.Now.Subtract(m_StartTimestamp).TotalSeconds;
+								}
+								else
+								{
+									graph.GraphPane.XAxis.Scale.Min = m_Counter - BufferSize;
+									graph.GraphPane.XAxis.Scale.Max = m_Counter;
+								}
 							}
-							else
-							{
-								m_Graph.GraphPane.XAxis.Scale.Min = m_Counter - BufferSize;
-								m_Graph.GraphPane.XAxis.Scale.Max = m_Counter;
-							}
+							graph.AxisChange();
+							graph.Invalidate();
+							m_Redraw = false;
 						}
-						m_Graph.AxisChange();
-						m_Graph.Invalidate();
-						m_Redraw = false;
 					}
 				}
 				Thread.Sleep(16);

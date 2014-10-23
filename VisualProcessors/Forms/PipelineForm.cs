@@ -92,6 +92,9 @@ namespace VisualProcessors.Forms
 
 			//Toolbox
 			Toolbox.PipelineForm = this;
+
+			PipelineOutputForm outputForm = new PipelineOutputForm(this);
+			outputForm.Show();
 		}
 
 		#endregion Constructor
