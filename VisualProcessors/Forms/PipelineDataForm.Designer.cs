@@ -1,6 +1,6 @@
 ﻿namespace VisualProcessors.Forms
 {
-	partial class PipelineOutputForm
+	partial class PipelineDataForm
 	{
 		/// <summary>
 		/// Required designer variable.

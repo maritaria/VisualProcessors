@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -21,22 +22,66 @@ namespace VisualProcessors
 		public static List<Assembly> LoadedAssemblies = new List<Assembly>();
 		public static List<Assembly> ProcessorAssemblies = new List<Assembly>();
 
-		/// <summary>
-		///  The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		public static void Main()
+		public static void LoadConfig(string path)
 		{
-			string assemblyDirectory = "/Assemblies";
-			string dir = Application.StartupPath + assemblyDirectory;
-			if (!Directory.Exists(dir))
+			Console.WriteLine("Loading config from: " + path);
+			FileStream fs = null;
+			try
 			{
-				Console.WriteLine("Creating " + assemblyDirectory + " directory");
-				Directory.CreateDirectory(dir);
+				fs = new FileStream(path, FileMode.Open);
+				//XmlSerializer s1 = new XmlSerializer(typeof(Config));
+				//Config = (Config)s1.Deserialize(fs);
 			}
+			catch (Exception e)
+			{
+				while (e != null)
+				{
+					Console.WriteLine("Failed to load config: " + e.Message);
+					e = e.InnerException;
+				}
+				return;
+			}
+			finally
+			{
+				if (fs != null)
+				{
+					fs.Dispose();
+				}
+			}
+		}
 
-			Console.WriteLine("Loading assemblies from " + assemblyDirectory);
-			foreach (string f in Directory.EnumerateFiles(dir))
+		public static void SaveConfig(string path)
+		{
+			XmlWriterSettings settings = new XmlWriterSettings();
+			settings.IndentChars = "\t";
+			settings.Indent = true;
+
+			FileStream fs = null;
+			try
+			{
+				fs = new FileStream(Application.StartupPath + "/application.config.xml", FileMode.Create);
+				XmlWriter writer = XmlWriter.Create(fs, settings);
+				//XmlSerializer s1 = new XmlSerializer(Config.GetType());
+				//s1.Serialize(writer, Config);
+			}
+			catch (Exception e)
+			{
+				while (e != null)
+				{
+					Console.WriteLine("Failed to safe config: " + e.Message);
+					e = e.InnerException;
+				}
+				return;
+			}
+			finally
+			{
+				fs.Dispose();
+			}
+		}
+
+		private static void LoadAssemblies(string path)
+		{
+			foreach (string f in Directory.EnumerateFiles(path))
 			{
 				try
 				{
@@ -79,6 +124,29 @@ namespace VisualProcessors
 				Console.WriteLine("\t" + processorAssembly.GetName().Name);
 				ProcessorAssemblies.Add(processorAssembly);
 			}
+		}
+
+		/// <summary>
+		///  The main entry point for the application.
+		/// </summary>
+		[STAThread]
+		private static void Main()
+		{
+			LoadConfig(Application.StartupPath + "/application.config.xml");
+
+			//Config.AddSection(new ApplicationConfig());
+
+			SaveConfig(Application.StartupPath + "/application.config.xml");
+
+			string assemblyDirectory = "/Assemblies";
+			string dir = Application.StartupPath + assemblyDirectory;
+			if (!Directory.Exists(dir))
+			{
+				Console.WriteLine("Creating " + assemblyDirectory + " directory");
+				Directory.CreateDirectory(dir);
+			}
+			Console.WriteLine("Loading assemblies from " + assemblyDirectory);
+			LoadAssemblies(dir);
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);

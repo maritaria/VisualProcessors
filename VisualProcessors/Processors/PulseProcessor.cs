@@ -95,5 +95,20 @@ namespace VisualProcessors.Processors
 		#region Event Handlers
 
 		#endregion Event Handlers
+
+		#region IXmlSerializable Members
+
+		public override void WriteXml(System.Xml.XmlWriter writer)
+		{
+			base.WriteXml(writer);
+		}
+
+		#endregion IXmlSerializable Members
+
+		#region PulseProcessorConfigSection Helper Class
+
+		//
+
+		#endregion PulseProcessorConfigSection Helper Class
 	}
 }

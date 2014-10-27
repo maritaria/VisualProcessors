@@ -15,7 +15,7 @@ namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "A base processor for processors which use a TcpClient", "", "",
 		AllowUserSpawn = false,
-		ThreadMode=ProcessorThreadMode.DenyMultiThreading)]
+		ThreadMode = ProcessorThreadMode.DenyMultiThreading)]
 	public class TcpClientBasedProcessor : Processor
 	{
 		#region Properties
@@ -207,5 +207,14 @@ namespace VisualProcessors.Processors
 		}
 
 		#endregion Methods
+
+		#region IXmlSerializable Members
+
+		public override void WriteXml(System.Xml.XmlWriter writer)
+		{
+			base.WriteXml(writer);
+		}
+
+		#endregion IXmlSerializable Members
 	}
 }

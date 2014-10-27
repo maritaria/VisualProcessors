@@ -34,7 +34,7 @@ namespace VisualProcessors.Processors
 		[DisplayName("Sensor selection")]
 		[Category("Settings")]
 		[Description("Selects the axis to receive data for, allows for higher sample rates when selecting less axis")]
-		[DefaultValue(0x00)]
+		[DefaultValue(AxisSelection.None)]
 		public AxisSelection Axis
 		{
 			get
@@ -43,7 +43,7 @@ namespace VisualProcessors.Processors
 			}
 			set
 			{
-				Options.SetOption("AxisSelection", value.ToString());
+				Options.GetOption("AxisSelection", value.ToString());
 				OnModified(HaltTypes.Ask);
 			}
 		}
@@ -72,7 +72,7 @@ namespace VisualProcessors.Processors
 
 		[Browsable(true)]
 		[ReadOnly(false)]
-		[DisplayName("Sensor selection")]
+		[DisplayName("SampleRate")]
 		[Category("Settings")]
 		[Description("Sets the samplerate to read samples in from, the actual binary data rate is the samplerate multiplied by the number of selected sensor axis.")]
 		[DefaultValue(60)]
@@ -450,9 +450,12 @@ namespace VisualProcessors.Processors
 			AcceleroX = 0x01,
 			AcceleroY = 0x02,
 			AcceleroZ = 0x04,
+			//Accelero = AcceleroX | AcceleroY | AcceleroZ,
 			MagnetoX = 0x10,
 			MagnetoY = 0x20,
 			MagnetoZ = 0x40,
+			//Magneto = MagnetoX | MagnetoY | MagnetoZ,
+			//All = Accelero | Magneto,
 		}
 
 		#endregion AxisSelection Enum

@@ -24,6 +24,7 @@ namespace VisualProcessors.Forms
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
+		private PipelineDataForm m_PipelineDataForm;
 
 		public Pipeline CurrentPipeline
 		{
@@ -93,8 +94,15 @@ namespace VisualProcessors.Forms
 			//Toolbox
 			Toolbox.PipelineForm = this;
 
-			PipelineOutputForm outputForm = new PipelineOutputForm(this);
-			outputForm.Show();
+			m_PipelineDataForm = new PipelineDataForm(this);
+			//if (Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").StartMaximized)
+			{
+				this.WindowState = FormWindowState.Maximized;
+			}
+			//if (Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").ShowPipelineOutputFormOnStartup)
+			{
+				m_PipelineDataForm.Show();
+			}
 		}
 
 		#endregion Constructor
@@ -506,10 +514,12 @@ namespace VisualProcessors.Forms
 			{
 				if (CurrentPipeline.IsRunning)
 				{
-					myBuffer.Graphics.Clear(Color.LightCoral);
+					//myBuffer.Graphics.Clear(Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").SimulationBackgroundColor);
+					myBuffer.Graphics.Clear(Color.Pink);
 				}
 				else
 				{
+					//myBuffer.Graphics.Clear(Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").WorksheetBackgroundColor);
 					myBuffer.Graphics.Clear(SystemColors.ActiveCaption);
 				}
 			}
@@ -662,7 +672,7 @@ namespace VisualProcessors.Forms
 				{
 					e = e.InnerException;
 				}
-				MessageBox.Show("There was a XML syntax error when trying to parse the file:"+Environment.NewLine+ e.Message,"Syntax error");
+				MessageBox.Show("There was a XML syntax error when trying to parse the file:" + Environment.NewLine + e.Message, "Syntax error");
 			}
 			finally
 			{
@@ -817,6 +827,10 @@ namespace VisualProcessors.Forms
 			{
 				m_AssemblyForm.BringToFront();
 			}
+		}
+
+		private void showIOWindowToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 		}
 
 		#endregion Menu: Tools

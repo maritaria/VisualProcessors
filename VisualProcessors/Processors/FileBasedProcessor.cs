@@ -174,5 +174,14 @@ namespace VisualProcessors.Processors
 		}
 
 		#endregion Methods
+
+		#region IXmlSerializable Members
+
+		public override void WriteXml(System.Xml.XmlWriter writer)
+		{
+			base.WriteXml(writer);
+		}
+
+		#endregion
 	}
 }

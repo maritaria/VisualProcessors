@@ -101,59 +101,6 @@ namespace VisualProcessors.Processing
 		}
 
 		/// <summary>
-		///  Gets or sets whether the processor uses a seperate thread during simulation
-		/// </summary>
-		[Browsable(true)]
-		[ReadOnly(false)]
-		[DisplayName("MultiThreaded")]
-		[Category("Processor")]
-		[Description("When true, the processor gets its own thread during simulation, use this only for intensive processors, or if there is a feedback loop in your model (and then only one is required to be multithreaded).")]
-		[DefaultValue(false)]
-		public bool MultiThreaded
-		{
-			get
-			{
-				if (Meta.ThreadMode == ProcessorThreadMode.UserDefined)
-				{
-					return bool.Parse(Options.GetOption("MultiThreaded", "False"));
-				}
-				else
-				{
-					return Meta.ThreadMode == ProcessorThreadMode.ForceMultiThreading;
-				}
-			}
-			set
-			{
-				if (Meta.ThreadMode == ProcessorThreadMode.UserDefined)
-				{
-					Options.SetOption("MultiThreaded", value.ToString());
-					OnModified(HaltTypes.ShouldHalt);
-				}
-			}
-		}
-		/// <summary>
-		/// Gets the amount of milliseconds to sleep after a unsuccesfull inputchannel check loop
-		/// </summary>
-		[Browsable(true)]
-		[ReadOnly(false)]
-		[DisplayName("ThreadSleep")]
-		[Category("Processor")]
-		[Description("Only used when multi-threading is enabled. Sets the amount of milliseconds to sleep after the workermethod has determined not all required inputchannels have data. Allows decimal placements.")]
-		[DefaultValue(1)]
-		public double ThreadSleep
-		{
-			get
-			{
-				return double.Parse(Options.GetOption("ThreadSleep", "1"));
-			}
-			set
-			{
-				Options.SetOption("ThreadSleep", value.ToString());
-				OnModified(HaltTypes.Continue);
-			}
-		}
-
-		/// <summary>
 		///  Gets the pipeline the processor belongs to.
 		/// </summary>
 		[Browsable(false)]
@@ -291,6 +238,64 @@ namespace VisualProcessors.Processing
 
 		#endregion Properties
 
+		#region Options
+
+		/// <summary>
+		///  Gets or sets whether the processor uses a seperate thread during simulation
+		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("MultiThreaded")]
+		[Category("Processor")]
+		[Description("When true, the processor gets its own thread during simulation, use this only for intensive processors, or if there is a feedback loop in your model (and then only one is required to be multithreaded).")]
+		[DefaultValue(false)]
+		public bool MultiThreaded
+		{
+			get
+			{
+				if (Meta.ThreadMode == ProcessorThreadMode.UserDefined)
+				{
+					return bool.Parse(Options.GetOption("MultiThreaded", false.ToString()));
+				}
+				else
+				{
+					return Meta.ThreadMode == ProcessorThreadMode.ForceMultiThreading;
+				}
+			}
+			set
+			{
+				if (Meta.ThreadMode == ProcessorThreadMode.UserDefined)
+				{
+					Options.SetOption("MultiThreaded", value.ToString());
+					OnModified(HaltTypes.ShouldHalt);
+				}
+			}
+		}
+
+		/// <summary>
+		///  Gets the amount of milliseconds to sleep after a unsuccesfull inputchannel check loop
+		/// </summary>
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("ThreadSleep")]
+		[Category("Processor")]
+		[Description("Only used when multi-threading is enabled. Sets the amount of milliseconds to sleep after the workermethod has determined not all required inputchannels have data. Allows decimal placements.")]
+		[DefaultValue(1)]
+		public double ThreadSleep
+		{
+			get
+			{
+				return double.Parse(Options.GetOption("ThreadSleep", "1"));
+			}
+			set
+			{
+				Options.SetOption("ThreadSleep", value.ToString());
+				OnModified(HaltTypes.Continue);
+			}
+		}
+
+		#endregion Options
+
 		#region Constructor
 
 		/// <summary>
@@ -379,6 +384,26 @@ namespace VisualProcessors.Processing
 			KillWorkerThread();
 		}
 
+		internal void SingleWorkerLoop()
+		{
+			bool ready = true;
+			foreach (InputChannel input in m_InputChannels)
+			{
+				if (!input.IsOptional)
+				{
+					ready &= input.HasValue();
+				}
+			}
+			if (ready)
+			{
+				Process();
+			}
+			else
+			{
+				Thread.Sleep(new TimeSpan((long)(TimeSpan.TicksPerMillisecond * ThreadSleep)));
+			}
+		}
+
 		protected void KillWorkerThread()
 		{
 			if (m_WorkerThread == null)
@@ -421,26 +446,6 @@ namespace VisualProcessors.Processing
 			while (true)
 			{
 				SingleWorkerLoop();
-			}
-		}
-
-		internal void SingleWorkerLoop()
-		{
-			bool ready = true;
-			foreach (InputChannel input in m_InputChannels)
-			{
-				if (!input.IsOptional)
-				{
-					ready &= input.HasValue();
-				}
-			}
-			if (ready)
-			{
-				Process();
-			}
-			else
-			{
-				Thread.Sleep(new TimeSpan((long)(TimeSpan.TicksPerMillisecond * ThreadSleep)));
 			}
 		}
 
@@ -666,6 +671,15 @@ namespace VisualProcessors.Processing
 		private List<OutputChannel> m_RawOutput = new List<OutputChannel>();
 
 		/// <summary>
+		///  Called when the processor has been loaded from a file, after its in- and outputs have
+		///  been linked.
+		/// </summary>
+		/// <param name="pipeline"></param>
+		public virtual void PostLoad(Pipeline pipeline)
+		{
+		}
+
+		/// <summary>
 		///  Initializes all Input/OutputChannels that were deserialized from XML.
 		/// </summary>
 		/// <param name="pipeline"></param>
@@ -700,14 +714,6 @@ namespace VisualProcessors.Processing
 			{
 				channel.BuildLinks(pipeline);
 			}
-		}
-		/// <summary>
-		/// Called when the processor has been loaded from a file, after its in- and outputs have been linked.
-		/// </summary>
-		/// <param name="pipeline"></param>
-		public virtual void PostLoad(Pipeline pipeline)
-		{
-
 		}
 
 		#endregion Build
@@ -976,5 +982,6 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion IDisposable Members
+
 	}
 }

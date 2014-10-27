@@ -87,11 +87,11 @@ namespace VisualProcessors.Processors
 		{
 			get
 			{
-				return bool.Parse(Options.GetOption("TruncateOnReset", "True"));
+				return bool.Parse(Options.GetOption("TruncateOnPrepare", "True"));
 			}
 			set
 			{
-				Options.SetOption("TruncateOnReset", value.ToString());
+				Options.SetOption("TruncateOnPrepare", value.ToString());
 			}
 		}
 

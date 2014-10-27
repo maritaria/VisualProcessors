@@ -52,6 +52,7 @@
 			this.loadStateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.assemblyInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.showIOWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.MainMenuSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.MainMenuOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -235,6 +236,7 @@
 			// 
 			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.assemblyInformationToolStripMenuItem,
+            this.showIOWindowToolStripMenuItem,
             this.optionsToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
@@ -243,14 +245,24 @@
 			// assemblyInformationToolStripMenuItem
 			// 
 			this.assemblyInformationToolStripMenuItem.Name = "assemblyInformationToolStripMenuItem";
-			this.assemblyInformationToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+			this.assemblyInformationToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A)));
+			this.assemblyInformationToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
 			this.assemblyInformationToolStripMenuItem.Text = "Assembly Information";
 			this.assemblyInformationToolStripMenuItem.Click += new System.EventHandler(this.assemblyInformationToolStripMenuItem_Click);
+			// 
+			// showIOWindowToolStripMenuItem
+			// 
+			this.showIOWindowToolStripMenuItem.Name = "showIOWindowToolStripMenuItem";
+			this.showIOWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Space)));
+			this.showIOWindowToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+			this.showIOWindowToolStripMenuItem.Text = "Show IO Window";
+			this.showIOWindowToolStripMenuItem.Click += new System.EventHandler(this.showIOWindowToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+			this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
 			this.optionsToolStripMenuItem.Text = "&Options";
 			// 
 			// MainMenuSaveFileDialog
@@ -304,7 +316,6 @@
 			this.IsMdiContainer = true;
 			this.Name = "PipelineForm";
 			this.Text = "Pipeline Editor";
-			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PipelineFormFormClosing);
 			this.MdiClientContextMenu.ResumeLayout(false);
 			this.MainMenu.ResumeLayout(false);
@@ -348,6 +359,7 @@
 		private System.Windows.Forms.ErrorProvider ErrorIcon;
 		private System.Windows.Forms.StatusStrip MdiStatusStrip;
 		private System.Windows.Forms.ToolStripStatusLabel SimulationStatusLabel;
+		private System.Windows.Forms.ToolStripMenuItem showIOWindowToolStripMenuItem;
 		
 
 	}

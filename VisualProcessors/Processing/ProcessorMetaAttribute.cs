@@ -112,6 +112,11 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public ProcessorThreadMode ThreadMode = ProcessorThreadMode.UserDefined;
 
+		/// <summary>
+		/// Determines whether the custom tab is shown on a seperate form on the PipelineOutputForm
+		/// </summary>
+		public bool ShowOutputWindow = false;
+
 		public ProcessorMeta(string author, string description, string defaultinput, string defaultoutput)
 		{
 			Author = author;

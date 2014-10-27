@@ -111,7 +111,7 @@ namespace VisualProcessors.Processors
 			}
 			set
 			{
-				Options.SetOption("Code", value);
+				Options.GetOption("Code", value);
 				OnModified(HaltTypes.Ask);
 			}
 		}
@@ -233,7 +233,15 @@ namespace VisualProcessors.Processors
 			CompilerParameters parameters = new CompilerParameters();
 			foreach (Assembly asm in Assemblies)
 			{
-				parameters.ReferencedAssemblies.Add(asm.Location);
+#warning NEEDS FIXING
+				try
+				{
+					parameters.ReferencedAssemblies.Add(asm.Location);
+				}
+				catch
+				{
+
+				}
 			}
 			parameters.GenerateInMemory = true;
 			parameters.GenerateExecutable = false;
@@ -311,27 +319,30 @@ namespace VisualProcessors.Processors
 		{
 			//After the options have been read, get all the assemblies and usings and put them in our lists, then remove the options from the Options object
 			base.ReadXml(reader);
-			IEnumerable<string> keys = Options.GetKeys();
+#warning NEEDS FIXING
+			/*
+			IEnumerable<string> keys = Options.GetValueKeys();
 			List<string> removeQueue = new List<string>();
 			foreach (string key in keys)
 			{
 				if (key.StartsWith("Assembly_"))
 				{
-					Assemblies.Add(Assembly.Load(Options.GetOption(key, null)));
+					Assemblies.Add(Assembly.Load(Options.GetValue(key, null)));
 					removeQueue.Add(key);
 					continue;
 				}
 				if (key.StartsWith("Using_"))
 				{
-					Usings.Add(Options.GetOption(key, null));
+					Usings.Add(Options.GetValue(key, null));
 					removeQueue.Add(key);
 					continue;
 				}
 			}
 			foreach (string key in removeQueue)
 			{
-				Options.ClearOption(key);
+				Options.RemoveValue(key);
 			}
+			 * */
 		}
 
 		public override void WriteXml(XmlWriter writer)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -9,20 +10,21 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using ZedGraph;
-using System.ComponentModel;
 using VisualProcessors.Processing;
+using ZedGraph;
 
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Plots its InputChannels onto a ZedGraph in realtime", "Red", "",
 		AllowOptionalInputs = true,
 		CustomTabTitle = "Graph",
-		OutputTabMode = ProcessorTabMode.Hide)]
+		OutputTabMode = ProcessorTabMode.Hide,
+		ShowOutputWindow = true)]
 	public class GraphProcessor : Processor
 	{
 		#region Properties
 
+		private long m_Counter = 0;
 		private List<ZedGraphControl> m_Graphs = new List<ZedGraphControl>();
 		private RollingPointPairList m_PointListBlue;
 		private RollingPointPairList m_PointListGreen;
@@ -30,13 +32,10 @@ namespace VisualProcessors.Processors
 		private bool m_Redraw = false;
 		private Thread m_RenderThread;
 		private DateTime m_StartTimestamp;
-		private long m_Counter = 0;
 
 		#endregion Properties
 
 		#region Options
-
-
 
 		[Browsable(true)]
 		[ReadOnly(false)]
@@ -87,7 +86,7 @@ namespace VisualProcessors.Processors
 		{
 			get
 			{
-				return bool.Parse(Options.GetOption("RealTime", "True"));
+				return bool.Parse(Options.GetOption("RealTime", "False"));
 			}
 			set
 			{
@@ -96,11 +95,12 @@ namespace VisualProcessors.Processors
 			}
 		}
 
-		#endregion
+		#endregion Options
 
 		#region Constructor
 
-		public GraphProcessor() : base()
+		public GraphProcessor()
+			: base()
 		{
 		}
 
@@ -116,7 +116,7 @@ namespace VisualProcessors.Processors
 		{
 			List<ZedGraphControl> copy = m_Graphs.ToList();
 			m_Graphs.Clear();
-			while(copy.Count > 0)
+			while (copy.Count > 0)
 			{
 				ZedGraphControl graph = copy[0];
 				copy.RemoveAt(0);
@@ -236,7 +236,7 @@ namespace VisualProcessors.Processors
 				{
 					lock (this)
 					{
-						foreach(ZedGraphControl graph in m_Graphs)
+						foreach (ZedGraphControl graph in m_Graphs)
 						{
 							if (ForceScroll)
 							{

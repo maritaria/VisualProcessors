@@ -12,7 +12,7 @@ using VisualProcessors.Processors;
 
 namespace VisualProcessors.Forms
 {
-	public partial class PipelineOutputForm : Form
+	public partial class PipelineDataForm : Form
 	{
 		#region Properties
 
@@ -43,12 +43,12 @@ namespace VisualProcessors.Forms
 
 		#region Constructor
 
-		public PipelineOutputForm()
+		public PipelineDataForm()
 		{
 			InitializeComponent();
 		}
 
-		public PipelineOutputForm(PipelineForm master)
+		public PipelineDataForm(PipelineForm master)
 			: this()
 		{
 			Master = master;

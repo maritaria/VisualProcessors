@@ -45,6 +45,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -66,6 +67,11 @@
     <Compile Include="Controls\CodePanel.Designer.cs">
       <DependentUpon>CodePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Design\ComPortListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Design\ComPortTypeEditor.cs" />
+    <Compile Include="Design\SerialPortSettings.cs" />
     <Compile Include="Design\EnumFlagsListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -88,6 +94,7 @@
     <Compile Include="Controls\ToolboxPanel.Designer.cs">
       <DependentUpon>ToolboxPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Design\SerialPortEditor.cs" />
     <Compile Include="Forms\AssemblyForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,11 +108,11 @@
     <Compile Include="Forms\ProcessorInterfaceForm.Designer.cs">
       <DependentUpon>ProcessorInterfaceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PipelineOutputForm.cs">
+    <Compile Include="Forms\PipelineDataForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\PipelineOutputForm.Designer.cs">
-      <DependentUpon>PipelineOutputForm.cs</DependentUpon>
+    <Compile Include="Forms\PipelineDataForm.Designer.cs">
+      <DependentUpon>PipelineDataForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\SerialPortForm.cs">
       <SubType>Form</SubType>
@@ -113,6 +120,7 @@
     <Compile Include="Forms\SerialPortForm.Designer.cs">
       <DependentUpon>SerialPortForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Processing\ProcessorOptions.cs" />
     <Compile Include="Processors\CompassSensorProcessor.cs" />
     <Compile Include="Processors\FileBasedProcessor.cs" />
     <Compile Include="Processors\GenericTcpReader.cs" />
@@ -121,7 +129,6 @@
     <Compile Include="Processors\CSVProcessor.cs" />
     <Compile Include="Processors\EmptyProcessor.cs" />
     <Compile Include="Processing\ProcessorModifiedEventArgs.cs" />
-    <Compile Include="Processing\ProcessorOptions.cs" />
     <Compile Include="Processors\PulseProcessor.cs" />
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>
@@ -179,8 +186,8 @@
     <EmbeddedResource Include="Forms\ChannelSelectionBox.resx">
       <DependentUpon>ChannelSelectionBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PipelineOutputForm.resx">
-      <DependentUpon>PipelineOutputForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\PipelineDataForm.resx">
+      <DependentUpon>PipelineDataForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProcessorInterfaceForm.resx">
       <DependentUpon>ProcessorInterfaceForm.cs</DependentUpon>

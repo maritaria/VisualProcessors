@@ -16,7 +16,8 @@ namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button", "", "Output",
 		InputTabMode = ProcessorTabMode.Hide,
-		CustomTabTitle = "Input")]
+		CustomTabTitle = "Input",
+		ShowOutputWindow = true)]
 	public class DirectInputProcessor : Processor
 	{
 		#region Properties
@@ -39,7 +40,7 @@ namespace VisualProcessors.Processors
 			}
 			set
 			{
-				Options.SetOption("Value", value.ToString());
+				Options.GetOption("Value", value.ToString());
 			}
 		}
 
@@ -72,11 +73,24 @@ namespace VisualProcessors.Processors
 			panel.Controls.Add(button);
 		}
 
+
+		#endregion Methods
+
+		#region Event Handlers
+
 		private void button_Click(object sender, EventArgs e)
 		{
 			GetOutputChannel("Output").WriteValue(Value);
 		}
+		#endregion
 
-		#endregion Methods
+		#region IXmlSerializable Members
+
+		public override void WriteXml(XmlWriter writer)
+		{
+			base.WriteXml(writer);
+		}
+
+		#endregion
 	}
 }
