@@ -159,7 +159,7 @@ namespace VisualProcessors.Processors
 			Usings.Add("VisualProcessors.Processors");
 			Assemblies.Add(Assembly.GetAssembly(typeof(int)));//mscorlib
 			Assemblies.Add(Assembly.GetAssembly(typeof(System.Xml.XmlAttribute)));//System.Xml namespace
-			Assemblies.AddRange(Program.ProcessorAssemblies);
+			Assemblies.AddRange(Program.LoadedAssemblies);
 		}
 
 		#endregion Constructor
