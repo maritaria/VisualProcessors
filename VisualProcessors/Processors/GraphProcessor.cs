@@ -116,6 +116,9 @@ namespace VisualProcessors.Processors
 		{
 			List<ZedGraphControl> copy = m_Graphs.ToList();
 			m_Graphs.Clear();
+			m_PointListRed = new RollingPointPairList(BufferSize);
+			m_PointListBlue = new RollingPointPairList(BufferSize);
+			m_PointListGreen = new RollingPointPairList(BufferSize);
 			while (copy.Count > 0)
 			{
 				ZedGraphControl graph = copy[0];
@@ -123,9 +126,6 @@ namespace VisualProcessors.Processors
 				if (!graph.BeenDisposed)
 				{
 					graph.GraphPane.CurveList.Clear();
-					m_PointListRed = new RollingPointPairList(BufferSize);
-					m_PointListBlue = new RollingPointPairList(BufferSize);
-					m_PointListGreen = new RollingPointPairList(BufferSize);
 					var rinput = GetInputChannel("Red");
 					var binput = GetInputChannel("Blue");
 					var ginput = GetInputChannel("Green");
@@ -230,7 +230,7 @@ namespace VisualProcessors.Processors
 
 		private void RenderThreadMethod()
 		{
-			while (true)
+			while (m_Graphs.Count > 0)
 			{
 				if (m_Redraw)
 				{
@@ -238,6 +238,11 @@ namespace VisualProcessors.Processors
 					{
 						foreach (ZedGraphControl graph in m_Graphs)
 						{
+							if (graph.IsDisposed)
+							{
+								m_Graphs.Remove(graph);
+								break;
+							}
 							if (ForceScroll)
 							{
 								if (RealTime)
