@@ -449,6 +449,11 @@ namespace VisualProcessors.Processing
 			}
 		}
 
+		public override string ToString()
+		{
+			return base.ToString() + " " + Name;
+		}
+
 		#endregion Methods
 
 		#region InputChannels
