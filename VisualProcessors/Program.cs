@@ -97,20 +97,23 @@ namespace VisualProcessors
 			Console.WriteLine("Listing assemblies that reference " + name);
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
 			{
-				foreach (AssemblyName reference in asm.GetReferencedAssemblies())
+				if (!asm.IsDynamic)
 				{
-					if (reference.Name == name)
+					foreach (AssemblyName reference in asm.GetReferencedAssemblies())
 					{
-						if (reference.Version != processorName.Version)
+						if (reference.Name == name)
 						{
-							Console.WriteLine("\t" + asm.GetName().Name + " Version mismatch!");
+							if (reference.Version != processorName.Version)
+							{
+								Console.WriteLine("\t" + asm.GetName().Name + " Version mismatch!");
+							}
+							else
+							{
+								Console.WriteLine("\t" + asm.GetName().Name);
+							}
+							ProcessorAssemblies.Add(asm);
+							break;
 						}
-						else
-						{
-							Console.WriteLine("\t" + asm.GetName().Name);
-						}
-						ProcessorAssemblies.Add(asm);
-						break;
 					}
 				}
 			}
