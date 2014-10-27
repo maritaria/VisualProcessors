@@ -14,7 +14,7 @@ namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Generates a pulse on a fixed interval", "", "Output",
 		InputTabMode = ProcessorTabMode.Hide)]
-	public class PulseProcessor : Processor
+	public class PulseGenerator : Processor
 	{
 		#region Properties
 
@@ -66,12 +66,12 @@ namespace VisualProcessors.Processors
 
 		#region Constructor
 
-		public PulseProcessor()
+		public PulseGenerator()
 			: base()
 		{
 		}
 
-		public PulseProcessor(Pipeline p, string name)
+		public PulseGenerator(Pipeline p, string name)
 			: base(p, name)
 		{
 			AddOutputChannel("Output");

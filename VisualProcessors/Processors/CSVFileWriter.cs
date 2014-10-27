@@ -15,7 +15,7 @@ namespace VisualProcessors.Processors
 	[ProcessorMeta("Bram Kamies", "Writes the input to a .csv file", "1", "",
 		CustomTabMode = ProcessorTabMode.Hide,
 		OutputTabMode = ProcessorTabMode.Hide)]
-	public class CSVProcessor : FileBasedProcessor
+	public class CSVFileWriter : FileBasedProcessor
 	{
 		#region Properties
 
@@ -99,13 +99,13 @@ namespace VisualProcessors.Processors
 
 		#region Constructor
 
-		public CSVProcessor()
+		public CSVFileWriter()
 			: base()
 		{
 			ExtensionRestriction.Add(".csv");
 		}
 
-		public CSVProcessor(Pipeline pipeline, string name)
+		public CSVFileWriter(Pipeline pipeline, string name)
 			: base(pipeline, name)
 		{
 			AddInputChannel("1", false);

@@ -127,10 +127,10 @@
     <Compile Include="Processors\GenericTcpReader.cs" />
     <Compile Include="Processors\SerialPortProcessor.cs" />
     <Compile Include="Processors\DeltaProcessor.cs" />
-    <Compile Include="Processors\CSVProcessor.cs" />
+    <Compile Include="Processors\CSVFileWriter.cs" />
     <Compile Include="Processors\EmptyProcessor.cs" />
     <Compile Include="Processing\ProcessorModifiedEventArgs.cs" />
-    <Compile Include="Processors\PulseProcessor.cs" />
+    <Compile Include="Processors\PulseGenerator.cs" />
     <Compile Include="Forms\ChannelSelectionBox.cs">
       <SubType>Form</SubType>
     </Compile>
