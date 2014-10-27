@@ -86,7 +86,7 @@ namespace VisualProcessors.Processors
 			while (true)
 			{
 				GetOutputChannel("Output").WriteValue(Value);
-				Thread.Sleep(new TimeSpan(TimeSpan.TicksPerSecond / Frequency);
+				Thread.Sleep(new TimeSpan(TimeSpan.TicksPerSecond / Frequency));
 			}
 		}
 
