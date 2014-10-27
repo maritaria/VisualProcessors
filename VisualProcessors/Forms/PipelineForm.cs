@@ -95,11 +95,11 @@ namespace VisualProcessors.Forms
 			Toolbox.PipelineForm = this;
 
 			m_PipelineDataForm = new PipelineDataForm(this);
-			//if (Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").StartMaximized)
+			if (Program.Config.StartMaximized)
 			{
 				this.WindowState = FormWindowState.Maximized;
 			}
-			//if (Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").ShowPipelineOutputFormOnStartup)
+			if (Program.Config.ShowDataFormOnStartup)
 			{
 				m_PipelineDataForm.Show();
 			}
@@ -814,7 +814,6 @@ namespace VisualProcessors.Forms
 		#region Menu: Tools
 
 		private AssemblyForm m_AssemblyForm;
-
 		private void assemblyInformationToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if ((m_AssemblyForm == null) || m_AssemblyForm.IsDisposed)
@@ -829,8 +828,20 @@ namespace VisualProcessors.Forms
 			}
 		}
 
-		private void showIOWindowToolStripMenuItem_Click(object sender, EventArgs e)
+		private void showDataWindowToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			if (m_PipelineDataForm==null || m_PipelineDataForm.IsDisposed)
+			{
+				m_PipelineDataForm = new PipelineDataForm(this);
+			}
+			if (m_PipelineDataForm.Visible)
+			{
+				m_PipelineDataForm.Close();
+			}
+			else
+			{
+				m_PipelineDataForm.Show();
+			}
 		}
 
 		#endregion Menu: Tools

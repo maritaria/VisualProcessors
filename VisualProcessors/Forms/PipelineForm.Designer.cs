@@ -246,7 +246,7 @@
 			// 
 			this.assemblyInformationToolStripMenuItem.Name = "assemblyInformationToolStripMenuItem";
 			this.assemblyInformationToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A)));
-			this.assemblyInformationToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+			this.assemblyInformationToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
 			this.assemblyInformationToolStripMenuItem.Text = "Assembly Information";
 			this.assemblyInformationToolStripMenuItem.Click += new System.EventHandler(this.assemblyInformationToolStripMenuItem_Click);
 			// 
@@ -254,15 +254,15 @@
 			// 
 			this.showIOWindowToolStripMenuItem.Name = "showIOWindowToolStripMenuItem";
 			this.showIOWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Space)));
-			this.showIOWindowToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-			this.showIOWindowToolStripMenuItem.Text = "Show IO Window";
-			this.showIOWindowToolStripMenuItem.Click += new System.EventHandler(this.showIOWindowToolStripMenuItem_Click);
+			this.showIOWindowToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+			this.showIOWindowToolStripMenuItem.Text = "Show Data Window";
+			this.showIOWindowToolStripMenuItem.Click += new System.EventHandler(this.showDataWindowToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
 			this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
 			this.optionsToolStripMenuItem.Text = "&Options";
 			// 
 			// MainMenuSaveFileDialog
