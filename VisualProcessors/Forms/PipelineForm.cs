@@ -655,6 +655,7 @@ namespace VisualProcessors.Forms
 		public void LoadFile()
 		{
 			MainMenuOpenFileDialog.InitialDirectory = m_CurrentFilepath;
+			MainMenuOpenFileDialog.Filter = "Pipeline file|*" + Program.Config.PipelineFileExtension + "|XML-file|*.xml|All files|*.*";
 			DialogResult result = MainMenuOpenFileDialog.ShowDialog();
 			if (result == DialogResult.Cancel)
 			{
@@ -699,6 +700,7 @@ namespace VisualProcessors.Forms
 		public string SaveFileAs()
 		{
 			MainMenuSaveFileDialog.InitialDirectory = m_CurrentFilepath;
+			MainMenuSaveFileDialog.Filter = "Pipeline file|*" + Program.Config.PipelineFileExtension + "|XML-file|*.xml|All files|*.*";
 			DialogResult result = MainMenuSaveFileDialog.ShowDialog();
 			if (result != DialogResult.Cancel)
 			{
