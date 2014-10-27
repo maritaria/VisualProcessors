@@ -705,10 +705,7 @@ namespace VisualProcessors.Forms
 			if (result != DialogResult.Cancel)
 			{
 				m_CurrentFilepath = MainMenuSaveFileDialog.FileName;
-				FileStream file = new FileStream(m_CurrentFilepath, FileMode.Create);
-				CurrentPipeline.SaveToFile(file);
-				file.Close();
-				IsSaved = true;
+				SaveFile();
 			}
 			return m_CurrentFilepath;
 		}
