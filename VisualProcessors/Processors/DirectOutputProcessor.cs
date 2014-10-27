@@ -55,8 +55,11 @@ namespace VisualProcessors.Processors
 			double value = GetInputChannel("Input").GetValue();
 			foreach (Label l in guis)
 			{
-				MethodInvoker action = delegate { l.Text = value.ToString(); };
-				l.BeginInvoke(action);
+				if (l.IsHandleCreated)
+				{
+					MethodInvoker action = delegate { l.Text = value.ToString(); };
+					l.BeginInvoke(action);
+				}
 			}
 		}
 
