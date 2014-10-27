@@ -111,7 +111,7 @@ namespace VisualProcessors.Processors
 			}
 			set
 			{
-				Options.GetOption("Code", value);
+				Options.SetOption("Code", value);
 				OnModified(HaltTypes.Ask);
 			}
 		}
@@ -159,6 +159,7 @@ namespace VisualProcessors.Processors
 			Usings.Add("VisualProcessors.Processors");
 			Assemblies.Add(Assembly.GetAssembly(typeof(int)));//mscorlib
 			Assemblies.Add(Assembly.GetAssembly(typeof(System.Xml.XmlAttribute)));//System.Xml namespace
+			Assemblies.Add(Assembly.GetAssembly(typeof(VisualProcessors.Processing.Processor)));
 			Assemblies.AddRange(Program.LoadedAssemblies);
 		}
 
