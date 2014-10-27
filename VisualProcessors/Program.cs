@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using VisualProcessors;
-using VisualProcessors.Controls;
 using VisualProcessors.Forms;
 using VisualProcessors.Processing;
-using ZedGraph;
 
 namespace VisualProcessors
 {
 	internal static class Program
 	{
+		public static ApplicationSettings Config = new ApplicationSettings();
 		public static List<Assembly> LoadedAssemblies = new List<Assembly>();
 		public static List<Assembly> ProcessorAssemblies = new List<Assembly>();
 
@@ -29,8 +24,8 @@ namespace VisualProcessors
 			try
 			{
 				fs = new FileStream(path, FileMode.Open);
-				//XmlSerializer s1 = new XmlSerializer(typeof(Config));
-				//Config = (Config)s1.Deserialize(fs);
+				XmlSerializer s1 = new XmlSerializer(typeof(ApplicationSettings));
+				Config = (ApplicationSettings)s1.Deserialize(fs);
 			}
 			catch (Exception e)
 			{
@@ -61,8 +56,8 @@ namespace VisualProcessors
 			{
 				fs = new FileStream(Application.StartupPath + "/application.config.xml", FileMode.Create);
 				XmlWriter writer = XmlWriter.Create(fs, settings);
-				//XmlSerializer s1 = new XmlSerializer(Config.GetType());
-				//s1.Serialize(writer, Config);
+				XmlSerializer s1 = new XmlSerializer(typeof(ApplicationSettings));
+				s1.Serialize(writer, Config);
 			}
 			catch (Exception e)
 			{
@@ -132,13 +127,10 @@ namespace VisualProcessors
 		[STAThread]
 		private static void Main()
 		{
-			LoadConfig(Application.StartupPath + "/application.config.xml");
-
-			//Config.AddSection(new ApplicationConfig());
-
+			//LoadConfig(Application.StartupPath + "/application.config.xml");
 			SaveConfig(Application.StartupPath + "/application.config.xml");
 
-			string assemblyDirectory = "/Assemblies";
+			string assemblyDirectory = Config.AssemblySubDirectory;
 			string dir = Application.StartupPath + assemblyDirectory;
 			if (!Directory.Exists(dir))
 			{
