@@ -43,7 +43,7 @@ namespace VisualProcessors.Processors
 			}
 			set
 			{
-				Options.GetOption("AxisSelection", value.ToString());
+				Options.SetOption("AxisSelection", value.ToString());
 				OnModified(HaltTypes.Ask);
 			}
 		}
