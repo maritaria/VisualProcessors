@@ -231,16 +231,16 @@ namespace VisualProcessors.Processors
 			ProcessFunction = null;
 			CSharpCodeProvider provider = new CSharpCodeProvider();
 			CompilerParameters parameters = new CompilerParameters();
-			foreach (Assembly asm in Assemblies)
+			Assembly[] copy = Assemblies.ToArray();
+			foreach (Assembly asm in copy)
 			{
-#warning NEEDS FIXING
 				try
 				{
 					parameters.ReferencedAssemblies.Add(asm.Location);
 				}
 				catch
 				{
-
+					Assemblies.Remove(asm);
 				}
 			}
 			parameters.GenerateInMemory = true;
@@ -319,30 +319,27 @@ namespace VisualProcessors.Processors
 		{
 			//After the options have been read, get all the assemblies and usings and put them in our lists, then remove the options from the Options object
 			base.ReadXml(reader);
-#warning NEEDS FIXING
-			/*
-			IEnumerable<string> keys = Options.GetValueKeys();
+			IEnumerable<string> keys = Options.GetKeys();
 			List<string> removeQueue = new List<string>();
 			foreach (string key in keys)
 			{
 				if (key.StartsWith("Assembly_"))
 				{
-					Assemblies.Add(Assembly.Load(Options.GetValue(key, null)));
+					Assemblies.Add(Assembly.Load(Options.GetOption(key, null)));
 					removeQueue.Add(key);
 					continue;
 				}
 				if (key.StartsWith("Using_"))
 				{
-					Usings.Add(Options.GetValue(key, null));
+					Usings.Add(Options.GetOption(key, null));
 					removeQueue.Add(key);
 					continue;
 				}
 			}
 			foreach (string key in removeQueue)
 			{
-				Options.RemoveValue(key);
+				Options.ClearOption(key);
 			}
-			 * */
 		}
 
 		public override void WriteXml(XmlWriter writer)
