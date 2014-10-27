@@ -176,7 +176,6 @@ namespace VisualProcessors.Processing
 					Stop();
 				}
 				XmlSerializer serializer = new XmlSerializer(typeof(Pipeline));
-				serializer.Serialize(Console.Out, this);
 				serializer.Serialize(filestream, this);
 			}
 		}
