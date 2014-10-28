@@ -134,7 +134,7 @@ namespace VisualProcessors
 			SaveConfig(Application.StartupPath + "/application.config.xml");
 
 			string assemblyDirectory = Config.AssemblySubDirectory;
-			string dir = Application.StartupPath + assemblyDirectory;
+			string dir = Application.StartupPath +"/" + assemblyDirectory;
 			if (!Directory.Exists(dir))
 			{
 				Console.WriteLine("Creating " + assemblyDirectory + " directory");
