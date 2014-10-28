@@ -30,14 +30,14 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this.OutputGridView = new System.Windows.Forms.DataGridView();
+			this.OutputColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.TargetColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+			this.InputColumn = new System.Windows.Forms.DataGridViewLinkColumn();
 			this.OutputContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.UnlinkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.LinkOutputButton = new System.Windows.Forms.Button();
 			this.LinkPanel = new System.Windows.Forms.Panel();
 			this.OutputComboBox = new System.Windows.Forms.ComboBox();
-			this.OutputColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.TargetColumn = new System.Windows.Forms.DataGridViewLinkColumn();
-			this.InputColumn = new System.Windows.Forms.DataGridViewLinkColumn();
 			((System.ComponentModel.ISupportInitialize)(this.OutputGridView)).BeginInit();
 			this.OutputContextMenu.SuspendLayout();
 			this.LinkPanel.SuspendLayout();
@@ -45,6 +45,8 @@
 			// 
 			// OutputGridView
 			// 
+			this.OutputGridView.AllowUserToAddRows = false;
+			this.OutputGridView.AllowUserToDeleteRows = false;
 			this.OutputGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.OutputGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.OutputColumn,
@@ -57,6 +59,27 @@
 			this.OutputGridView.Size = new System.Drawing.Size(330, 184);
 			this.OutputGridView.TabIndex = 1;
 			this.OutputGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OutputGridView_CellContentClick);
+			// 
+			// OutputColumn
+			// 
+			this.OutputColumn.HeaderText = "OutputChannel";
+			this.OutputColumn.Name = "OutputColumn";
+			// 
+			// TargetColumn
+			// 
+			this.TargetColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.TargetColumn.HeaderText = "Target";
+			this.TargetColumn.Name = "TargetColumn";
+			this.TargetColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.TargetColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.TargetColumn.VisitedLinkColor = System.Drawing.Color.Blue;
+			// 
+			// InputColumn
+			// 
+			this.InputColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.InputColumn.HeaderText = "InputChannel";
+			this.InputColumn.Name = "InputColumn";
+			this.InputColumn.VisitedLinkColor = System.Drawing.Color.Blue;
 			// 
 			// OutputContextMenu
 			// 
@@ -104,27 +127,6 @@
 			this.OutputComboBox.Name = "OutputComboBox";
 			this.OutputComboBox.Size = new System.Drawing.Size(217, 21);
 			this.OutputComboBox.TabIndex = 3;
-			// 
-			// OutputColumn
-			// 
-			this.OutputColumn.HeaderText = "OutputChannel";
-			this.OutputColumn.Name = "OutputColumn";
-			// 
-			// TargetColumn
-			// 
-			this.TargetColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.TargetColumn.HeaderText = "Target";
-			this.TargetColumn.Name = "TargetColumn";
-			this.TargetColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.TargetColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.TargetColumn.VisitedLinkColor = System.Drawing.Color.Blue;
-			// 
-			// InputColumn
-			// 
-			this.InputColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.InputColumn.HeaderText = "InputChannel";
-			this.InputColumn.Name = "InputColumn";
-			this.InputColumn.VisitedLinkColor = System.Drawing.Color.Blue;
 			// 
 			// ProcessorOutputPanel
 			// 
