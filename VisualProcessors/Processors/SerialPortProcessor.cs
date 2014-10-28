@@ -238,7 +238,20 @@ namespace VisualProcessors.Processors
 		public override void Start()
 		{
 			base.Start();
-			SerialPort = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
+			if (SerialPort==null)
+			{
+				SerialPort = new SerialPort();
+			}
+			if (SerialPort.IsOpen)
+			{
+				SerialPort.Close();
+				while (SerialPort.IsOpen) ;
+			}
+			SerialPort.PortName = PortName;
+			SerialPort.BaudRate = BaudRate; 
+			SerialPort.Parity = Parity;
+			SerialPort.DataBits = DataBits;
+			SerialPort.StopBits = StopBits;
 			SerialPort.DtrEnable = DtrEnable;
 			SerialPort.Handshake = Handshake;
 			SerialPort.ReadTimeout = ReadTimeout;
@@ -250,18 +263,13 @@ namespace VisualProcessors.Processors
 
 		public override void Stop()
 		{
-			if (SerialPort != null)
-			{
-				SerialPort.Dispose();
-				SerialPort = null;
-			}
 			base.Stop();
+			if (SerialPort != null && SerialPort.IsOpen)
+			{
+				SerialPort.Close();
+			}
 		}
 
 		#endregion Methods
 	}
-
-	#region PropertyGrid Helper Classes
-
-	#endregion PropertyGrid Helper Classes
 }
