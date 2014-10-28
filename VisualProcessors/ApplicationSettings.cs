@@ -1,17 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using System.ComponentModel;
 
 namespace VisualProcessors.Forms
 {
 	public sealed class ApplicationSettings
 	{
 		#region Properties
+
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Assembly directory")]
+		[Category("Startup")]
+		[Description("Sets the directory in the CWD to load assemblies from, requires restart to take effect")]
+		[DefaultValue("/Assemblies")]
+		public string AssemblySubDirectory { get; set; }
+
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Channel data")]
+		[Category("File extensions")]
+		[Description("Sets the file extension used to save/load channel data")]
+		[DefaultValue(".cdata.xml")]
+		public string ChannelDataFileExtension { get; set; }
 
 		[Browsable(false)]
 		[ReadOnly(true)]
@@ -24,6 +40,14 @@ namespace VisualProcessors.Forms
 		[Description("When true, the application will (on startup) load up the file that was opened last by the application previously")]
 		[DefaultValue(false)]
 		public bool OpenLastPipelineOnStartup { get; set; }
+
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Pipeline")]
+		[Category("File extensions")]
+		[Description("Sets the file extension used to save/load pipeline files")]
+		[DefaultValue(".pipe.xml")]
+		public string PipelineFileExtension { get; set; }
 
 		[Browsable(true)]
 		[ReadOnly(false)]
@@ -40,7 +64,7 @@ namespace VisualProcessors.Forms
 		[Category("Worksheet")]
 		[Description("Sets the background color of the worksheet during simulation")]
 		public Color SimulationBackgroundColor { get; set; }
-		
+
 		[Browsable(true)]
 		[ReadOnly(false)]
 		[DisplayName("Start maximized")]
@@ -56,30 +80,6 @@ namespace VisualProcessors.Forms
 		[Category("Worksheet")]
 		[Description("Sets the background color of the worksheet during editing")]
 		public Color WorksheetBackgroundColor { get; set; }
-		
-		[Browsable(true)]
-		[ReadOnly(false)]
-		[DisplayName("Pipeline")]
-		[Category("File extensions")]
-		[Description("Sets the file extension used to save/load pipeline files")]
-		[DefaultValue(".pipe.xml")]
-		public string PipelineFileExtension { get; set; }
-		
-		[Browsable(true)]
-		[ReadOnly(false)]
-		[DisplayName("Channel data")]
-		[Category("File extensions")]
-		[Description("Sets the file extension used to save/load channel data")]
-		[DefaultValue(".cdata.xml")]
-		public string ChannelDataFileExtension { get; set; }
-		
-		[Browsable(true)]
-		[ReadOnly(false)]
-		[DisplayName("Assembly directory")]
-		[Category("Startup")]
-		[Description("Sets the directory in the CWD to load assemblies from, requires restart to take effect")]
-		[DefaultValue("/Assemblies")]
-		public string AssemblySubDirectory { get; set; }
 
 		#endregion Properties
 
@@ -104,33 +104,31 @@ namespace VisualProcessors.Forms
 
 		#endregion Methods
 	}
+
 	#region XmlColor Helper Class
+
 	public class XmlColor
 	{
 		private Color color_ = Color.Black;
 
-		public XmlColor() { }
-		public XmlColor(Color c) { color_ = c; }
-
-
-		public Color ToColor()
+		public XmlColor()
 		{
-			return color_;
 		}
 
-		public void FromColor(Color c)
+		public XmlColor(Color c)
 		{
 			color_ = c;
 		}
 
-		public static implicit operator Color(XmlColor x)
+		[XmlAttribute]
+		public byte Alpha
 		{
-			return x.ToColor();
-		}
-
-		public static implicit operator XmlColor(Color c)
-		{
-			return new XmlColor(c);
+			get { return color_.A; }
+			set
+			{
+				if (value != color_.A) // avoid hammering named color if no alpha change
+					color_ = Color.FromArgb(value, color_);
+			}
 		}
 
 		[XmlAttribute]
@@ -153,18 +151,31 @@ namespace VisualProcessors.Forms
 			}
 		}
 
-		[XmlAttribute]
-		public byte Alpha
+		public static implicit operator Color(XmlColor x)
 		{
-			get { return color_.A; }
-			set
-			{
-				if (value != color_.A) // avoid hammering named color if no alpha change
-					color_ = Color.FromArgb(value, color_);
-			}
+			return x.ToColor();
 		}
 
-		public bool ShouldSerializeAlpha() { return Alpha < 0xFF; }
+		public static implicit operator XmlColor(Color c)
+		{
+			return new XmlColor(c);
+		}
+
+		public void FromColor(Color c)
+		{
+			color_ = c;
+		}
+
+		public bool ShouldSerializeAlpha()
+		{
+			return Alpha < 0xFF;
+		}
+
+		public Color ToColor()
+		{
+			return color_;
+		}
 	}
-	#endregion
+
+	#endregion XmlColor Helper Class
 }
