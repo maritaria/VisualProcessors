@@ -250,157 +250,164 @@ namespace VisualProcessors.Processors
 
 			while (true)
 			{
-				int i = -1;
-				switch (State)
+				try
 				{
-					case InternalState.Starting:
-					case InternalState.Configuring:
-						if (StateConfirmed)
-						{
-							//Check response
-							i = SerialPort.ReadByte();
-							Buffer.Add((byte)i);
-							if (Buffer.Count == 4 && Buffer[0] == 0x24 && Buffer[1] == 0x61 && Buffer[2] == 0xD8 && Buffer[3] == 0xC4)
+					int i = -1;
+					switch (State)
+					{
+						case InternalState.Starting:
+						case InternalState.Configuring:
+							if (StateConfirmed)
 							{
-								State = InternalState.Activating;
-								Buffer.Clear();
-							}
-							while (Buffer.Count >= 4)
-							{
-								Buffer.RemoveAt(0);
-							}
-							if (StateConfirmedTimestamp.Subtract(DateTime.Now).TotalSeconds > 0.5)
-							{
-								StateConfirmed = false;
-							}
-						}
-						else
-						{
-							//Send packet
-							int srate = SampleRate;
-							byte[] packet = GeneratePacket(new byte[] { 0x03, (byte)(srate >> 8), (byte)(srate & 0xFF), (byte)Axis });
-							SerialPort.DiscardInBuffer();
-							SerialPort.Write(packet, 0, packet.Length);
-							StateConfirmed = true;
-						}
-						break;
-					case InternalState.Activating:
-						if (StateConfirmed)
-						{
-							//Check response
-							i = SerialPort.ReadByte();
-							if (i == 0x24)
-							{
-								State = InternalState.Reading;
-							}
-							if (StateConfirmedTimestamp.Subtract(DateTime.Now).TotalSeconds > 0.5)
-							{
-								StateConfirmed = false;
-							}
-						}
-						else
-						{
-							//Send packet
-							int srate = SampleRate;
-							byte[] packet = GeneratePacket(new byte[] { 0x01 });
-							SerialPort.DiscardInBuffer();
-							SerialPort.Write(packet, 0, packet.Length);
-							StateConfirmed = true;
-						}
-						break;
-					case InternalState.Reading:
-						if (!StateConfirmed)
-						{
-							StateConfirmed = true;
-							Buffer.Clear();
-						}
-						switch(PacketState)
-						{
-							case PacketReadState.Syncblock:
+								//Check response
 								i = SerialPort.ReadByte();
 								Buffer.Add((byte)i);
-								if (Buffer.Count == 6 && Buffer[0] == 0xAA && Buffer[1] == 0xBB && Buffer[2] == 0xCC && Buffer[3] == 0xDD && Buffer[4] == 0xEE && Buffer[5] == 0xFF)
+								if (Buffer.Count == 4 && Buffer[0] == 0x24 && Buffer[1] == 0x61 && Buffer[2] == 0xD8 && Buffer[3] == 0xC4)
 								{
-									PacketState = PacketReadState.Data;
+									State = InternalState.Activating;
 									Buffer.Clear();
-									break;
 								}
-								while (Buffer.Count >= 6)
+								while (Buffer.Count >= 4)
 								{
 									Buffer.RemoveAt(0);
 								}
-								break;
-							case PacketReadState.Data:
+								if (StateConfirmedTimestamp.Subtract(DateTime.Now).TotalSeconds > 0.5)
+								{
+									StateConfirmed = false;
+								}
+							}
+							else
+							{
+								//Send packet
+								int srate = SampleRate;
+								byte[] packet = GeneratePacket(new byte[] { 0x03, (byte)(srate >> 8), (byte)(srate & 0xFF), (byte)Axis });
+								SerialPort.DiscardInBuffer();
+								SerialPort.Write(packet, 0, packet.Length);
+								StateConfirmed = true;
+							}
+							break;
+						case InternalState.Activating:
+							if (StateConfirmed)
+							{
+								//Check response
 								i = SerialPort.ReadByte();
-								Buffer.Add((byte)i);
-								if (Buffer.Count >=60)
+								if (i == 0x24)
 								{
-									PacketState = PacketReadState.Convert;
-									break;
+									State = InternalState.Reading;
 								}
-								break;
-							case PacketReadState.Convert:
-								byte[] packet = Buffer.ToArray();
+								if (StateConfirmedTimestamp.Subtract(DateTime.Now).TotalSeconds > 0.5)
+								{
+									StateConfirmed = false;
+								}
+							}
+							else
+							{
+								//Send packet
+								int srate = SampleRate;
+								byte[] packet = GeneratePacket(new byte[] { 0x01 });
+								SerialPort.DiscardInBuffer();
+								SerialPort.Write(packet, 0, packet.Length);
+								StateConfirmed = true;
+							}
+							break;
+						case InternalState.Reading:
+							if (!StateConfirmed)
+							{
+								StateConfirmed = true;
 								Buffer.Clear();
-								short converted;
-								for (i = 0; i+flagCount < 30;i+=flagCount)
+							}
+							switch (PacketState)
+							{
+								case PacketReadState.Syncblock:
+									i = SerialPort.ReadByte();
+									Buffer.Add((byte)i);
+									if (Buffer.Count == 6 && Buffer[0] == 0xAA && Buffer[1] == 0xBB && Buffer[2] == 0xCC && Buffer[3] == 0xDD && Buffer[4] == 0xEE && Buffer[5] == 0xFF)
+									{
+										PacketState = PacketReadState.Data;
+										Buffer.Clear();
+										break;
+									}
+									while (Buffer.Count >= 6)
+									{
+										Buffer.RemoveAt(0);
+									}
+									break;
+								case PacketReadState.Data:
+									i = SerialPort.ReadByte();
+									Buffer.Add((byte)i);
+									if (Buffer.Count >= 60)
+									{
+										PacketState = PacketReadState.Convert;
+										break;
+									}
+									break;
+								case PacketReadState.Convert:
+									byte[] packet = Buffer.ToArray();
+									Buffer.Clear();
+									short converted;
+									for (i = 0; i + flagCount < 30; i += flagCount)
+									{
+										converted = BitConverter.ToInt16(packet, i * 2);
+										if (sax)
+										{
+											ax.WriteValue((double)converted);
+										}
+										if (say)
+										{
+											ay.WriteValue((double)converted);
+										}
+										if (saz)
+										{
+											az.WriteValue((double)converted);
+										}
+										if (smx)
+										{
+											mx.WriteValue((double)converted);
+										}
+										if (smy)
+										{
+											my.WriteValue((double)converted);
+										}
+										if (smz)
+										{
+											mz.WriteValue((double)converted);
+										}
+									}
+									PacketState = PacketReadState.Syncblock;
+									break;
+							}
+							break;
+						case InternalState.Stopping:
+							if (StateConfirmed)
+							{
+								//Check response
+								i = SerialPort.ReadByte();
+								if (i == 0x24)
 								{
-									converted = BitConverter.ToInt16(packet, i * 2);
-									if (sax)
-									{
-										ax.WriteValue((double)converted);
-									}
-									if (say)
-									{
-										ay.WriteValue((double)converted);
-									}
-									if (saz)
-									{
-										az.WriteValue((double)converted);
-									}
-									if (smx)
-									{
-										mx.WriteValue((double)converted);
-									}
-									if (smy)
-									{
-										my.WriteValue((double)converted);
-									}
-									if (smz)
-									{
-										mz.WriteValue((double)converted);
-									}
+									State = InternalState.Stopped;
 								}
-								PacketState = PacketReadState.Syncblock;
-								break;
-						}
-						break;
-					case InternalState.Stopping:
-						if (StateConfirmed)
-						{
-							//Check response
-							i = SerialPort.ReadByte();
-							if (i == 0x24)
-							{
-								State = InternalState.Stopped;
+								if (StateConfirmedTimestamp.Subtract(DateTime.Now).TotalSeconds > 0.5)
+								{
+									StateConfirmed = false;
+								}
 							}
-							if (StateConfirmedTimestamp.Subtract(DateTime.Now).TotalSeconds > 0.5)
+							else
 							{
-								StateConfirmed = false;
+								//Send packet
+								int srate = SampleRate;
+								byte[] packet = GeneratePacket(new byte[] { 0x02 });
+								SerialPort.DiscardInBuffer();
+								SerialPort.Write(packet, 0, packet.Length);
+								StateConfirmed = true;
 							}
-						}
-						else
-						{
-							//Send packet
-							int srate = SampleRate;
-							byte[] packet = GeneratePacket(new byte[] { 0x02 });
-							SerialPort.DiscardInBuffer();
-							SerialPort.Write(packet, 0, packet.Length);
-							StateConfirmed = true;
-						}
-						break;
-					case InternalState.Stopped:
-						return;
+							break;
+						case InternalState.Stopped:
+							return;
+					}
+				}
+				catch
+				{
+
 				}
 			}
 		}
