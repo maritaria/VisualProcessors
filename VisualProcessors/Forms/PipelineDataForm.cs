@@ -61,16 +61,13 @@ namespace VisualProcessors.Forms
 
 		private void AddProcessorInterface(Processor proc)
 		{
-			if (!m_Interfaces.ContainsKey(proc))
+			if (!m_Interfaces.ContainsKey(proc) && proc.Meta.ShowOnDataForm == ProcessorVisibility.Show)
 			{
-				if (proc.Meta.CustomTabMode != ProcessorVisibility.Hide)
-				{
-					ProcessorInterfaceForm gf = new ProcessorInterfaceForm(proc);
-					m_Interfaces.Add(proc, gf);
-					gf.TopLevel = false;
-					gf.MdiParent = this;
-					gf.Show();
-				}
+				ProcessorInterfaceForm gf = new ProcessorInterfaceForm(proc);
+				m_Interfaces.Add(proc, gf);
+				gf.TopLevel = false;
+				gf.MdiParent = this;
+				gf.Show();
 			}
 		}
 
