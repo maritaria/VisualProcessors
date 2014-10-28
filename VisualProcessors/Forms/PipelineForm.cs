@@ -189,22 +189,31 @@ namespace VisualProcessors.Forms
 
 		public void StartSimulation()
 		{
-			runToolStripMenuItem.Checked = true;
-			CurrentPipeline.Start();
+			if (CurrentPipeline != null)
+			{
+				runToolStripMenuItem.Checked = true;
+				CurrentPipeline.Start();
+			}
 		}
 		public void StopSimulation()
 		{
-			runToolStripMenuItem.Checked = false;
-			CurrentPipeline.Stop();
+			if (CurrentPipeline != null)
+			{
+				runToolStripMenuItem.Checked = false;
+				CurrentPipeline.Stop();
+			}
 		}
 		public void ResetSimulation()
 		{
-			runToolStripMenuItem.Checked = false;
-			CurrentPipeline.Reset();
+			if (CurrentPipeline != null)
+			{
+				runToolStripMenuItem.Checked = false;
+				CurrentPipeline.Reset();
+			}
 		}
 		public bool IsSimulationRunning()
 		{
-			return CurrentPipeline.IsRunning || CurrentPipeline.IsPreparingSimulation;
+			return CurrentPipeline != null && (CurrentPipeline.IsRunning || CurrentPipeline.IsPreparingSimulation);
 		}
 
 		#endregion Methods
