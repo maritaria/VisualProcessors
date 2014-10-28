@@ -130,8 +130,7 @@ namespace VisualProcessors
 		[STAThread]
 		private static void Main()
 		{
-			//LoadConfig(Application.StartupPath + "/application.config.xml");
-			SaveConfig(Application.StartupPath + "/application.config.xml");
+			LoadConfig(Application.StartupPath + "/application.config.xml");
 
 			string assemblyDirectory = Config.AssemblySubDirectory;
 			string dir = Application.StartupPath + "/" + assemblyDirectory;
@@ -146,6 +145,7 @@ namespace VisualProcessors
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new PipelineForm());
+			SaveConfig(Application.StartupPath + "/application.config.xml");
 		}
 	}
 }
