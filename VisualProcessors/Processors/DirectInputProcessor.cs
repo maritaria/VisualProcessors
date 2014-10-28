@@ -73,7 +73,6 @@ namespace VisualProcessors.Processors
 			panel.Controls.Add(button);
 		}
 
-
 		#endregion Methods
 
 		#region Event Handlers
@@ -82,7 +81,8 @@ namespace VisualProcessors.Processors
 		{
 			GetOutputChannel("Output").WriteValue(Value);
 		}
-		#endregion
+
+		#endregion Event Handlers
 
 		#region IXmlSerializable Members
 
@@ -91,6 +91,6 @@ namespace VisualProcessors.Processors
 			base.WriteXml(writer);
 		}
 
-		#endregion
+		#endregion IXmlSerializable Members
 	}
 }

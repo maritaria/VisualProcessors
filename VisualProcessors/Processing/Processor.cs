@@ -384,6 +384,11 @@ namespace VisualProcessors.Processing
 			KillWorkerThread();
 		}
 
+		public override string ToString()
+		{
+			return base.ToString() + " " + Name;
+		}
+
 		internal void SingleWorkerLoop()
 		{
 			bool ready = true;
@@ -447,11 +452,6 @@ namespace VisualProcessors.Processing
 			{
 				SingleWorkerLoop();
 			}
-		}
-
-		public override string ToString()
-		{
-			return base.ToString() + " " + Name;
 		}
 
 		#endregion Methods
@@ -987,6 +987,5 @@ namespace VisualProcessors.Processing
 		}
 
 		#endregion IDisposable Members
-
 	}
 }

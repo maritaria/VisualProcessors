@@ -14,23 +14,23 @@ namespace VisualProcessors.Design
 	{
 		#region Properties
 
-		private Enum m_Value;
 		private Type m_Type;
+		private Enum m_Value;
 
 		public Enum Value
 		{
 			get
 			{
 				int i = 0;
-				foreach(int o in CheckedItems)
+				foreach (int o in CheckedItems)
 				{
 					i += o;
 				}
-				return (Enum) Enum.ToObject(m_Type,i);
+				return (Enum)Enum.ToObject(m_Type, i);
 			}
 			set
 			{
-				if (m_Type!=value.GetType())
+				if (m_Type != value.GetType())
 				{
 					m_Type = value.GetType();
 					UpdateList();
@@ -48,7 +48,7 @@ namespace VisualProcessors.Design
 		{
 			CheckOnClick = true;
 		}
-	
+
 		#endregion Constructor
 
 		#region Methods
@@ -61,11 +61,12 @@ namespace VisualProcessors.Design
 				Items.Add(Enum.Parse(m_Type, s));
 			}
 		}
+
 		private void UpdateSelection()
 		{
 			Console.WriteLine("UpdateSelection() " + m_Value);
 			SelectedIndices.Clear();
-			if (m_Value==null)
+			if (m_Value == null)
 			{
 				return;
 			}
@@ -84,6 +85,5 @@ namespace VisualProcessors.Design
 		}
 
 		#endregion Methods
-
 	}
 }

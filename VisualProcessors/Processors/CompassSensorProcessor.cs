@@ -15,7 +15,7 @@ namespace VisualProcessors.Processors
 	[ProcessorMeta("Bram Kamies", "Reads data from the eCompass sensor", "", "AcceleroX",
 		InputTabMode = ProcessorTabMode.Hide,
 		CustomTabMode = ProcessorTabMode.Hide,
-		ThreadMode=ProcessorThreadMode.ForceMultiThreading)]
+		ThreadMode = ProcessorThreadMode.ForceMultiThreading)]
 	public class CompassSensorProcessor : SerialPortProcessor
 	{
 		#region Properties
@@ -146,9 +146,9 @@ namespace VisualProcessors.Processors
 				return;
 			}
 			DateTime start = DateTime.Now;
-			while(true)
+			while (true)
 			{
-				if (SerialPort!=null && SerialPort.IsOpen)
+				if (SerialPort != null && SerialPort.IsOpen)
 				{
 					break;
 				}
@@ -450,10 +450,13 @@ namespace VisualProcessors.Processors
 			AcceleroX = 0x01,
 			AcceleroY = 0x02,
 			AcceleroZ = 0x04,
+
 			//Accelero = AcceleroX | AcceleroY | AcceleroZ,
 			MagnetoX = 0x10,
+
 			MagnetoY = 0x20,
 			MagnetoZ = 0x40,
+
 			//Magneto = MagnetoX | MagnetoY | MagnetoZ,
 			//All = Accelero | Magneto,
 		}

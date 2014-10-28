@@ -9,14 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using VisualProcessors.Design;
 using VisualProcessors.Forms;
 using VisualProcessors.Processing;
-using VisualProcessors.Design;
 
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Reads data from a SerialPort and writes it to its 'Output' channel", "", "Output",
-		AllowUserSpawn=false)]
+		AllowUserSpawn = false)]
 	public class SerialPortProcessor : Processor
 	{
 		#region Properties

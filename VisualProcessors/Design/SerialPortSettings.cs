@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Design;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VisualProcessors.Processing;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using VisualProcessors.Processing;
 using VisualProcessors.Processors;
-using System.IO.Ports;
-using System.Drawing.Design;
 
 namespace VisualProcessors.Design
 {
-
 	[TypeConverter(typeof(ExpandableObjectConverter))]
 	[Editor(typeof(SerialPortEditor), typeof(UITypeEditor))]
 	public class SerialPortSettings

@@ -234,7 +234,7 @@ namespace VisualProcessors.Processing
 			{
 				p.BuildLinks(this);
 			}
-			foreach(Processor p in m_Processors)
+			foreach (Processor p in m_Processors)
 			{
 				p.PostLoad(this);
 			}
@@ -258,13 +258,7 @@ namespace VisualProcessors.Processing
 		///  Invoked whenever a Processor invokes their Modified event.
 		/// </summary>
 		public event EventHandler<ProcessorModifiedEventArgs> ProcessorModified;
-		private void OnProcessorModified(object sender, ProcessorModifiedEventArgs e)
-		{
-			if (ProcessorModified!=null)
-			{
-				ProcessorModified(this, e);
-			}
-		}
+
 		/// <summary>
 		///  Invoked just after a processor is removed from the pipeline.
 		/// </summary>
@@ -307,6 +301,14 @@ namespace VisualProcessors.Processing
 			if (ProcessorAdded != null)
 			{
 				ProcessorAdded(p);
+			}
+		}
+
+		private void OnProcessorModified(object sender, ProcessorModifiedEventArgs e)
+		{
+			if (ProcessorModified != null)
+			{
+				ProcessorModified(this, e);
 			}
 		}
 

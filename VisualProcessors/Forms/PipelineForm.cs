@@ -25,6 +25,7 @@ namespace VisualProcessors.Forms
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
 d
+
 		public Pipeline CurrentPipeline
 		{
 			get
@@ -814,6 +815,7 @@ d
 		private AssemblyForm m_AssemblyForm;
 		private Form m_OptionsForm;
 		private PipelineDataForm m_PipelineDataForm;
+
 		public void HideDataWindow()
 		{
 			showDataWindowToolStripMenuItem.Text = "Show Data Window";

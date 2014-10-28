@@ -108,14 +108,14 @@ namespace VisualProcessors.Processing
 		public string PropertiesTabTitle = "Properties";
 
 		/// <summary>
-		/// Determines whether to use multithreading, also allows the end user to choose
-		/// </summary>
-		public ProcessorThreadMode ThreadMode = ProcessorThreadMode.UserDefined;
-
-		/// <summary>
-		/// Determines whether the custom tab is shown on a seperate form on the PipelineOutputForm
+		///  Determines whether the custom tab is shown on a seperate form on the PipelineOutputForm
 		/// </summary>
 		public bool ShowOutputWindow = false;
+
+		/// <summary>
+		///  Determines whether to use multithreading, also allows the end user to choose
+		/// </summary>
+		public ProcessorThreadMode ThreadMode = ProcessorThreadMode.UserDefined;
 
 		public ProcessorMeta(string author, string description, string defaultinput, string defaultoutput)
 		{

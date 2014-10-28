@@ -182,6 +182,6 @@ namespace VisualProcessors.Processors
 			base.WriteXml(writer);
 		}
 
-		#endregion
+		#endregion IXmlSerializable Members
 	}
 }

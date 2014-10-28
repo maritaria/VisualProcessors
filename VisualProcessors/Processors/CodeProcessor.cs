@@ -175,6 +175,11 @@ namespace VisualProcessors.Processors
 			base.GetUserInterface(panel);
 		}
 
+		public override void PostLoad(Pipeline pipeline)
+		{
+			Compile();
+		}
+
 		protected override void Prepare()
 		{
 			if (!m_IsCompiled)
@@ -212,11 +217,6 @@ namespace VisualProcessors.Processors
 					OnError("The Process() function threw an exception!" + Environment.NewLine + e.Message);
 				}
 			}
-		}
-
-		public override void PostLoad(Pipeline pipeline)
-		{
-			Compile();
 		}
 
 		#endregion Methods

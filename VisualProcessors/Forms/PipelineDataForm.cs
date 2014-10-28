@@ -101,7 +101,7 @@ namespace VisualProcessors.Forms
 			{
 				arg2.ProcessorAdded += AddProcessorInterface;
 				arg2.ProcessorRemoved += RemoveProcessorInterface;
-				foreach(string name in arg2.GetListOfNames())
+				foreach (string name in arg2.GetListOfNames())
 				{
 					AddProcessorInterface(arg2.GetByName(name));
 				}

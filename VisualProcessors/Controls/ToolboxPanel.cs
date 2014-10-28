@@ -17,9 +17,9 @@ namespace VisualProcessors.Controls
 	{
 		#region Properties
 
+		private SortedList<string, Control> m_Buttons = new SortedList<string, Control>();
 		private PipelineForm m_PipelineForm;
 		private List<Type> m_Types = new List<Type>();
-		private SortedList<string, Control> m_Buttons = new SortedList<string, Control>();
 
 		public PipelineForm PipelineForm
 		{
@@ -78,13 +78,7 @@ namespace VisualProcessors.Controls
 			}
 			SortButtons();
 		}
-		private void SortButtons()
-		{
-			foreach(KeyValuePair<string, Control> c in m_Buttons.Reverse())
-			{
-				ButtonPanel.Controls.Add(c.Value);
-			}
-		}
+
 		public void SetPipelineForm(PipelineForm pipeline)
 		{
 			ClearButtonList();
@@ -161,6 +155,14 @@ namespace VisualProcessors.Controls
 					};
 					m_Buttons.Add(processorType.Name, b);
 				}
+			}
+		}
+
+		private void SortButtons()
+		{
+			foreach (KeyValuePair<string, Control> c in m_Buttons.Reverse())
+			{
+				ButtonPanel.Controls.Add(c.Value);
 			}
 		}
 
