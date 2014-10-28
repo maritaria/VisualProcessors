@@ -144,7 +144,8 @@ namespace VisualProcessors
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new PipelineForm());
+			PipelineForm mainform = new PipelineForm();
+			Application.Run(mainform);
 			SaveConfig(Application.StartupPath + "/application.config.xml");
 		}
 	}

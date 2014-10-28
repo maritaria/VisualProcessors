@@ -550,13 +550,11 @@ namespace VisualProcessors.Forms
 			{
 				if (CurrentPipeline.IsRunning)
 				{
-					//myBuffer.Graphics.Clear(Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").SimulationBackgroundColor);
-					myBuffer.Graphics.Clear(Color.Pink);
+					myBuffer.Graphics.Clear(Program.Config.SimulationBackgroundColor);
 				}
 				else
 				{
-					//myBuffer.Graphics.Clear(Program.Config.GetSection<ApplicationConfig>("ApplicationConfig").WorksheetBackgroundColor);
-					myBuffer.Graphics.Clear(SystemColors.ActiveCaption);
+					myBuffer.Graphics.Clear(Program.Config.WorksheetBackgroundColor);
 				}
 			}
 			else
@@ -921,8 +919,6 @@ namespace VisualProcessors.Forms
 			}
 		}
 
-		#endregion Menu: Tools
-
 		private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (m_OptionsForm == null || m_OptionsForm.IsDisposed)
@@ -937,14 +933,15 @@ namespace VisualProcessors.Forms
 							Dock = DockStyle.Fill
 						}
 					},
-					Size = RestoreBounds.Size,
+					Size = new Size(470,550),
 					Location = RestoreBounds.Location,
-					WindowState = WindowState
 				};
 				m_OptionsForm.Show();
 			}
 			m_OptionsForm.Focus();
 		}
+
+		#endregion Menu: Tools
 
 		#endregion MenuStrip Implementation
 	}
