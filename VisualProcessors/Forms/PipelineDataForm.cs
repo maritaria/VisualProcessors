@@ -61,7 +61,7 @@ namespace VisualProcessors.Forms
 
 		private void AddProcessorInterface(Processor proc)
 		{
-			if (!m_Interfaces.ContainsKey(proc) && proc.Meta.ShowOnDataForm == ProcessorVisibility.Show)
+			if (!m_Interfaces.ContainsKey(proc) && proc.Meta.DataFormMode == ProcessorVisibility.Show)
 			{
 				ProcessorInterfaceForm gf = new ProcessorInterfaceForm(proc);
 				m_Interfaces.Add(proc, gf);

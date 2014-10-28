@@ -110,7 +110,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Determines whether the custom tab should be displayed on the ProcessorDataForm
 		/// </summary>
-		public ProcessorVisibility ShowOnDataForm = ProcessorVisibility.Hide;
+		public ProcessorVisibility DataFormMode = ProcessorVisibility.Hide;
 
 		/// <summary>
 		///  Determines whether the custom tab is shown on a seperate form on the PipelineOutputForm
