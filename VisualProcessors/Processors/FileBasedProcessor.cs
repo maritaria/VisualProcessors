@@ -100,7 +100,7 @@ namespace VisualProcessors.Processors
 			{
 				ThrowExceptionOnInvalid(FilePath);
 			}
-			catch(Exception e)
+			catch
 			{
 				return false;
 			}
