@@ -904,6 +904,9 @@ namespace VisualProcessors.Forms
 				m_PipelineDataForm.FormClosed += m_PipelineDataForm_FormClosed;
 			}
 			m_PipelineDataForm.Show();
+			m_PipelineDataForm.Location = RestoreBounds.Location;
+			m_PipelineDataForm.Size = RestoreBounds.Size;
+			m_PipelineDataForm.WindowState = WindowState;
 			showDataWindowToolStripMenuItem.Text = "Hide Data Window";
 		}
 

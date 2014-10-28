@@ -71,6 +71,16 @@ namespace VisualProcessors.Forms
 			}
 		}
 
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			if (keyData == (Keys.Control | Keys.Space))
+			{
+				Master.HideDataWindow();
+				return true;
+			}
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+
 		private void RemoveProcessorInterface(Processor proc)
 		{
 			ProcessorInterfaceForm gf = m_Interfaces[proc];
