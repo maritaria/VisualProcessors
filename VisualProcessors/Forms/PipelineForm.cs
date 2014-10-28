@@ -94,15 +94,7 @@ namespace VisualProcessors.Forms
 			Toolbox.PipelineForm = this;
 
 			m_PipelineDataForm = new PipelineDataForm(this);
-			if (Program.Config.StartMaximized)
-			{
-				this.WindowState = FormWindowState.Maximized;
-			}
-			if (Program.Config.ShowDataFormOnStartup)
-			{
-				ShowDataWindow();
-			}
-			pipelineErrorPanel1.Master = this;
+			ErrorList.Master = this;
 		}
 
 		#endregion Constructor
@@ -497,6 +489,14 @@ namespace VisualProcessors.Forms
 		private void PipelineFormLoad(object sender, EventArgs e)
 		{
 			this.SetBevel(false);
+			if (Program.Config.StartMaximized)
+			{
+				this.WindowState = FormWindowState.Maximized;
+			}
+			if (Program.Config.ShowDataFormOnStartup)
+			{
+				ShowDataWindow();
+			}
 		}
 
 		private void MdiClientMouseClick(object sender, MouseEventArgs e)

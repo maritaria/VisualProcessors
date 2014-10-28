@@ -51,7 +51,7 @@ namespace VisualProcessors.Forms
 
 		[Browsable(true)]
 		[ReadOnly(false)]
-		[DisplayName("Open last file opened on startup")]
+		[DisplayName("Show data form on startup")]
 		[Category("Startup")]
 		[Description("When true, the application will (on startup) open the data form")]
 		[DefaultValue(false)]
@@ -73,6 +73,14 @@ namespace VisualProcessors.Forms
 		[DefaultValue(true)]
 		public bool StartMaximized { get; set; }
 
+		[Browsable(true)]
+		[ReadOnly(false)]
+		[DisplayName("Use 3D border on worksheet")]
+		[Category("Startup")]
+		[Description("When true, the worksheet will have a 3D border around it (requires restart)")]
+		[DefaultValue(false)]
+		public bool Use3DBorderOnMdiClient { get; set; }
+
 		[XmlElement(Type = typeof(XmlColor))]
 		[Browsable(true)]
 		[ReadOnly(false)]
@@ -87,15 +95,16 @@ namespace VisualProcessors.Forms
 
 		public ApplicationSettings()
 		{
-			LastOpenedPipelineFile = "";
-			OpenLastPipelineOnStartup = false;
-			ShowDataFormOnStartup = false;
-			SimulationBackgroundColor = Color.Crimson;
 			StartMaximized = true;
+			ShowDataFormOnStartup = false;
+			OpenLastPipelineOnStartup = false;
+			Use3DBorderOnMdiClient = false;
 			WorksheetBackgroundColor = SystemColors.ActiveCaption;
+			SimulationBackgroundColor = Color.Crimson;
 			PipelineFileExtension = ".pipe.xml";
 			ChannelDataFileExtension = ".cdata.xml";
 			AssemblySubDirectory = "Assemblies";
+			LastOpenedPipelineFile = "";
 		}
 
 		#endregion Constructor

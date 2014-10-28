@@ -61,7 +61,7 @@
 			this.SimulationStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.ToolBoxSplitter = new System.Windows.Forms.Splitter();
 			this.ErrorListSplitter = new System.Windows.Forms.Splitter();
-			this.pipelineErrorPanel1 = new VisualProcessors.Controls.PipelineErrorPanel();
+			this.ErrorList = new VisualProcessors.Controls.PipelineErrorPanel();
 			this.Toolbox = new VisualProcessors.Controls.ToolboxPanel();
 			this.MdiClientContextMenu.SuspendLayout();
 			this.MainMenu.SuspendLayout();
@@ -316,12 +316,12 @@
 			// 
 			// pipelineErrorPanel1
 			// 
-			this.pipelineErrorPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pipelineErrorPanel1.Location = new System.Drawing.Point(180, 407);
-			this.pipelineErrorPanel1.Master = null;
-			this.pipelineErrorPanel1.Name = "pipelineErrorPanel1";
-			this.pipelineErrorPanel1.Size = new System.Drawing.Size(1303, 204);
-			this.pipelineErrorPanel1.TabIndex = 6;
+			this.ErrorList.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.ErrorList.Location = new System.Drawing.Point(180, 407);
+			this.ErrorList.Master = null;
+			this.ErrorList.Name = "pipelineErrorPanel1";
+			this.ErrorList.Size = new System.Drawing.Size(1303, 204);
+			this.ErrorList.TabIndex = 6;
 			// 
 			// Toolbox
 			// 
@@ -339,7 +339,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1483, 633);
 			this.Controls.Add(this.ErrorListSplitter);
-			this.Controls.Add(this.pipelineErrorPanel1);
+			this.Controls.Add(this.ErrorList);
 			this.Controls.Add(this.MdiStatusStrip);
 			this.Controls.Add(this.ToolBoxSplitter);
 			this.Controls.Add(this.Toolbox);
@@ -390,7 +390,7 @@
 		private System.Windows.Forms.StatusStrip MdiStatusStrip;
 		private System.Windows.Forms.ToolStripStatusLabel SimulationStatusLabel;
 		private System.Windows.Forms.ToolStripMenuItem showDataWindowToolStripMenuItem;
-		private Controls.PipelineErrorPanel pipelineErrorPanel1;
+		private Controls.PipelineErrorPanel ErrorList;
 		private System.Windows.Forms.Splitter ToolBoxSplitter;
 		private System.Windows.Forms.Splitter ErrorListSplitter;
 		
