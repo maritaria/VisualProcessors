@@ -494,6 +494,11 @@ namespace VisualProcessors.Forms
 			}
 		}
 
+		private void PipelineFormLoad(object sender, EventArgs e)
+		{
+			this.SetBevel(false);
+		}
+
 		private void MdiClientMouseClick(object sender, MouseEventArgs e)
 		{
 			if (e.Button.HasFlag(MouseButtons.Right))
