@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using VisualProcessors;
 using VisualProcessors.Controls;
 using VisualProcessors.Forms;
@@ -92,7 +93,6 @@ namespace VisualProcessors.Forms
 
 			//Toolbox
 			Toolbox.PipelineForm = this;
-
 			m_PipelineDataForm = new PipelineDataForm(this);
 			ErrorList.Master = this;
 		}
@@ -497,6 +497,7 @@ namespace VisualProcessors.Forms
 			{
 				ShowDataWindow();
 			}
+			InitializeThumbnail();
 		}
 
 		private void MdiClientMouseClick(object sender, MouseEventArgs e)
@@ -944,5 +945,23 @@ namespace VisualProcessors.Forms
 		#endregion Menu: Tools
 
 		#endregion MenuStrip Implementation
+
+		#region Taskbar Thumbnail Implementation
+
+		private void InitializeThumbnail()
+		{
+			var manager = TaskbarManager.Instance;
+			ThumbnailToolBarButton play = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_play.GetHicon()), "Play");
+			ThumbnailToolBarButton stop = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_stop.GetHicon()), "Pause");
+			play.Click += pause_Click;
+			manager.ThumbnailToolBars.AddButtons(this.Handle,stop, play);
+		}
+
+		void pause_Click(object sender, ThumbnailButtonClickedEventArgs e)
+		{
+			System.Diagnostics.Debugger.Break();
+		}
+
+		#endregion
 	}
 }
