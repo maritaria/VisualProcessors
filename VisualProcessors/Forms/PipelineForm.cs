@@ -93,7 +93,6 @@ namespace VisualProcessors.Forms
 
 			//Toolbox
 			Toolbox.PipelineForm = this;
-			m_PipelineDataForm = new PipelineDataForm(this);
 			ErrorList.Master = this;
 		}
 
