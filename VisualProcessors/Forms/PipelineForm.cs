@@ -187,6 +187,26 @@ namespace VisualProcessors.Forms
 			return result;
 		}
 
+		public void StartSimulation()
+		{
+			runToolStripMenuItem.Checked = true;
+			CurrentPipeline.Start();
+		}
+		public void StopSimulation()
+		{
+			runToolStripMenuItem.Checked = false;
+			CurrentPipeline.Stop();
+		}
+		public void ResetSimulation()
+		{
+			runToolStripMenuItem.Checked = false;
+			CurrentPipeline.Reset();
+		}
+		public bool IsSimulationRunning()
+		{
+			return CurrentPipeline.IsRunning || CurrentPipeline.IsPreparingSimulation;
+		}
+
 		#endregion Methods
 
 		#region ProcessorForm Control
@@ -824,30 +844,20 @@ namespace VisualProcessors.Forms
 
 		#region Menu: Simulation
 
-		private bool m_RunCheckedChanging = false;
-
 		private void resetToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (m_RunCheckedChanging)
-			{
-				return;
-			}
-			m_RunCheckedChanging = true;
-			runToolStripMenuItem.Checked = false;
-			CurrentPipeline.Reset();
-			m_RunCheckedChanging = false;
+			ResetSimulation();
 		}
 
 		private void runToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			runToolStripMenuItem.Checked = !runToolStripMenuItem.Checked;
-			if (runToolStripMenuItem.Checked)
+			if (IsSimulationRunning())
 			{
-				CurrentPipeline.Start();
+				StopSimulation();
 			}
 			else
 			{
-				CurrentPipeline.Stop();
+				StartSimulation();
 			}
 		}
 
@@ -951,17 +961,12 @@ namespace VisualProcessors.Forms
 		private void InitializeThumbnail()
 		{
 			var manager = TaskbarManager.Instance;
-			ThumbnailToolBarButton play = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_play.GetHicon()), "Play");
-			ThumbnailToolBarButton stop = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_stop.GetHicon()), "Pause");
-			play.Click += pause_Click;
-			manager.ThumbnailToolBars.AddButtons(this.Handle,stop, play);
-		}
+			ThumbnailToolBarButton reset = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_start.GetHicon()), "Reset simulation");
+			ThumbnailToolBarButton stop = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_stop.GetHicon()), "Stop simulation");
+			ThumbnailToolBarButton play = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_play.GetHicon()), "Start simulation");
 
-		void pause_Click(object sender, ThumbnailButtonClickedEventArgs e)
-		{
-			System.Diagnostics.Debugger.Break();
+			manager.ThumbnailToolBars.AddButtons(this.Handle,reset,stop, play);
 		}
-
 		#endregion
 	}
 }
