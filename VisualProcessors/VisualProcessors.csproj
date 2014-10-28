@@ -67,6 +67,12 @@
     <Compile Include="Controls\CodePanel.Designer.cs">
       <DependentUpon>CodePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PipelineErrorPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PipelineErrorPanel.Designer.cs">
+      <DependentUpon>PipelineErrorPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Design\ComPortListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -122,6 +128,7 @@
       <DependentUpon>SerialPortForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Processing\ProcessorOptions.cs" />
+    <Compile Include="Processing\ProcessorErrorEventArgs.cs" />
     <Compile Include="Processors\CompassSensorReader.cs" />
     <Compile Include="Processors\FileBasedProcessor.cs" />
     <Compile Include="Processors\GenericTcpReader.cs" />
@@ -171,6 +178,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Controls\CodePanel.resx">
       <DependentUpon>CodePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PipelineErrorPanel.resx">
+      <DependentUpon>PipelineErrorPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProcessorInputPanel.resx">
       <DependentUpon>ProcessorInputPanel.cs</DependentUpon>
@@ -231,7 +241,81 @@
       <Name>ZedGraph</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\accept.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bug.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bug_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bug_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bug_edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bug_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bug_go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bug_link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cog_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cog_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cog_edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cog_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cog_go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link_break.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link_edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link_go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lock_break.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lock_open.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
