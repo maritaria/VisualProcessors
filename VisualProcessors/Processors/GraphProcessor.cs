@@ -198,22 +198,29 @@ namespace VisualProcessors.Processors
 				}
 				else
 				{
-					var inputRed = GetInputChannel("Red");
-					if (inputRed.HasValue())
+					bool again = true;
+					while (again)
 					{
-						m_PointListRed.Add(m_Counter, inputRed.GetValue());
+						var inputRed = GetInputChannel("Red");
+						if (inputRed.HasValue())
+						{
+							m_PointListRed.Add(m_Counter, inputRed.GetValue());
+							again &= inputRed.HasValue();
+						}
+						var inputBlue = GetInputChannel("Blue");
+						if (inputBlue.HasValue())
+						{
+							m_PointListBlue.Add(m_Counter, inputBlue.GetValue());
+							again &= inputBlue.HasValue();
+						}
+						var inputGreen = GetInputChannel("Green");
+						if (inputGreen.HasValue())
+						{
+							m_PointListGreen.Add(m_Counter, inputGreen.GetValue());
+							again &= inputGreen.HasValue();
+						}
+						m_Counter++;
 					}
-					var inputBlue = GetInputChannel("Blue");
-					if (inputBlue.HasValue())
-					{
-						m_PointListBlue.Add(m_Counter, inputBlue.GetValue());
-					}
-					var inputGreen = GetInputChannel("Green");
-					if (inputGreen.HasValue())
-					{
-						m_PointListGreen.Add(m_Counter, inputGreen.GetValue());
-					}
-					m_Counter++;
 				}
 			}
 			m_Redraw = true;
