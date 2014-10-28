@@ -24,8 +24,7 @@ namespace VisualProcessors.Forms
 		private MdiClient m_MdiClient;
 		private MdiClientHelper m_MdiClientHelper;
 		private Pipeline m_Pipeline;
-		private PipelineDataForm m_PipelineDataForm;
-
+d
 		public Pipeline CurrentPipeline
 		{
 			get
@@ -101,7 +100,7 @@ namespace VisualProcessors.Forms
 			}
 			if (Program.Config.ShowDataFormOnStartup)
 			{
-				m_PipelineDataForm.Show();
+				ShowDataWindow();
 			}
 		}
 
@@ -813,6 +812,38 @@ namespace VisualProcessors.Forms
 		#region Menu: Tools
 
 		private AssemblyForm m_AssemblyForm;
+		private Form m_OptionsForm;
+		private PipelineDataForm m_PipelineDataForm;
+		public void HideDataWindow()
+		{
+			showDataWindowToolStripMenuItem.Text = "Show Data Window";
+			if (m_PipelineDataForm == null || m_PipelineDataForm.IsDisposed)
+			{
+				return;
+			}
+			m_PipelineDataForm.Close();
+		}
+
+		public bool IsDataWindowVisible()
+		{
+			if (m_PipelineDataForm == null || m_PipelineDataForm.IsDisposed)
+			{
+				return false;
+			}
+			return m_PipelineDataForm.Visible;
+		}
+
+		public void ShowDataWindow()
+		{
+			if (m_PipelineDataForm == null || m_PipelineDataForm.IsDisposed)
+			{
+				m_PipelineDataForm = new PipelineDataForm(this);
+				m_PipelineDataForm.FormClosed += m_PipelineDataForm_FormClosed;
+			}
+			m_PipelineDataForm.Show();
+			showDataWindowToolStripMenuItem.Text = "Hide Data Window";
+		}
+
 		private void assemblyInformationToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if ((m_AssemblyForm == null) || m_AssemblyForm.IsDisposed)
@@ -827,23 +858,47 @@ namespace VisualProcessors.Forms
 			}
 		}
 
+		private void m_PipelineDataForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			showDataWindowToolStripMenuItem.Text = "Show Data Window";
+		}
+
 		private void showDataWindowToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (m_PipelineDataForm==null || m_PipelineDataForm.IsDisposed)
+			if (IsDataWindowVisible())
 			{
-				m_PipelineDataForm = new PipelineDataForm(this);
-			}
-			if (m_PipelineDataForm.Visible)
-			{
-				m_PipelineDataForm.Close();
+				HideDataWindow();
 			}
 			else
 			{
-				m_PipelineDataForm.Show();
+				ShowDataWindow();
 			}
 		}
 
 		#endregion Menu: Tools
+
+		private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (m_OptionsForm == null || m_OptionsForm.IsDisposed)
+			{
+				m_OptionsForm = new Form
+				{
+					Controls =
+					{
+						new System.Windows.Forms.PropertyGrid
+						{
+							SelectedObject = Program.Config,
+							Dock = DockStyle.Fill
+						}
+					},
+					Size = RestoreBounds.Size,
+					Location = RestoreBounds.Location,
+					WindowState = WindowState
+				};
+				m_OptionsForm.Show();
+			}
+			m_OptionsForm.Focus();
+		}
 
 		#endregion MenuStrip Implementation
 	}

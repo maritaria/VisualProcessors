@@ -52,7 +52,7 @@
 			this.loadStateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.assemblyInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.showIOWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.showDataWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.MainMenuSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.MainMenuOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -236,7 +236,7 @@
 			// 
 			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.assemblyInformationToolStripMenuItem,
-            this.showIOWindowToolStripMenuItem,
+            this.showDataWindowToolStripMenuItem,
             this.optionsToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
@@ -250,13 +250,13 @@
 			this.assemblyInformationToolStripMenuItem.Text = "Assembly Information";
 			this.assemblyInformationToolStripMenuItem.Click += new System.EventHandler(this.assemblyInformationToolStripMenuItem_Click);
 			// 
-			// showIOWindowToolStripMenuItem
+			// showDataWindowToolStripMenuItem
 			// 
-			this.showIOWindowToolStripMenuItem.Name = "showIOWindowToolStripMenuItem";
-			this.showIOWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Space)));
-			this.showIOWindowToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
-			this.showIOWindowToolStripMenuItem.Text = "Show Data Window";
-			this.showIOWindowToolStripMenuItem.Click += new System.EventHandler(this.showDataWindowToolStripMenuItem_Click);
+			this.showDataWindowToolStripMenuItem.Name = "showDataWindowToolStripMenuItem";
+			this.showDataWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Space)));
+			this.showDataWindowToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+			this.showDataWindowToolStripMenuItem.Text = "Show Data Window";
+			this.showDataWindowToolStripMenuItem.Click += new System.EventHandler(this.showDataWindowToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
@@ -264,6 +264,7 @@
 			this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
 			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
 			this.optionsToolStripMenuItem.Text = "&Options";
+			this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
 			// 
 			// MainMenuSaveFileDialog
 			// 
@@ -359,7 +360,7 @@
 		private System.Windows.Forms.ErrorProvider ErrorIcon;
 		private System.Windows.Forms.StatusStrip MdiStatusStrip;
 		private System.Windows.Forms.ToolStripStatusLabel SimulationStatusLabel;
-		private System.Windows.Forms.ToolStripMenuItem showIOWindowToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem showDataWindowToolStripMenuItem;
 		
 
 	}
