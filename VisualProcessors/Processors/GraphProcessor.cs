@@ -108,9 +108,9 @@ namespace VisualProcessors.Processors
 		public GraphProcessor(Pipeline pipeline, string name)
 			: base(pipeline, name)
 		{
-			AddInputChannel("Red", true);
-			AddInputChannel("Blue", true);
-			AddInputChannel("Green", true);
+			AddInputChannel("Red", false);
+			AddInputChannel("Blue", false);
+			AddInputChannel("Green", false);
 		}
 
 		private void SetupLists()
