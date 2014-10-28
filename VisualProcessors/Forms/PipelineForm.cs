@@ -102,6 +102,7 @@ namespace VisualProcessors.Forms
 			{
 				ShowDataWindow();
 			}
+			pipelineErrorPanel1.Master = this;
 		}
 
 		#endregion Constructor
@@ -116,7 +117,6 @@ namespace VisualProcessors.Forms
 				CurrentPipeline.Started -= PipelineStarted;
 				CurrentPipeline.Stopped -= PipelineStopped;
 				CurrentPipeline.ProcessorModified -= PipelineModification;
-				CurrentPipeline.Warning -= PipelineWarning;
 				CurrentPipeline.Error -= PipelineError;
 				CurrentPipeline.Stop();
 			}
@@ -131,7 +131,6 @@ namespace VisualProcessors.Forms
 				CurrentPipeline.Started += PipelineStarted;
 				CurrentPipeline.Stopped += PipelineStopped;
 				CurrentPipeline.ProcessorModified += PipelineModification;
-				CurrentPipeline.Warning += PipelineWarning;
 				CurrentPipeline.Error += PipelineError;
 				CurrentPipeline.Stop();
 				foreach (string name in pipeline.GetListOfNames())
@@ -257,6 +256,39 @@ namespace VisualProcessors.Forms
 			{
 				pf.Visible = false;
 			}
+		}
+
+		/// <summary>
+		///  Checks if a Processor's form is (partially) visible in the MdiClient
+		/// </summary>
+		/// <param name="processorname">
+		///  The name of the processor whose ProcessorForm to check
+		/// </param>
+		/// <returns>
+		///  Returns true if the processor has a ProcessorForm that is visible in the MdiClient,
+		///  false otherwise
+		/// </returns>
+		public bool IsProcessorVisible(string processorname)
+		{
+			ProcessorForm pf = GetProcessorForm(processorname);
+			if (pf == null)
+			{
+				return false;
+			}
+			return IsProcessorVisible(pf);
+		}
+
+		/// <summary>
+		///  Checks if a given ProcessorForm is (partially) visible in the MdiClient
+		/// </summary>
+		/// <param name="form"></param>
+		/// <returns>
+		///  Returns true if the ProcessorForm is (partially) visible in the MdiClient, false
+		///  otherwise
+		/// </returns>
+		public bool IsProcessorVisible(ProcessorForm form)
+		{
+			return form.Left < MdiClient.Width && form.Top < MdiClient.Height && form.Right > 0 && form.Bottom > 0;
 		}
 
 		/// <summary>
@@ -544,19 +576,26 @@ namespace VisualProcessors.Forms
 					{
 						if (outputchannel.Owner != inputchannel.Owner)
 						{
-							Form endform = GetProcessorForm(inputchannel.Owner.Name);
-							Point lineoutput = CalculateChannelLink(startform, endform.GetCenter());
-							Point lineinput = CalculateChannelLink(endform, lineoutput);
-							Point halfway = new Point((lineoutput.X + lineinput.X) / 2, (lineoutput.Y + lineinput.Y) / 2);
-							myBuffer.Graphics.DrawLine(outputhalf, lineoutput, halfway);
-							myBuffer.Graphics.DrawLine((inputchannel.IsConstant) ? unused : inputhalf, halfway, lineinput);
-							string str1 = "(" + outputchannel.Name + ")";
-							string str2 = "(" + inputchannel.Name + ")";
-							SizeF size1 = myBuffer.Graphics.MeasureString(str1, font);
-							SizeF size2 = myBuffer.Graphics.MeasureString(str2, font);
-							float height = size1.Height + size2.Height;
-							myBuffer.Graphics.DrawString(str1, font, new SolidBrush(outputhalf.Color), halfway.X - size1.Width / 2, halfway.Y - height / 2);
-							myBuffer.Graphics.DrawString(str2, font, new SolidBrush((inputchannel.IsConstant) ? unused.Color : inputhalf.Color), halfway.X - size2.Width / 2, halfway.Y + size2.Height - height / 2);
+							ProcessorForm endform = GetProcessorForm(inputchannel.Owner.Name);
+							if (!endform.Visible)
+							{
+								continue;
+							}
+							if (IsProcessorVisible(startform) || IsProcessorVisible(endform))
+							{
+								Point lineoutput = CalculateChannelLink(startform, endform.GetCenter());
+								Point lineinput = CalculateChannelLink(endform, lineoutput);
+								Point halfway = new Point((lineoutput.X + lineinput.X) / 2, (lineoutput.Y + lineinput.Y) / 2);
+								myBuffer.Graphics.DrawLine(outputhalf, lineoutput, halfway);
+								myBuffer.Graphics.DrawLine((inputchannel.IsConstant) ? unused : inputhalf, halfway, lineinput);
+								string str1 = "(" + outputchannel.Name + ")";
+								string str2 = "(" + inputchannel.Name + ")";
+								SizeF size1 = myBuffer.Graphics.MeasureString(str1, font);
+								SizeF size2 = myBuffer.Graphics.MeasureString(str2, font);
+								float height = size1.Height + size2.Height;
+								myBuffer.Graphics.DrawString(str1, font, new SolidBrush(outputhalf.Color), halfway.X - size1.Width / 2, halfway.Y - height / 2);
+								myBuffer.Graphics.DrawString(str2, font, new SolidBrush((inputchannel.IsConstant) ? unused.Color : inputhalf.Color), halfway.X - size2.Width / 2, halfway.Y + size2.Height - height / 2);
+							}
 						}
 					}
 				}
@@ -565,15 +604,26 @@ namespace VisualProcessors.Forms
 			myBuffer.Dispose();
 		}
 
-		private void PipelineError(Processor arg1, string arg2)
+		private void PipelineError(object sender, ProcessorErrorEventArgs e)
 		{
-			MethodInvoker action = delegate
+			if (sender is Processor)
 			{
-				ShowProcessor(arg1.Name);
-				ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-				ErrorIcon.Icon = SystemIcons.Error;
-			};
-			this.BeginInvoke(action);
+				Processor p = sender as Processor;
+				MethodInvoker action = delegate
+				{
+					ShowProcessor(p.Name);
+					ErrorIcon.SetError(GetProcessorForm(p.Name), e.Title + Environment.NewLine + e.Message);
+					ErrorIcon.Icon = e.IsWarning ? SystemIcons.Warning : SystemIcons.Error;
+				};
+				this.BeginInvoke(action);
+			}
+			if (e.HaltType != HaltTypes.Continue && (CurrentPipeline.IsRunning || CurrentPipeline.IsPreparingSimulation))
+			{
+				if ((e.HaltType == HaltTypes.ShouldHalt) || (MessageBox.Show(e.Message + Environment.NewLine + "Do you want to stop the simulation?", e.Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes))
+				{
+					CurrentPipeline.Stop();
+				}
+			}
 		}
 
 		private void PipelineFormFormClosing(object sender, FormClosingEventArgs e)
@@ -615,16 +665,6 @@ namespace VisualProcessors.Forms
 				runToolStripMenuItem.Checked = false;
 				SimulationStatusLabel.Text = "Edit-mode";
 				MdiClient.Invalidate();
-			};
-			this.BeginInvoke(action);
-		}
-
-		private void PipelineWarning(Processor arg1, string arg2)
-		{
-			MethodInvoker action = delegate
-			{
-				ErrorIcon.SetError(GetProcessorForm(arg1.Name), arg2);
-				ErrorIcon.Icon = SystemIcons.Warning;
 			};
 			this.BeginInvoke(action);
 		}

@@ -17,6 +17,8 @@ namespace VisualProcessors.Processing
 		#region Properties
 
 		private bool m_BreakOnModification = true;
+		private bool m_CancelSimulationPreperation = false;
+		private bool m_PreparingSimulation = false;
 		private List<Processor> m_Processors = new List<Processor>();
 		private bool m_Running = false;
 
@@ -32,6 +34,14 @@ namespace VisualProcessors.Processing
 				{
 					m_BreakOnModification = value;
 				}
+			}
+		}
+
+		public bool IsPreparingSimulation
+		{
+			get
+			{
+				return m_PreparingSimulation;
 			}
 		}
 
@@ -84,7 +94,6 @@ namespace VisualProcessors.Processing
 				}
 				p.Modified += OnProcessorModified;
 				p.Error += OnError;
-				p.Warning += OnWarning;
 				if (GetByName(p.Name) == null)
 				{
 					m_Processors.Add(p);
@@ -182,24 +191,32 @@ namespace VisualProcessors.Processing
 
 		public void Start()
 		{
+			m_PreparingSimulation = true;
+			m_CancelSimulationPreperation = false;
 			bool fail = false;
 			lock (m_Processors)
 			{
 				foreach (Processor p in m_Processors)
 				{
+					if (m_CancelSimulationPreperation)
+					{
+						fail = true;
+						break;
+					}
 					try
 					{
 						p.Start();
 					}
-					catch (Exception e)
+					catch (Exception ex)
 					{
 						fail = true;
-						OnError(p, e.Message);
+						MessageBox.Show("Something went wrong when starting the simulation" + Environment.NewLine + p.Name + ":" + Environment.NewLine + ex.Message, ex.GetType().Name);
 						break;
 					}
 				}
 				m_Running = true;
 			}
+			m_PreparingSimulation = false;
 			if (fail)
 			{
 				Stop();
@@ -210,6 +227,11 @@ namespace VisualProcessors.Processing
 
 		public void Stop()
 		{
+			if (m_PreparingSimulation)
+			{
+				m_CancelSimulationPreperation = true;
+				return;
+			}
 			lock (m_Processors)
 			{
 				foreach (Processor p in m_Processors)
@@ -228,7 +250,6 @@ namespace VisualProcessors.Processing
 				p.Build(this);
 				p.Modified += OnProcessorModified;
 				p.Error += OnError;
-				p.Warning += OnWarning;
 			}
 			foreach (Processor p in m_Processors)
 			{
@@ -247,7 +268,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Invoked when a Processor indicates an error
 		/// </summary>
-		public event Action<Processor, string> Error;
+		public event EventHandler<ProcessorErrorEventArgs> Error;
 
 		/// <summary>
 		///  Invoked just after a processor has been added to the pipeline
@@ -275,16 +296,11 @@ namespace VisualProcessors.Processing
 		/// </summary>
 		public event EventHandler Stopped;
 
-		/// <summary>
-		///  Invoked when a Processor indicates a warning
-		/// </summary>
-		public event Action<Processor, string> Warning;
-
-		private void OnError(Processor p, string s)
+		private void OnError(object sender, ProcessorErrorEventArgs e)
 		{
 			if (Error != null)
 			{
-				Error(p, s);
+				Error(sender, e);
 			}
 		}
 
@@ -333,14 +349,6 @@ namespace VisualProcessors.Processing
 			if (Stopped != null)
 			{
 				Stopped(this, EventArgs.Empty);
-			}
-		}
-
-		private void OnWarning(Processor p, string s)
-		{
-			if (Warning != null)
-			{
-				Warning(p, s);
 			}
 		}
 

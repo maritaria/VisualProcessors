@@ -76,7 +76,14 @@ namespace VisualProcessors.Processors
 
 		public override void Start()
 		{
-			ThrowExceptionOnInvalid(FilePath);
+			try
+			{
+				ThrowExceptionOnInvalid(FilePath);
+			}
+			catch(Exception e)
+			{
+				OnError(new ProcessorErrorEventArgs(this, "FilePath", e.Message, false, HaltTypes.ShouldHalt, IsFilePathValid));
+			}
 			FileStream = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess);
 			base.Start();
 		}
@@ -85,6 +92,19 @@ namespace VisualProcessors.Processors
 		{
 			base.Stop();
 			DisposeFileStream();
+		}
+
+		public bool IsFilePathValid()
+		{
+			try
+			{
+				ThrowExceptionOnInvalid(FilePath);
+			}
+			catch(Exception e)
+			{
+				return false;
+			}
+			return true;
 		}
 
 		public void ThrowExceptionOnInvalid(string path)
@@ -120,15 +140,15 @@ namespace VisualProcessors.Processors
 			}
 			if (info.Attributes.HasFlag(FileAttributes.Temporary))
 			{
-				OnWarning("The selected file is a temporary file, it may be removed when the application closes");
+				OnError(new ProcessorErrorEventArgs(this, "FilePath", "The selected file is a temporary file, it may be removed when the application closes", true, HaltTypes.Continue, IsFilePathValid));
 			}
 			if (info.Attributes.HasFlag(FileAttributes.Compressed))
 			{
-				OnWarning("The selected file is compressed, unknown behaviour on read/write-operations");
+				OnError(new ProcessorErrorEventArgs(this, "FilePath", "The selected file is compressed, unknown behaviour on read/write-operations", true, HaltTypes.Continue, IsFilePathValid));
 			}
 			if (info.Attributes.HasFlag(FileAttributes.ReadOnly))
 			{
-				OnWarning("The selected file is a read-only file");
+				OnError(new ProcessorErrorEventArgs(this, "FilePath", "The selected file is a read-only file", true, HaltTypes.Continue, IsFilePathValid));
 			}
 
 			//This will try to open the file, and immidiatly close it again.
@@ -165,12 +185,9 @@ namespace VisualProcessors.Processors
 		{
 			if (!m_OutputSet)
 			{
-				OnWarning("No output set");
+				return;
 			}
-			else
-			{
-				base.WorkerMethod();
-			}
+			base.WorkerMethod();
 		}
 
 		#endregion Methods

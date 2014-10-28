@@ -190,12 +190,12 @@ namespace VisualProcessors.Processors
 				}
 				catch (Exception e)
 				{
-					OnWarning("Connection lost: " + e.Message);
+					OnError(new ProcessorErrorEventArgs(this,"Connection lost", e.Message, true, HaltTypes.Ask));
 					return;
 				}
 				if (read == 0)
 				{
-					OnWarning("Connection lost: socket closed");
+					OnError(new ProcessorErrorEventArgs(this, "Connection lost", "Socket closed", true, HaltTypes.Ask));
 					return;
 				}
 				if (HandlePacket(buffer, read))

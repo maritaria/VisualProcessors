@@ -60,6 +60,7 @@
 			this.MdiStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.SimulationStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.Toolbox = new VisualProcessors.Controls.ToolboxPanel();
+			this.pipelineErrorPanel1 = new VisualProcessors.Controls.PipelineErrorPanel();
 			this.MdiClientContextMenu.SuspendLayout();
 			this.MainMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ErrorIcon)).BeginInit();
@@ -306,11 +307,20 @@
 			this.Toolbox.Size = new System.Drawing.Size(175, 410);
 			this.Toolbox.TabIndex = 0;
 			// 
+			// pipelineErrorPanel1
+			// 
+			this.pipelineErrorPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.pipelineErrorPanel1.Location = new System.Drawing.Point(175, 130);
+			this.pipelineErrorPanel1.Name = "pipelineErrorPanel1";
+			this.pipelineErrorPanel1.Size = new System.Drawing.Size(518, 282);
+			this.pipelineErrorPanel1.TabIndex = 6;
+			// 
 			// PipelineForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(693, 434);
+			this.Controls.Add(this.pipelineErrorPanel1);
 			this.Controls.Add(this.MdiStatusStrip);
 			this.Controls.Add(this.Toolbox);
 			this.Controls.Add(this.MainMenu);
@@ -361,6 +371,7 @@
 		private System.Windows.Forms.StatusStrip MdiStatusStrip;
 		private System.Windows.Forms.ToolStripStatusLabel SimulationStatusLabel;
 		private System.Windows.Forms.ToolStripMenuItem showDataWindowToolStripMenuItem;
+		private Controls.PipelineErrorPanel pipelineErrorPanel1;
 		
 
 	}

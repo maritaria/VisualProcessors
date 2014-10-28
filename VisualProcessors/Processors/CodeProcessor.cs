@@ -32,9 +32,10 @@ namespace VisualProcessors.Processors
 		private List<Assembly> m_Assemblies = new List<Assembly>();
 		private string m_ChachedCode = "";
 		private List<CompilerError> m_Errors = new List<CompilerError>();
-		private bool m_IsCompiled;
+		private bool m_IsCompiled = false;
 		private List<string> m_Usings = new List<string>();
 		private List<CompilerError> m_Warnings = new List<CompilerError>();
+		private bool m_ReCompiled = false;
 
 		[Browsable(false)]
 		public List<Assembly> Assemblies
@@ -188,7 +189,7 @@ namespace VisualProcessors.Processors
 			}
 			if (m_ChachedCode != Code)
 			{
-				OnWarning("Code changed");
+				//OnWarning("Code changed");
 			}
 			base.Prepare();
 			if (PrepareFunction != null)
@@ -214,7 +215,10 @@ namespace VisualProcessors.Processors
 				}
 				catch (Exception e)
 				{
-					OnError("The Process() function threw an exception!" + Environment.NewLine + e.Message);
+					this.m_ReCompiled = false;
+					OnError(new ProcessorErrorEventArgs(this,"Process() " + e.GetType().Name,e.Message,false,HaltTypes.Ask,delegate(){
+						return !this.m_ReCompiled;
+					}));
 				}
 			}
 		}
@@ -297,6 +301,7 @@ namespace VisualProcessors.Processors
 				PrepareFunction = (Action<CodeProcessor>)Delegate.CreateDelegate(typeof(Action<CodeProcessor>), prepare);
 			}
 			m_IsCompiled = true;
+			m_ReCompiled = true;
 			return true;
 		}
 

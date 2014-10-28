@@ -728,7 +728,7 @@ namespace VisualProcessors.Processing
 		/// <summary>
 		///  Invoked when the processor wants to indicate an error.
 		/// </summary>
-		public event Action<Processor, string> Error;
+		public event EventHandler<ProcessorErrorEventArgs> Error;
 
 		/// <summary>
 		///  Invoked after an InputChannel has been added
@@ -781,19 +781,14 @@ namespace VisualProcessors.Processing
 		public event EventHandler SizeChanged;
 
 		/// <summary>
-		///  Invoked when the processor wants to indicate a warning.
-		/// </summary>
-		public event Action<Processor, string> Warning;
-
-		/// <summary>
 		///  Invokes the Error event
 		/// </summary>
 		/// <param name="message">The message that describes the error</param>
-		protected void OnError(string message)
+		protected void OnError(ProcessorErrorEventArgs e)
 		{
 			if (Error != null)
 			{
-				Error(this, message);
+				Error(this, e);
 			}
 		}
 
@@ -807,18 +802,6 @@ namespace VisualProcessors.Processing
 			if (Modified != null)
 			{
 				Modified(this, new ProcessorModifiedEventArgs(this, haltType));
-			}
-		}
-
-		/// <summary>
-		///  Invokes the Warning event
-		/// </summary>
-		/// <param name="message">The message that describes the warning</param>
-		protected void OnWarning(string message)
-		{
-			if (Warning != null)
-			{
-				Warning(this, message);
 			}
 		}
 

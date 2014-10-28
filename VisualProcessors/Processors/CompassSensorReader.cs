@@ -163,7 +163,7 @@ namespace VisualProcessors.Processors
 				}
 				if (value * val > 2400)
 				{
-					OnWarning("Warning: the given samplerate and sensor axis selection creates a data rate higher then 2400, the device may block up!");
+					OnError(new ProcessorErrorEventArgs(this, "Datarate too high", "the given samplerate and sensor axis selection creates a data rate higher then 2400, the device may block up!", true, HaltTypes.Continue));
 				}
 				Options.SetOption("SampleRate", value.ToString());
 			}
@@ -214,7 +214,10 @@ namespace VisualProcessors.Processors
 		{
 			if (Axis == AxisSelection.None)
 			{
-				OnWarning("No axis have been selected");
+				OnError(new ProcessorErrorEventArgs(this, "AxisSelection", "No axis have been selected", true, HaltTypes.Ask, delegate()
+				{
+					return Axis != AxisSelection.None;
+				}));
 				return;
 			}
 			while (!SerialPort.IsOpen)

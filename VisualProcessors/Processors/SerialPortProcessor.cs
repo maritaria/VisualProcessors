@@ -258,7 +258,14 @@ namespace VisualProcessors.Processors
 			SerialPort.ReceivedBytesThreshold = ReceivedBytesThreshold;
 			SerialPort.RtsEnable = RtsEnable;
 			SerialPort.WriteTimeout = WriteTimeout;
-			SerialPort.Open();
+			try
+			{
+				SerialPort.Open();
+			}
+			catch(Exception e)
+			{
+				OnError(new ProcessorErrorEventArgs(this, "SerialPort " + e.GetType().Name, e.Message, false, HaltTypes.Ask));
+			}
 		}
 
 		public override void Stop()
