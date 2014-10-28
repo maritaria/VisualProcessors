@@ -12,6 +12,7 @@ namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Displays a single number on a label", "Input", "",
 		OutputTabMode = ProcessorVisibility.Hide,
+		DataFormMode=ProcessorVisibility.Show,
 		CustomTabTitle = "Data",
 		ShowOutputWindow = true)]
 	public class DirectOutputProcessor : Processor

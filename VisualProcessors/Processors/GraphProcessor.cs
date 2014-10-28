@@ -19,6 +19,7 @@ namespace VisualProcessors.Processors
 		AllowOptionalInputs = true,
 		CustomTabTitle = "Graph",
 		OutputTabMode = ProcessorVisibility.Hide,
+		DataFormMode=ProcessorVisibility.Show,
 		ShowOutputWindow = true)]
 	public class GraphProcessor : Processor
 	{

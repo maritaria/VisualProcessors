@@ -16,6 +16,7 @@ namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Writes a 0 to its OutputChannel, triggered via a clickable button", "", "Output",
 		InputTabMode = ProcessorVisibility.Hide,
+		DataFormMode = ProcessorVisibility.Show,
 		CustomTabTitle = "Input",
 		ShowOutputWindow = true)]
 	public class DirectInputProcessor : Processor
