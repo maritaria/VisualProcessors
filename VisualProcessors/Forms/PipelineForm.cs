@@ -956,16 +956,39 @@ namespace VisualProcessors.Forms
 
 		#endregion MenuStrip Implementation
 
-		#region Taskbar Thumbnail Implementation
+		#region ThumbnailToolbar Implementation
+
+		ThumbnailToolBarButton m_StartThumbnailButton;
+		ThumbnailToolBarButton m_StopThumbnailButton;
+		ThumbnailToolBarButton m_ResetThumbnailButton;
 
 		private void InitializeThumbnail()
 		{
 			var manager = TaskbarManager.Instance;
-			ThumbnailToolBarButton reset = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_start.GetHicon()), "Reset simulation");
-			ThumbnailToolBarButton stop = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_stop.GetHicon()), "Stop simulation");
-			ThumbnailToolBarButton play = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_play.GetHicon()), "Start simulation");
+			m_StartThumbnailButton = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_play.GetHicon()), "Start simulation");
+			m_StopThumbnailButton = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_stop.GetHicon()), "Stop simulation");
+			m_ResetThumbnailButton = new ThumbnailToolBarButton(Icon.FromHandle(Properties.Resources.control_start.GetHicon()), "Reset simulation");
 
-			manager.ThumbnailToolBars.AddButtons(this.Handle,reset,stop, play);
+			m_StartThumbnailButton.Click += delegate(object sender, ThumbnailButtonClickedEventArgs e)
+			{
+				if (!IsSimulationRunning())
+				{
+					StartSimulation();
+				}
+			};
+			m_StopThumbnailButton.Click += delegate(object sender, ThumbnailButtonClickedEventArgs e)
+			{
+				StopSimulation();
+			};
+			m_ResetThumbnailButton.Click += delegate(object sender, ThumbnailButtonClickedEventArgs e)
+			{
+				ResetSimulation();
+			};
+
+			manager.ThumbnailToolBars.AddButtons(this.Handle,
+				m_ResetThumbnailButton,
+				m_StopThumbnailButton,
+				m_StartThumbnailButton);
 		}
 		#endregion
 	}
