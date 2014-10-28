@@ -11,7 +11,7 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Adds two values together", "A", "Output",
-		CustomTabMode = ProcessorTabMode.Hide)]
+		CustomTabMode = ProcessorVisibility.Hide)]
 	public class AddProcessor : Processor
 	{
 		#region Properties

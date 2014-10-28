@@ -12,7 +12,7 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Calculates the average of a signal over time", "Input", "Output",
-		CustomTabMode = ProcessorTabMode.Hide)]
+		CustomTabMode = ProcessorVisibility.Hide)]
 	public class AverageProcessor : Processor
 	{
 		#region Properties

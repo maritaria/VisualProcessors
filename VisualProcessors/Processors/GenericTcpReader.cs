@@ -9,8 +9,8 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Processor that implements the TcpPlot Generic profile protocol", "", "1",
-		CustomTabMode = ProcessorTabMode.Hide,
-		InputTabMode = ProcessorTabMode.Hide)]
+		CustomTabMode = ProcessorVisibility.Hide,
+		InputTabMode = ProcessorVisibility.Hide)]
 	public class GenericTcpReader : TcpClientBasedProcessor
 	{
 		#region Properties

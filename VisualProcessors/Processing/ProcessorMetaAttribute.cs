@@ -7,12 +7,6 @@ using System.Windows.Forms;
 
 namespace VisualProcessors.Processing
 {
-	public enum ProcessorTabMode
-	{
-		Show,
-		Hide,
-	}
-
 	public enum ProcessorTabs
 	{
 		Input,
@@ -26,6 +20,12 @@ namespace VisualProcessors.Processing
 		ForceMultiThreading,
 		DenyMultiThreading,
 		UserDefined,
+	}
+
+	public enum ProcessorVisibility
+	{
+		Show,
+		Hide,
 	}
 
 	[AttributeUsage(AttributeTargets.Class)]
@@ -52,7 +52,7 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Custom' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode CustomTabMode = ProcessorTabMode.Show;
+		public ProcessorVisibility CustomTabMode = ProcessorVisibility.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Custom' tab
@@ -78,7 +78,7 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Input' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode InputTabMode = ProcessorTabMode.Show;
+		public ProcessorVisibility InputTabMode = ProcessorVisibility.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Input' tab
@@ -89,7 +89,7 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Output' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode OutputTabMode = ProcessorTabMode.Show;
+		public ProcessorVisibility OutputTabMode = ProcessorVisibility.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Output' tab
@@ -100,12 +100,17 @@ namespace VisualProcessors.Processing
 		///  Determines the display of the 'Properties' TabPage on the ProcessorForm of this type of
 		///  Processor
 		/// </summary>
-		public ProcessorTabMode PropertiesTabMode = ProcessorTabMode.Show;
+		public ProcessorVisibility PropertiesTabMode = ProcessorVisibility.Show;
 
 		/// <summary>
 		///  Determines the title of the 'Properties' tab
 		/// </summary>
 		public string PropertiesTabTitle = "Properties";
+
+		/// <summary>
+		///  Determines whether the custom tab should be displayed on the ProcessorDataForm
+		/// </summary>
+		public ProcessorVisibility ShowOnDataForm = ProcessorVisibility.Hide;
 
 		/// <summary>
 		///  Determines whether the custom tab is shown on a seperate form on the PipelineOutputForm

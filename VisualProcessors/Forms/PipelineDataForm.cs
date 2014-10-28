@@ -63,7 +63,7 @@ namespace VisualProcessors.Forms
 		{
 			if (!m_Interfaces.ContainsKey(proc))
 			{
-				if (proc.Meta.CustomTabMode != ProcessorTabMode.Hide)
+				if (proc.Meta.CustomTabMode != ProcessorVisibility.Hide)
 				{
 					ProcessorInterfaceForm gf = new ProcessorInterfaceForm(proc);
 					m_Interfaces.Add(proc, gf);

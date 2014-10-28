@@ -11,7 +11,7 @@ using VisualProcessors.Processing;
 namespace VisualProcessors.Processors
 {
 	[ProcessorMeta("Bram Kamies", "Multiplies two values together", "A", "Output",
-		CustomTabMode = ProcessorTabMode.Hide)]
+		CustomTabMode = ProcessorVisibility.Hide)]
 	public class MultiplyProcessor : Processor
 	{
 		#region Properties
