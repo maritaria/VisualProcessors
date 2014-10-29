@@ -356,31 +356,42 @@ namespace VisualProcessors.Processors
 									byte[] packet = Buffer.ToArray();
 									Buffer.Clear();
 									short converted;
-									for (i = 0; i + flagCount < 30; i += flagCount)
+									for (i = 0; i + flagCount < 30;)
 									{
-										converted = BitConverter.ToInt16(packet, i * 2);
 										if (sax)
 										{
+											converted = BitConverter.ToInt16(packet, i * 2);
+											i++;
 											ax.WriteValue((double)converted);
 										}
 										if (say)
 										{
+											converted = BitConverter.ToInt16(packet, i * 2);
+											i++;
 											ay.WriteValue((double)converted);
 										}
 										if (saz)
 										{
+											converted = BitConverter.ToInt16(packet, i * 2);
+											i++;
 											az.WriteValue((double)converted);
 										}
 										if (smx)
 										{
+											converted = BitConverter.ToInt16(packet, i * 2);
+											i++;
 											mx.WriteValue((double)converted);
 										}
 										if (smy)
 										{
+											converted = BitConverter.ToInt16(packet, i * 2);
+											i++;
 											my.WriteValue((double)converted);
 										}
 										if (smz)
 										{
+											converted = BitConverter.ToInt16(packet, i * 2);
+											i++;
 											mz.WriteValue((double)converted);
 										}
 									}
