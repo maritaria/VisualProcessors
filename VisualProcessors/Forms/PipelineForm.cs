@@ -517,7 +517,6 @@ namespace VisualProcessors.Forms
 
 		private void PipelineFormLoad(object sender, EventArgs e)
 		{
-			this.SetBevel(false);
 			if (Program.Config.StartMaximized)
 			{
 				this.WindowState = FormWindowState.Maximized;
@@ -530,6 +529,7 @@ namespace VisualProcessors.Forms
 			{
 				LoadFile(Program.Config.LastOpenedPipelineFile);
 			}
+			this.SetBevel(Program.Config.Use3DBorderOnMdiClient);
 			InitializeThumbnail();
 		}
 
