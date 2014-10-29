@@ -115,6 +115,16 @@ namespace VisualProcessors.Processors
 			set
 			{
 				Options.SetOption("AxisSelection", value.ToString());
+				int val = 0;
+				int axi = (int)Axis;
+				for (int i = 0; i < 8; i++)
+				{
+					val += (axi >> i) & 1;
+				}
+				if (SampleRate * val > 2400)
+				{
+					OnError(new ProcessorErrorEventArgs(this, "Datarate too high", "the given samplerate and sensor axis selection creates a data rate higher then 2400, the device may block up!", true, HaltTypes.Ask));
+				}
 				OnModified(HaltTypes.Ask);
 			}
 		}
@@ -155,17 +165,18 @@ namespace VisualProcessors.Processors
 			}
 			set
 			{
+				Options.SetOption("SampleRate", value.ToString());
 				int val = 0;
 				int axi = (int)Axis;
 				for (int i = 0; i < 8; i++)
 				{
 					val += (axi >> i) & 1;
 				}
-				if (value * val > 2400)
+				if (SampleRate * val > 2400)
 				{
-					OnError(new ProcessorErrorEventArgs(this, "Datarate too high", "the given samplerate and sensor axis selection creates a data rate higher then 2400, the device may block up!", true, HaltTypes.Continue));
+					OnError(new ProcessorErrorEventArgs(this, "Datarate too high", "the given samplerate and sensor axis selection creates a data rate higher then 2400, the device may block up!", true, HaltTypes.Ask));
 				}
-				Options.SetOption("SampleRate", value.ToString());
+				OnModified(HaltTypes.Ask);
 			}
 		}
 
