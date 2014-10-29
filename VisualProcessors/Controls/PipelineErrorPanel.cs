@@ -101,7 +101,11 @@ namespace VisualProcessors.Controls
 
 		void arg2_Error(object sender, ProcessorErrorEventArgs e)
 		{
-			ErrorGridView.Rows.Add(e.IsWarning ? SystemIcons.Warning : SystemIcons.Error, e.Source, e.Title, e.Message, e.HaltType, e.Callback);
+			MethodInvoker action = delegate
+			{
+				ErrorGridView.Rows.Add(e.IsWarning ? SystemIcons.Warning : SystemIcons.Error, e.Source, e.Title, e.Message, e.HaltType, e.Callback);
+			};
+			this.BeginInvoke(action);
 		}
 		#endregion Event Handlers
 
