@@ -484,6 +484,7 @@ namespace VisualProcessors.Forms
 		private Point m_ContextLocation;
 		private bool m_IsDragging = false;
 		private Point m_PreviousDragPosition;
+		private bool m_PaintingLinks = false;
 
 		private void MdiClientContextMenuOpening(object sender, CancelEventArgs e)
 		{
@@ -571,6 +572,11 @@ namespace VisualProcessors.Forms
 		private void MdiClientPaintLinks(object sender, PaintEventArgs e)
 		{
 #warning Optimization needed
+			if (m_PaintingLinks)
+			{
+				return;
+			}
+			m_PaintingLinks = true;
 			BufferedGraphicsContext currentContext;
 			BufferedGraphics myBuffer;
 			currentContext = BufferedGraphicsManager.Current;
@@ -634,6 +640,7 @@ namespace VisualProcessors.Forms
 			}
 			myBuffer.Render();
 			myBuffer.Dispose();
+			m_PaintingLinks = false;
 		}
 
 		private void PipelineError(object sender, ProcessorErrorEventArgs e)
