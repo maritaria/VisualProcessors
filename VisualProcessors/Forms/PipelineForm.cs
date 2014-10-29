@@ -967,7 +967,7 @@ namespace VisualProcessors.Forms
 
 		#endregion MenuStrip Implementation
 
-		#region ThumbnailToolbar Implementation
+		#region Windows Taskbar ThumbnailToolbar
 
 		ThumbnailToolBarButton m_StartThumbnailButton;
 		ThumbnailToolBarButton m_StopThumbnailButton;
@@ -1001,6 +1001,7 @@ namespace VisualProcessors.Forms
 				m_StopThumbnailButton,
 				m_StartThumbnailButton);
 		}
+
 		#endregion
 	}
 }
