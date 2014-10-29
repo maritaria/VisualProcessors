@@ -651,6 +651,7 @@ namespace VisualProcessors.Forms
 				MethodInvoker action = delegate
 				{
 					ShowProcessor(p.Name);
+					ErrorIcon.Clear();
 					ErrorIcon.SetError(GetProcessorForm(p.Name), e.Title + Environment.NewLine + e.Message);
 					ErrorIcon.Icon = e.IsWarning ? SystemIcons.Warning : SystemIcons.Error;
 				};
