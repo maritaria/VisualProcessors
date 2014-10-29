@@ -405,7 +405,10 @@ namespace VisualProcessors.Processing
 			}
 			else
 			{
-				Thread.Sleep(new TimeSpan((long)(TimeSpan.TicksPerMillisecond * ThreadSleep)));
+				if (MultiThreaded)
+				{
+					Thread.Sleep(new TimeSpan((long)(TimeSpan.TicksPerMillisecond * ThreadSleep)));
+				}
 			}
 		}
 
