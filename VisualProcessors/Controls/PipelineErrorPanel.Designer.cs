@@ -30,14 +30,17 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this.ErrorGridView = new System.Windows.Forms.DataGridView();
-			this.ErrorMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.TypeColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.SourceColumn = new System.Windows.Forms.DataGridViewLinkColumn();
 			this.TitleColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MessageColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.HaltTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.CallbackColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ErrorMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.ErrorGridView)).BeginInit();
+			this.ErrorMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ErrorGridView
@@ -59,11 +62,6 @@
 			this.ErrorGridView.Size = new System.Drawing.Size(922, 282);
 			this.ErrorGridView.TabIndex = 1;
 			this.ErrorGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ErrorGridView_CellContentClick);
-			// 
-			// ErrorMenuStrip
-			// 
-			this.ErrorMenuStrip.Name = "ErrorMenuStrip";
-			this.ErrorMenuStrip.Size = new System.Drawing.Size(61, 4);
 			// 
 			// TypeColumn
 			// 
@@ -106,6 +104,28 @@
 			this.CallbackColumn.ReadOnly = true;
 			this.CallbackColumn.Visible = false;
 			// 
+			// ErrorMenuStrip
+			// 
+			this.ErrorMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.refreshToolStripMenuItem,
+            this.clearAllToolStripMenuItem});
+			this.ErrorMenuStrip.Name = "ErrorMenuStrip";
+			this.ErrorMenuStrip.Size = new System.Drawing.Size(153, 70);
+			// 
+			// refreshToolStripMenuItem
+			// 
+			this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.refreshToolStripMenuItem.Text = "Refresh";
+			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+			// 
+			// clearAllToolStripMenuItem
+			// 
+			this.clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
+			this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.clearAllToolStripMenuItem.Text = "Clear All";
+			this.clearAllToolStripMenuItem.Click += new System.EventHandler(this.clearAllToolStripMenuItem_Click);
+			// 
 			// PipelineErrorPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -114,6 +134,7 @@
 			this.Name = "PipelineErrorPanel";
 			this.Size = new System.Drawing.Size(922, 282);
 			((System.ComponentModel.ISupportInitialize)(this.ErrorGridView)).EndInit();
+			this.ErrorMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -128,5 +149,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MessageColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn HaltTypeColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn CallbackColumn;
+		private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem clearAllToolStripMenuItem;
 	}
 }

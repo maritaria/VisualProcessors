@@ -125,5 +125,15 @@ namespace VisualProcessors.Controls
 				return;
 			}
 		}
+
+		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			UpdateErrorList(false);
+		}
+
+		private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			UpdateErrorList(true);
+		}
 	}
 }
