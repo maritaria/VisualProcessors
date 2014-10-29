@@ -259,7 +259,7 @@ namespace VisualProcessors.Processors
 				flagCount += ((int)axis >> i) & 1;
 			}
 
-			while (true)
+			while (SerialPort.IsOpen)
 			{
 				try
 				{
@@ -421,6 +421,7 @@ namespace VisualProcessors.Processors
 
 				}
 			}
+			OnError(new ProcessorErrorEventArgs(this, "SerialPort", "The serialport has closed during simulation", false, HaltTypes.Ask));
 		}
 
 		private void CheckResponse(InternalState nextState)
