@@ -526,6 +526,10 @@ namespace VisualProcessors.Forms
 			{
 				ShowDataWindow();
 			}
+			if (Program.Config.OpenLastPipelineOnStartup)
+			{
+				LoadFile(Program.Config.LastOpenedPipelineFile);
+			}
 			InitializeThumbnail();
 		}
 
@@ -740,11 +744,18 @@ namespace VisualProcessors.Forms
 			{
 				return;
 			}
-			m_CurrentFilepath = MainMenuOpenFileDialog.FileName;
-			FileStream file = new FileStream(m_CurrentFilepath, FileMode.Open);
+			LoadFile(MainMenuOpenFileDialog.FileName);
+		}
+
+		public void LoadFile(string path)
+		{
+			Text = "Pipeline Editor";
+			FileStream file = new FileStream(path, FileMode.Open);
 			try
 			{
 				CurrentPipeline = Pipeline.LoadFromFile(file);
+				m_CurrentFilepath = path;
+				Program.Config.LastOpenedPipelineFile = path;
 			}
 			catch (Exception e)
 			{
