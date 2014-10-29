@@ -61,13 +61,19 @@ namespace VisualProcessors.Forms
 
 		private void AddProcessorInterface(Processor proc)
 		{
-			if (!m_Interfaces.ContainsKey(proc) && proc.Meta.DataFormMode == ProcessorVisibility.Show)
+			if (m_Interfaces.ContainsKey(proc))
+			{
+				RemoveProcessorInterface(proc);
+			}
+			if (proc.Meta.DataFormMode == ProcessorVisibility.Show)
 			{
 				ProcessorInterfaceForm gf = new ProcessorInterfaceForm(proc);
 				m_Interfaces.Add(proc, gf);
 				gf.TopLevel = false;
 				gf.MdiParent = this;
 				gf.Show();
+				var item = showProcessorToolStripMenuItem.DropDownItems.Add(proc.Name, null, ShowProcessorDropDownItemClick);
+				item.Name = proc.Name;//Used for RemoveByKey()
 			}
 		}
 
@@ -87,6 +93,7 @@ namespace VisualProcessors.Forms
 			gf.Close();
 			gf.Dispose();
 			m_Interfaces.Remove(proc);
+			showProcessorToolStripMenuItem.DropDownItems.RemoveByKey(proc.Name);
 		}
 
 		#endregion Methods
@@ -115,6 +122,34 @@ namespace VisualProcessors.Forms
 			}
 		}
 
+		private void ShowProcessorDropDownItemClick(object sender, EventArgs e)
+		{
+			if (Master.CurrentPipeline != null)
+			{
+				AddProcessorInterface(Master.CurrentPipeline.GetByName((sender as ToolStripDropDownItem).Text));
+			}
+		}
+
 		#endregion Event Handlers
+
+		private void arrangeToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			LayoutMdi(MdiLayout.ArrangeIcons);
+		}
+
+		private void cascadeToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			LayoutMdi(MdiLayout.Cascade);
+		}
+
+		private void tileHorizontallyToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			LayoutMdi(MdiLayout.TileHorizontal);
+		}
+
+		private void tileVerticallyToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			LayoutMdi(MdiLayout.TileVertical);
+		}
 	}
 }
